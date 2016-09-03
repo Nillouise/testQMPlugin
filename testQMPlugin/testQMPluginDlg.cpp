@@ -6,7 +6,12 @@
 #include "testQMPlugin.h"
 #include "testQMPluginDlg.h"
 #include "afxdialogex.h"
+
+
 #include "Cdmsoft.h"
+#include"Room.h"
+#include"test.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -65,11 +70,13 @@ BEGIN_MESSAGE_MAP(CtestQMPluginDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDOK, &CtestQMPluginDlg::OnBnClickedOk)
+	ON_BN_CLICKED(IDC_OpenConsole, &CtestQMPluginDlg::OnBnClickedOpenconsole)
 END_MESSAGE_MAP()
 
 
 // CtestQMPluginDlg message handlers
 
+Cdmsoft dm;
 BOOL CtestQMPluginDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
@@ -101,6 +108,14 @@ BOOL CtestQMPluginDlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 
+	::CoInitialize(NULL);
+	CLSID clsid;
+	HRESULT hr = CLSIDFromProgID(OLESTR("dm.dmsoft"), &clsid);
+	dm.CreateDispatch(clsid);
+	dm.Reg(L"dieofai3e4c4149f6970cd69b4fc3af7ac85de4", L"0001");
+
+	test::OpenConsole();
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -123,6 +138,8 @@ void CtestQMPluginDlg::OnSysCommand(UINT nID, LPARAM lParam)
 
 void CtestQMPluginDlg::OnPaint()
 {
+
+
 	if (IsIconic())
 	{
 		CPaintDC dc(this); // device context for painting
@@ -144,6 +161,8 @@ void CtestQMPluginDlg::OnPaint()
 	{
 		CDialogEx::OnPaint();
 	}
+
+
 }
 
 // The system calls this function to obtain the cursor to display while the user drags
@@ -158,13 +177,20 @@ HCURSOR CtestQMPluginDlg::OnQueryDragIcon()
 void CtestQMPluginDlg::OnBnClickedOk()
 {
 	// TODO: Add your control notification handler code here
-	Cdmsoft dm;
-	::CoInitialize(NULL);
-	CLSID clsid;
-	HRESULT hr = CLSIDFromProgID(OLESTR("dm.dmsoft"), &clsid);
-	dm.CreateDispatch(clsid);
-	dm.Reg(L"dieofai3e4c4149f6970cd69b4fc3af7ac85de4", L"0001");
+
 
 	dm.RightClick();
-	CDialogEx::OnOK();
+
+	
+	test::getMonsterOverlay(dm, gandalfr::CRectangle());
+//	gandalfr::CMonster::m_vecCMon.push_back(gandalfr::CMonster(gandalfr::CRectangle()));
+//	CDialogEx::OnCancel();
+}
+
+
+void CtestQMPluginDlg::OnBnClickedOpenconsole()
+{
+	// TODO: Add your control notification handler code here
+	test::OpenConsole();
+
 }
