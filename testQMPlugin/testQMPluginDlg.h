@@ -34,4 +34,7 @@ protected:
 public:
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnBnClickedOpenconsole();
+	CString CSLayerWidth;
+	CString CSLayerHeight;
+	afx_msg void OnBnClickedfindmonster();
 };

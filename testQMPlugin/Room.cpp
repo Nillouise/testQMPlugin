@@ -5,7 +5,7 @@
 #include<queue>
 #include<functional>
 #include<cmath>
-
+#include<set>
 using namespace gandalfr;
 
 std::vector<CMonster> CMonster::m_vecCMon;
@@ -19,21 +19,28 @@ long gandalfr::CMonster::findMonster(Cdmsoft dm, int rangeX, int rangeY, int ran
 	static DWORD pretime = GetTickCount();
 	CString cs = dm.FindColorBlockEx(rangeX, rangeY, rangeWidth, rangeHeight, MonColor, similar, PointCount, monWidth, monHeight);
 	long count = dm.GetResultCount(cs);
-	int prex = -100;
-	int prey = -100;
-	gandalfr::CMonster::m_vecCMon.clear();
-	for (int i = 0; i < 1; i++)
+
+	//process the m_vecCMon and m_vecCMonTrail
+	m_vecCMon.clear();
+	
+	for (int i = 0; i < count; i++)
 	{
 		VARIANT intX, intY;
 		int dm_ret = dm.GetResultPos(cs, i, &intX, &intY);
-		if (abs(intX.intVal - prex) < monWidth / 3 && abs(intY.intVal - prey) < monHeight / 3)
-		{
-			continue;
-		}
-		prex = intX.intVal;
-		prey = intY.intVal;
 
-		m_vecCMon.push_back(CMonster(intX.intVal, intY.intVal));
+		int ok = 1;
+		for (auto iter = m_vecCMon.begin(); iter != m_vecCMon.end(); iter++)
+		{
+			if (abs((*iter).m_rect.x - intX.intVal) < monWidth / 2 && abs((*iter).m_rect.y - intY.intVal) < monHeight / 2)
+			{
+				ok = 0;
+				break;
+			}
+		}
+		if (ok == 1)
+		{
+			m_vecCMon.push_back(CMonster(CRectangle(intX.intVal, intY.intVal)));
+		}
 	}
 
 	return 0;
@@ -56,9 +63,16 @@ int gandalfr::CDecision::getMonsterOverlay(CRectangle rectSkill, std::vector<std
 	}
 
 	//use pre layer to calculate next layer that overlay
+
 	for (int count = 0; ; count++)
 	{
+		if (receive[count].size() < 2)
+		{
+			break;
+		}
 		receive.push_back(std::vector<CRectangle>());
+		std::set<CRectangle> setRectDerep;
+
 		for (auto iteri = receive[count].begin(); iteri != receive[count].end(); iteri++)
 		{
 			for (auto iterj = iteri + 1; iterj != receive[count].end(); iterj++)
@@ -74,11 +88,19 @@ int gandalfr::CDecision::getMonsterOverlay(CRectangle rectSkill, std::vector<std
 					continue;
 				r.width = x - r.x;
 				r.height = y - r.y;
-				receive[count + 1].push_back(r);
+				if (setRectDerep.insert(r).second)
+				{
+					receive[count + 1].push_back(r);
+				}
 			}
 		}
-		if (receive[count + 1].size() < 2)
-			break;
+
 	}
 	return 0;
+}
+
+bool gandalfr::operator<(const CRectangle & t1, const CRectangle & t2)
+{
+
+	return t1.x == t2.x? t1.y< t2.y : t1.x<t2.x;
 }

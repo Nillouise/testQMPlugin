@@ -56,6 +56,8 @@ END_MESSAGE_MAP()
 
 CtestQMPluginDlg::CtestQMPluginDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_TESTQMPLUGIN_DIALOG, pParent)
+	, CSLayerWidth(_T("300"))
+	, CSLayerHeight(_T("300"))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -63,6 +65,8 @@ CtestQMPluginDlg::CtestQMPluginDlg(CWnd* pParent /*=NULL*/)
 void CtestQMPluginDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Text(pDX, IDC_LayerWidth, CSLayerWidth);
+	DDX_Text(pDX, IDC_LayerHeight, CSLayerHeight);
 }
 
 BEGIN_MESSAGE_MAP(CtestQMPluginDlg, CDialogEx)
@@ -71,6 +75,7 @@ BEGIN_MESSAGE_MAP(CtestQMPluginDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDOK, &CtestQMPluginDlg::OnBnClickedOk)
 	ON_BN_CLICKED(IDC_OpenConsole, &CtestQMPluginDlg::OnBnClickedOpenconsole)
+	ON_BN_CLICKED(IDC_findMonster, &CtestQMPluginDlg::OnBnClickedfindmonster)
 END_MESSAGE_MAP()
 
 
@@ -115,6 +120,7 @@ BOOL CtestQMPluginDlg::OnInitDialog()
 	dm.Reg(L"dieofai3e4c4149f6970cd69b4fc3af7ac85de4", L"0001");
 
 	test::OpenConsole();
+
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -181,8 +187,9 @@ void CtestQMPluginDlg::OnBnClickedOk()
 
 	dm.RightClick();
 
-	
-	test::getMonsterOverlay(dm, gandalfr::CRectangle());
+	test::findmonster(dm);
+	UpdateData(TRUE);
+	test::getMonsterOverlay(dm, gandalfr::CRectangle(0,0, ::_ttoi(CSLayerWidth) , ::_ttoi(CSLayerHeight) ));
 //	gandalfr::CMonster::m_vecCMon.push_back(gandalfr::CMonster(gandalfr::CRectangle()));
 //	CDialogEx::OnCancel();
 }
@@ -191,6 +198,13 @@ void CtestQMPluginDlg::OnBnClickedOk()
 void CtestQMPluginDlg::OnBnClickedOpenconsole()
 {
 	// TODO: Add your control notification handler code here
-	test::OpenConsole();
+	test::OpenConsole();	
+}
 
+
+
+void CtestQMPluginDlg::OnBnClickedfindmonster()
+{
+	// TODO: Add your control notification handler code here
+	test::findmonster(dm);
 }

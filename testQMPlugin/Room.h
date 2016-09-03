@@ -29,8 +29,10 @@ namespace gandalfr
 		int width;
 		int height;
 		CRectangle(int x = -1, int y = -1, int width = 0, int height = 0) :x(x), y(y), width(width), height(height) {};
+		
+	
 	};
-
+	bool operator < (const CRectangle &t1, const CRectangle &t2);
 
 	class CMonster
 	{
@@ -43,7 +45,7 @@ namespace gandalfr
 		static std::vector<CMonster> m_vecCMon;
 		static std::vector<std::vector<CMonster> > m_vecCMonTrail;
 		CMonster(CRectangle rect, int hitTime = 0) :m_rect(rect), m_hitTime(hitTime) {};
-		static long findMonster(Cdmsoft dm, int rangeX = 0, int rangeY = 0, int rangeWidth = 800, int rangeHeight = 600, WCHAR *MonColor = L"ff0094-010101", double similar = 1.0, int PointCount = 500, int monWidth = 30, int monHeight = 30);
+		static long findMonster(Cdmsoft dm, int rangeX = 0, int rangeY = 0, int rangeWidth = 800, int rangeHeight = 600, WCHAR *MonColor = L"ff0094-010101", double similar = 1.0, int PointCount = 250, int monWidth = 30, int monHeight = 30);
 	};
 	
 
