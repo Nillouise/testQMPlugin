@@ -99,6 +99,9 @@ int gandalfr::CDecision::getMonsterOverlay(CRectangle rectSkill, std::vector<std
 	return 0;
 }
 
+
+
+
 bool gandalfr::operator<(const CRectangle & t1, const CRectangle & t2)
 {
 

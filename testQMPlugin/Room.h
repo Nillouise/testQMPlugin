@@ -136,5 +136,17 @@ namespace gandalfr
 
 	};
 
+	class CAction
+	{
+	public:
+		int RunOutRect();
+		int RunIntoRect();
 
+
+	};
+
+	class Exper
+	{
+
+	};
 }
