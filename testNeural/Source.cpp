@@ -2,6 +2,7 @@
 #include<vector>
 #include<map>
 #include<set>
+#include<Windows.h>
 using namespace std;
 
 map<pair<void*, void*>, double> map_weight;
@@ -90,7 +91,7 @@ public:
 		if (curObject == NULL)
 		{
 			curObject = new targetTarget();
-			cout << "create targetTarget";
+			cout << "create targetTarget" << endl;
 		}
 
 
@@ -132,13 +133,31 @@ player* player::curObject;
 int main()
 {
 	cout << (void*)player::getClass() << endl;
-
+	cout << (void*)player::getClass()->curObject << endl;
 	(*targetTarget::getClass()->set_Uplevel.begin())->run();
 	cout << (*targetTarget::getClass()->set_Uplevel.begin())->pos.x << endl;
 	auto it = targetTarget::getClass()->set_Uplevel.begin();
 	it++;
 	(*it)->run();
+	auto it2 = *it;
 	cout << (*it)->pos.x << endl;
+	cout << (*(--it))->pos.x << endl;
+	map_weight[make_pair((void *)*it,(void*)*it)]  = 2500.0;
+	cout << map_weight[make_pair((void *)*it, (void*)*it)];
+
+
+
+
 	getchar();
 	return 0;
 }
+
+
+
+
+
+
+
+
+
+

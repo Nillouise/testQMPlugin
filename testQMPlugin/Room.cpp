@@ -8,12 +8,10 @@
 #include<set>
 using namespace gandalfr;
 
-std::vector<CMonster> CMonster::m_vecCMon;
-std::vector<std::vector<CMonster> > CMonster::m_vecCMonTrail;
-static std::vector<CKeyOp> m_vecCKeyOp;
 
+CRoomState g_RoomState;
 
-long gandalfr::CMonster::findMonster(Cdmsoft dm, int rangeX, int rangeY, int rangeWidth, int rangeHeight, WCHAR * MonColor, double similar, int PointCount, int monWidth, int monHeight)
+CMonsterSet gandalfr::CMonsterSet::findMonster(Cdmsoft dm, int rangeX, int rangeY, int rangeWidth, int rangeHeight, WCHAR * MonColor, double similar, int PointCount, int monWidth, int monHeight)
 {
 
 	static DWORD pretime = GetTickCount();
@@ -21,7 +19,7 @@ long gandalfr::CMonster::findMonster(Cdmsoft dm, int rangeX, int rangeY, int ran
 	long count = dm.GetResultCount(cs);
 
 	//process the m_vecCMon and m_vecCMonTrail
-	m_vecCMon.clear();
+	CMonsterSet cr;
 	
 	for (int i = 0; i < count; i++)
 	{
@@ -29,7 +27,7 @@ long gandalfr::CMonster::findMonster(Cdmsoft dm, int rangeX, int rangeY, int ran
 		int dm_ret = dm.GetResultPos(cs, i, &intX, &intY);
 
 		int ok = 1;
-		for (auto iter = m_vecCMon.begin(); iter != m_vecCMon.end(); iter++)
+		for (auto iter = cr.m_vecCMon.begin(); iter != cr.m_vecCMon.end(); iter++)
 		{
 			if (abs((*iter).m_rect.x - intX.intVal) < monWidth / 2 && abs((*iter).m_rect.y - intY.intVal) < monHeight / 2)
 			{
@@ -39,20 +37,20 @@ long gandalfr::CMonster::findMonster(Cdmsoft dm, int rangeX, int rangeY, int ran
 		}
 		if (ok == 1)
 		{
-			m_vecCMon.push_back(CMonster(CRectangle(intX.intVal, intY.intVal)));
+			cr.m_vecCMon.push_back(CMonsterOne(CRectangle(intX.intVal, intY.intVal)));
 		}
 	}
 
-	return 0;
+	return cr;
 }
 
 
 //reflect to CMonster::m_vecCMon,responsible to CMonster is not empty;
-int gandalfr::CDecision::getMonsterOverlay(CRectangle rectSkill, std::vector<std::vector<CRectangle>> &receive)
+int gandalfr::CDecision::getMonsterOverlay(const CRectangle &rectSkill, const CMonsterSet &monset, std::vector<std::vector<CRectangle>> &receive)
 {
 	//preprocess the monster collide with rectSkill and  calculate the 1 monster range.
 	receive.push_back(std::vector<CRectangle>());
-	for (auto iter = CMonster::m_vecCMon.begin(); iter != CMonster::m_vecCMon.end(); iter++)
+	for ( auto iter =  monset.m_vecCMon.begin(); iter != monset.m_vecCMon.end(); iter++)
 	{
 		CRectangle curMon = (*iter).m_rect;
 		curMon.x = curMon.x - rectSkill.width / 2;

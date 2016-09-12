@@ -182,6 +182,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cdmsoft.h" />
+    <ClInclude Include="CharRedEye.h" />
+    <ClInclude Include="Neural.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="stdafx.h" />
@@ -191,6 +193,7 @@
     <ClInclude Include="testQMPluginDlg.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CharRedEye.cpp" />
     <ClCompile Include="Neural.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="stdafx.cpp">
