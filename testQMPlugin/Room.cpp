@@ -9,7 +9,7 @@
 using namespace gandalfr;
 
 
-CRoomState g_RoomState;
+//CRoomState g_RoomState;
 
 CMonsterSet gandalfr::CMonsterSet::findMonster(Cdmsoft dm, int rangeX, int rangeY, int rangeWidth, int rangeHeight, WCHAR * MonColor, double similar, int PointCount, int monWidth, int monHeight)
 {
@@ -46,7 +46,7 @@ CMonsterSet gandalfr::CMonsterSet::findMonster(Cdmsoft dm, int rangeX, int range
 
 
 //reflect to CMonster::m_vecCMon,responsible to CMonster is not empty;
-int gandalfr::CDecision::getMonsterOverlay(const CRectangle &rectSkill, const CMonsterSet &monset, std::vector<std::vector<CRectangle>> &receive)
+int gandalfr::CDecision::getMonsterOverlay(const CRectangle &rectSkill, std::vector<std::vector<CRectangle>> &receive , const CMonsterSet &monset =g_RoomState.m_monster )
 {
 	//preprocess the monster collide with rectSkill and  calculate the 1 monster range.
 	receive.push_back(std::vector<CRectangle>());

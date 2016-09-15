@@ -6,54 +6,36 @@
 #include<queue>
 #include<functional>
 #include<cmath>
+#include<map>
+
 
 
 namespace gandalfr
 {
-	
+	class  CRoomState;
+
 	class CKeyOp
 	{
 	public:
 
 		std::wstring m_Key;
 		DWORD m_KeyTime;
-		int(*m_KeyCallback)(int x);
-		int m_KeyType; // 0 to press,1 to down,2 to up
+		int(*m_KeyCallback)(int x);//when a key press ,it call back 
+		int m_KeyType; // 0 to press,10 to down if this key no down ,then up before down;11 to down ,if down,no down again;20 to up
+		int m_forWhat;//0 if for run to some area,1 to release skill,you can you other num to approach other effect
 		static int KeyDefaultCallback(int x);
 		static std::vector<CKeyOp> m_vecCKeyOp; // record the history key
 		static std::priority_queue<CKeyOp, std::vector<CKeyOp>, std::greater<CKeyOp> > m_pqKeyOp;  // incoming key
 		static CRITICAL_SECTION g_csKeyOp;
+		static std::map<std::wstring, DWORD> m_keyDown;
 		CKeyOp(std::wstring Key = L"", DWORD KeyTime = 0, int KeyType = 0, int(*KeyCallback)(int) = KeyDefaultCallback) :m_Key(Key), m_KeyTime(KeyTime), m_KeyCallback(KeyCallback), m_KeyType(KeyType) {}
-		static UINT __stdcall KeyboardInput(LPVOID);
+		static UINT __stdcall KeyboardInput(LPVOID);//use to begin a new thread
 	};
 	bool operator < (const CKeyOp &t1, const CKeyOp &t2);
 	bool operator > (const CKeyOp &t1, const CKeyOp &t2);
 
 
-	class CRoomState
-	{
-	public:
-		CRoomState();
-		~CRoomState();
 
-		std::vector<CMonsterSet> m_vecMonTrail;
-		std::vector<CGoldSet> m_vecGoldTrail;
-		std::vector<CPlayer> m_vecPlayerTrail;
-		std::vector<CObstacle> m_vecObstacleTrail;
-		std::vector<CSceneBox> m_vecSceneBoxTrail;
-
-		CMonsterSet m_monster;
-		CGoldSet m_gold;
-		CPlayer m_palyer;
-		CObstacle m_Obstacle;
-		CSceneBox m_CSceneBox;
-
-		std::map<std::wstring, int> m_keyboard;//0 to up a key,1 to walk key ,2 to run key;
-
-
-	private:
-
-	};
 
 
 	class CRectangle
@@ -99,8 +81,9 @@ namespace gandalfr
 	public:
 		CRectangle m_rect;
 		double direction; //-1.0 represent to left,1.0 represent to right, 0 to both
-		int num; // how number could attack
-
+		std::vector<CMonsterOne> vec_Mons; // how number could attack
+		int num;
+		CAttackArea(CRectangle rect, double direction, int num) :m_rect(rect), direction(direction), num(num) {}
 	};
 
 
@@ -199,7 +182,7 @@ namespace gandalfr
 		CRectangle MostMonsterInRect(std::vector<CRectangle> rect);
 		CRectangle MostMonsterNearlyPlayer(CPlayer player, CRectangle range);
 
-		static int getMonsterOverlay(const CRectangle &rectSkill, const CMonsterSet &monset, std::vector<std::vector<CRectangle>> &receive);
+		static int getMonsterOverlay(const CRectangle &rectSkill, std::vector<std::vector<CRectangle>> &receive, const CMonsterSet &monset );
 	};
 
 
@@ -227,7 +210,33 @@ namespace gandalfr
 		CSpeed m_speed;
 	};
 
-	extern CRoomState g_RoomState;
+	class CRoomState
+	{
+	public:
+		CRoomState();
+		~CRoomState();
+
+		std::vector<CMonsterSet> m_vecMonTrail;
+		std::vector<CGoldSet> m_vecGoldTrail;
+		std::vector<CPlayer> m_vecPlayerTrail;
+		std::vector<CObstacle> m_vecObstacleTrail;
+		std::vector<CSceneBox> m_vecSceneBoxTrail;
+
+		CMonsterSet m_monster;
+		CGoldSet m_gold;
+		CPlayer m_player;
+		CObstacle m_Obstacle;
+		CSceneBox m_CSceneBox;
+
+		std::map<std::wstring, int> m_runState;//0 to up a key,1 to walk key ,2 to run key;
+
+
+	private:
+
+	};
+	
 
 
 }
+
+extern gandalfr::CRoomState g_RoomState;
