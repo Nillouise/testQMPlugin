@@ -18,9 +18,11 @@ using namespace std;
 //1 to collide,R is the collided Rectangle
 int RectCollide(const CRectangle &A,const CRectangle &B,CRectangle* R=NULL)
 {
+	int DelR = 0;
 	if (R == NULL)
 	{
 		R = new CRectangle();
+		DelR = 1;
 	}
 	int collide = 0;
 	R->x = max(A.x, B.x);
@@ -33,9 +35,16 @@ int RectCollide(const CRectangle &A,const CRectangle &B,CRectangle* R=NULL)
 		collide = 1;
 	R->width = x - R->x;
 	R->height = y - R->y;
+	if (DelR == 1)
+	{
+		delete R;
+	}
+
 	return collide;
 }
 
+
+//add all weight relative to the head
 double sumUpWeight(void* head)
 {
 	double sum = 0;
@@ -53,6 +62,7 @@ double sumUpWeight(void* head)
 
 void gandalfr::ActShuangDao::run()
 {
+	
 	CRectangle skillArea(0, 0, 100, 50);
 	vector<vector<CRectangle>> receive;
 	CDecision::getMonsterOverlay(skillArea, receive, g_RoomState.m_monster);
@@ -174,12 +184,12 @@ void gandalfr::ActShuangDao::express()
 	CRectangle rectDist;
 	ActTemp* actAttack = new ActTemp();
 	DWORD nowTime = GetTickCount();
-	actAttack->beginTime = nowTime;
+	actAttack->m_beginTime = nowTime;
 	actAttack->creator = this;
 	if (RectCollide(m_bestArea.m_rect, g_RoomState.m_player.m_rect, &rectDist) == 1)
 	{
 		//attack immediatly
-		actAttack->endTime = nowTime + 2000;
+		actAttack->m_endTime = nowTime + 2000;
 		if (isCoDirection(g_RoomState.m_player.m_direction, m_bestArea.direction) == 0)
 		{
 			if (m_bestArea.direction < 0)

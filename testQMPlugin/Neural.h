@@ -52,7 +52,7 @@ class ActNeural :public Neural
 {
 public:
 	virtual ActNeural* getClassType() { return this; }
-	DWORD m_lastReleaseSkills;
+	DWORD m_lastReleaseSkills;// the time that last release Skill
 
 	MonNeural **m_MonToAttack;// point to a fix variant that point to dynamic MonNeural
 
@@ -62,17 +62,20 @@ public:
 class ActTemp :public Neural
 {
 public:
-	DWORD beginTime;
-	DWORD endTime;
+	DWORD m_beginTime;
+	DWORD m_endTime;
+
+	vector<CTrail> m_trail;//if it is no empty,than didn't run m_key,else,run m_key
 	vector<CKeyOp>m_key;
-	vector<CTrail> m_trail;
-	double(*m_fnOutput)(DWORD begin, DWORD end);
+	int m_keySignal;//it only use in m_key
+
+	
+	double(*m_fnOutput)(DWORD begin, DWORD end);//the function poiter to cal the ActTemp output should be what in this time
 	ActNeural* creator;//who create it
 
-	ActTemp(CTrail m_trail, vector<CKeyOp>m_key, DWORD beginTime, DWORD endTime) {};
 	ActTemp() {};
 	virtual ActTemp* getClassType() { return this; }
-	virtual void run();
+	virtual void run();//ActTemp output only depen on m_fnOutput?didn't relative the other Neural?
 	virtual void express();
 	virtual void end();
 };
@@ -86,7 +89,7 @@ public:
 	vector<ActNeural*> m_hisActNeural;
 
 	void run();
-	static DWORD executeTrail( const vector<CTrail>& trail);// it must be changed to vector<CTrail>
+	static DWORD executeTrail(const vector<CTrail>& trail);// it must be changed to vector<CTrail>
 
 	static DWORD playerRunX(int x, map<wstring, int> &runState, const CSpeed &speed, const DWORD &beginTime, int runOrWalk);
 

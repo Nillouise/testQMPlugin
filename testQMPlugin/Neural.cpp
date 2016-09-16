@@ -65,6 +65,10 @@ void CAction::run()
 		m_curAct = newAct;
 		if (typeid(ActTemp) != typeid(newAct->getClassType()))
 		{
+			for (auto it = g_AnyToActTemp[(void*)this].begin(); it != g_AnyToActTemp[(void*)this].end(); it++)
+			{
+				delete (*it);
+			}
 			g_AnyToActTemp[(void*)this].clear();
 			m_hisActNeural.push_back((ActNeural*)newAct);
 		}
@@ -74,13 +78,14 @@ void CAction::run()
 
 }
 
+//take a trail ,immediatly run ,and return the end time
 DWORD CAction::executeTrail(const vector<CTrail>& trail)
 {
 	//this function have a problem that it not fit the real keyboard ,because it hasn't the correctly press interval abstract
 
 	//it shounld only delete the run state key
 	::EnterCriticalSection(&CKeyOp::g_csKeyOp);
-	CKeyOp::m_pqKeyOp.swap(priority_queue<CKeyOp, vector<CKeyOp>, greater<CKeyOp> >());
+	CKeyOp::m_setKeyOp.clear();
 	::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
 
 	int runOrWalk = 0;
@@ -383,8 +388,8 @@ DWORD CAction::playerRunX(int x, map<wstring,int> &runState,const CSpeed &speed,
 		if (abs(x) > runForever)
 		{
 			::EnterCriticalSection(&CKeyOp::g_csKeyOp);
-			CKeyOp::m_pqKeyOp.push(CKeyOp(NextDirection, beginTime + firstPress, 0));
-			CKeyOp::m_pqKeyOp.push(CKeyOp(NextDirection, beginTime + secondDown, 1));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(NextDirection, beginTime + firstPress, 0));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(NextDirection, beginTime + secondDown, 1));
 			::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
 			runState[NextDirection] = 2;
 			return 7 * 1000;
@@ -393,9 +398,9 @@ DWORD CAction::playerRunX(int x, map<wstring,int> &runState,const CSpeed &speed,
 		{
 			DWORD curTime = abs(x) * 1000 / speed.m_spRunX;
 			::EnterCriticalSection(&CKeyOp::g_csKeyOp);
-			CKeyOp::m_pqKeyOp.push(CKeyOp(NextDirection, beginTime + firstPress, 0));
-			CKeyOp::m_pqKeyOp.push(CKeyOp(NextDirection, beginTime + secondDown, 1));
-			CKeyOp::m_pqKeyOp.push(CKeyOp(NextDirection, beginTime + curTime + secondUp, 2));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(NextDirection, beginTime + firstPress, 0));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(NextDirection, beginTime + secondDown, 1));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(NextDirection, beginTime + curTime + secondUp, 2));
 			::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
 			runState[NextDirection] = 2;
 			return curTime;
@@ -404,8 +409,8 @@ DWORD CAction::playerRunX(int x, map<wstring,int> &runState,const CSpeed &speed,
 		{
 			DWORD curTime = abs(x) * 1000 / speed.m_spWalkX;
 			::EnterCriticalSection(&CKeyOp::g_csKeyOp);
-			CKeyOp::m_pqKeyOp.push(CKeyOp(NextDirection, beginTime + firstDown, 1));
-			CKeyOp::m_pqKeyOp.push(CKeyOp(NextDirection, beginTime + curTime + secondUp, 2));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(NextDirection, beginTime + firstDown, 1));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(NextDirection, beginTime + curTime + secondUp, 2));
 			::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
 			runState[NextDirection] = 1;
 			return curTime;
@@ -424,7 +429,7 @@ DWORD CAction::playerRunX(int x, map<wstring,int> &runState,const CSpeed &speed,
 		{
 			DWORD curTime = abs(x) * 1000 / speed.m_spRunX;
 			::EnterCriticalSection(&CKeyOp::g_csKeyOp);
-			CKeyOp::m_pqKeyOp.push(CKeyOp(NextDirection, beginTime + curTime + secondUp, 2));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(NextDirection, beginTime + curTime + secondUp, 2));
 			::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
 			return curTime;
 		}
@@ -432,10 +437,10 @@ DWORD CAction::playerRunX(int x, map<wstring,int> &runState,const CSpeed &speed,
 		{
 			DWORD curTime = abs(x) * 1000 / speed.m_spRunX;
 			::EnterCriticalSection(&CKeyOp::g_csKeyOp);
-			CKeyOp::m_pqKeyOp.push(CKeyOp(CurDirection, beginTime, 2));
-			CKeyOp::m_pqKeyOp.push(CKeyOp(NextDirection, beginTime + firstPress, 0));
-			CKeyOp::m_pqKeyOp.push(CKeyOp(NextDirection, beginTime + secondDown, 1));
-			CKeyOp::m_pqKeyOp.push(CKeyOp(NextDirection, beginTime + curTime+ secondUp, 2));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(CurDirection, beginTime, 2));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(NextDirection, beginTime + firstPress, 0));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(NextDirection, beginTime + secondDown, 1));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(NextDirection, beginTime + curTime+ secondUp, 2));
 			::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
 			runState[NextDirection] = 2;
 			return curTime;
@@ -444,7 +449,7 @@ DWORD CAction::playerRunX(int x, map<wstring,int> &runState,const CSpeed &speed,
 		{
 			DWORD curTime = abs(x) * 1000 / speed.m_spWalkX;
 			::EnterCriticalSection(&CKeyOp::g_csKeyOp);
-			CKeyOp::m_pqKeyOp.push(CKeyOp(NextDirection, beginTime + curTime + secondUp, 2));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(NextDirection, beginTime + curTime + secondUp, 2));
 			::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
 			return curTime;
 		}
@@ -455,9 +460,9 @@ DWORD CAction::playerRunX(int x, map<wstring,int> &runState,const CSpeed &speed,
 		if (abs(x)>runForever)
 		{
 			::EnterCriticalSection(&CKeyOp::g_csKeyOp);
-			CKeyOp::m_pqKeyOp.push(CKeyOp(CurDirection, beginTime, 2));
-			CKeyOp::m_pqKeyOp.push(CKeyOp(NextDirection, beginTime + firstPress, 0));
-			CKeyOp::m_pqKeyOp.push(CKeyOp(NextDirection, beginTime + secondDown, 1));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(CurDirection, beginTime, 2));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(NextDirection, beginTime + firstPress, 0));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(NextDirection, beginTime + secondDown, 1));
 			::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
 			runState[NextDirection] = 2;
 			return 7 * 1000;
@@ -467,10 +472,10 @@ DWORD CAction::playerRunX(int x, map<wstring,int> &runState,const CSpeed &speed,
 		{
 			DWORD curTime = abs(x) * 1000 / speed.m_spRunX;
 			::EnterCriticalSection(&CKeyOp::g_csKeyOp);
-			CKeyOp::m_pqKeyOp.push(CKeyOp(CurDirection, beginTime, 2));
-			CKeyOp::m_pqKeyOp.push(CKeyOp(NextDirection, beginTime + firstPress, 0));
-			CKeyOp::m_pqKeyOp.push(CKeyOp(NextDirection, beginTime + secondDown, 1));
-			CKeyOp::m_pqKeyOp.push(CKeyOp(NextDirection, beginTime + curTime + secondUp, 2));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(CurDirection, beginTime, 2));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(NextDirection, beginTime + firstPress, 0));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(NextDirection, beginTime + secondDown, 1));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(NextDirection, beginTime + curTime + secondUp, 2));
 			::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
 			runState[NextDirection] = 2;
 			return curTime;
@@ -479,9 +484,9 @@ DWORD CAction::playerRunX(int x, map<wstring,int> &runState,const CSpeed &speed,
 		{
 			DWORD curTime = abs(x) * 1000 / speed.m_spWalkX;
 			::EnterCriticalSection(&CKeyOp::g_csKeyOp);
-			CKeyOp::m_pqKeyOp.push(CKeyOp(CurDirection, beginTime, 2));
-			CKeyOp::m_pqKeyOp.push(CKeyOp(NextDirection, beginTime + secondDown, 1));
-			CKeyOp::m_pqKeyOp.push(CKeyOp(NextDirection, beginTime + curTime + secondUp, 2));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(CurDirection, beginTime, 2));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(NextDirection, beginTime + secondDown, 1));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(NextDirection, beginTime + curTime + secondUp, 2));
 			::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
 			runState[NextDirection] = 1;
 			return curTime;
@@ -530,7 +535,7 @@ DWORD CAction::playerRunY(int y, map<wstring, int> &runState, const CSpeed &spee
 		if (abs(y) > runForever)
 		{
 			::EnterCriticalSection(&CKeyOp::g_csKeyOp);
-			CKeyOp::m_pqKeyOp.push(CKeyOp(nextDirection, beginTime + secondDown, 1));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(nextDirection, beginTime + secondDown, 1));
 			::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
 			runState[nextDirection] = 2;
 			return 7 * 1000;
@@ -540,8 +545,8 @@ DWORD CAction::playerRunY(int y, map<wstring, int> &runState, const CSpeed &spee
 		{
 			DWORD curTime = abs(y) * 1000 / speed.m_spWalkY;
 			::EnterCriticalSection(&CKeyOp::g_csKeyOp);
-			CKeyOp::m_pqKeyOp.push(CKeyOp(nextDirection, beginTime + secondDown, 1));
-			CKeyOp::m_pqKeyOp.push(CKeyOp(nextDirection, beginTime + curTime + secondUp, 2));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(nextDirection, beginTime + secondDown, 1));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(nextDirection, beginTime + curTime + secondUp, 2));
 			::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
 			runState[nextDirection] = 2;
 			return curTime;
@@ -559,7 +564,7 @@ DWORD CAction::playerRunY(int y, map<wstring, int> &runState, const CSpeed &spee
 		{
 			DWORD curTime = abs(y) * 1000 / speed.m_spWalkY;
 			::EnterCriticalSection(&CKeyOp::g_csKeyOp);
-			CKeyOp::m_pqKeyOp.push(CKeyOp(nextDirection, beginTime + curTime + secondUp, 2));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(nextDirection, beginTime + curTime + secondUp, 2));
 			::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
 			runState[nextDirection] = 2;
 			return curTime;
@@ -570,13 +575,13 @@ DWORD CAction::playerRunY(int y, map<wstring, int> &runState, const CSpeed &spee
 	if (curDirection != nextDirection)
 	{
 		::EnterCriticalSection(&CKeyOp::g_csKeyOp);
-		CKeyOp::m_pqKeyOp.push(CKeyOp(curDirection, beginTime , 2));
+		CKeyOp::m_setKeyOp.insert(CKeyOp(curDirection, beginTime , 2));
 		::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
 
 		if (abs(y) > runForever)
 		{
 			::EnterCriticalSection(&CKeyOp::g_csKeyOp);
-			CKeyOp::m_pqKeyOp.push(CKeyOp(nextDirection, beginTime + secondDown, 1));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(nextDirection, beginTime + secondDown, 1));
 			::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
 			runState[nextDirection] = 2;
 			return 7 * 1000;
@@ -585,8 +590,8 @@ DWORD CAction::playerRunY(int y, map<wstring, int> &runState, const CSpeed &spee
 		{
 			DWORD curTime = abs(y) * 1000 / speed.m_spWalkY;
 			::EnterCriticalSection(&CKeyOp::g_csKeyOp);
-			CKeyOp::m_pqKeyOp.push(CKeyOp(nextDirection, beginTime + secondDown, 1));
-			CKeyOp::m_pqKeyOp.push(CKeyOp(nextDirection, beginTime + curTime + secondUp, 2));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(nextDirection, beginTime + secondDown, 1));
+			CKeyOp::m_setKeyOp.insert(CKeyOp(nextDirection, beginTime + curTime + secondUp, 2));
 			::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
 			runState[nextDirection] = 2;
 			return curTime;
@@ -600,11 +605,56 @@ DWORD CAction::playerRunY(int y, map<wstring, int> &runState, const CSpeed &spee
 	return 0;
 }
 
-void ActTemp::express()
+void ActTemp::run()
 {
+	m_output = m_fnOutput(m_beginTime, m_endTime);
 }
 
+void ActTemp::express()
+{
+	if (m_trail.empty() == true)
+	{
+		//generate it's only keySignal
+		int signal = 2;// the least number 
+		for (;; signal++)
+		{
+			int ok = 1;
+			for (auto iter = CKeyOp::m_setKeyOp.begin(); iter != CKeyOp::m_setKeyOp.end(); iter++)
+			{
+				if (iter->m_signal == signal)
+				{
+					ok = 0;
+					break;
+				}
+			}
+			if (ok == 1)
+			{
+				m_keySignal = signal;
+				break;
+			}
+		}
+		
+
+		::EnterCriticalSection(&CKeyOp::g_csKeyOp);
+		for (auto it = m_key.begin(); it != m_key.end(); it++)
+		{
+			it->m_signal = m_keySignal;
+			CKeyOp::m_setKeyOp.insert(*it);
+		}
+		::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
+	}
+	else {
+		m_endTime = CAction::executeTrail( m_trail );
+	}
+
+
+}
+
+
+//
 void ActTemp::end()
 {
+	CKeyOp::delKeyNoExe(m_keySignal);
+	CKeyOp::upKeyNoUp(m_keySignal);
 }
 

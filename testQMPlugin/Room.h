@@ -7,13 +7,14 @@
 #include<functional>
 #include<cmath>
 #include<map>
+#include<set>
 
 
 
 namespace gandalfr
 {
 	class  CRoomState;
-
+	class CMonsterOne;
 	class CKeyOp
 	{
 	public:
@@ -21,13 +22,18 @@ namespace gandalfr
 		std::wstring m_Key;
 		DWORD m_KeyTime;
 		int(*m_KeyCallback)(int x);//when a key press ,it call back 
-		int m_KeyType; // 0 to press,10 to down if this key no down ,then up before down;11 to down ,if down,no down again;20 to up
-		int m_forWhat;//0 if for run to some area,1 to release skill,you can you other num to approach other effect
+		int m_KeyType; // 1 to press,10 to down if this key no down ,then up before down;11 to down ,if down,no down again;20 to up
+		int m_signal;//0 if for run to some area,1 to release skill,you can you other num to approach other effect
 		static int KeyDefaultCallback(int x);
 		static std::vector<CKeyOp> m_vecCKeyOp; // record the history key
-		static std::priority_queue<CKeyOp, std::vector<CKeyOp>, std::greater<CKeyOp> > m_pqKeyOp;  // incoming key
+		static std::set<CKeyOp > m_setKeyOp;  // incoming key
 		static CRITICAL_SECTION g_csKeyOp;
-		static std::map<std::wstring, DWORD> m_keyDown;
+		static std::map<std::wstring, DWORD> m_keyStateDown;//the key press in the recent time.if is downing,it should be a max time;
+		static std::map<std::wstring, int> m_keyStateSignal;//the key is 0 if not down,else int represent the ActTemp's keySignal;
+
+		static int delKeyNoExe(int signalId);
+		static int upKeyNoUp(int signalId);
+
 		CKeyOp(std::wstring Key = L"", DWORD KeyTime = 0, int KeyType = 0, int(*KeyCallback)(int) = KeyDefaultCallback) :m_Key(Key), m_KeyTime(KeyTime), m_KeyCallback(KeyCallback), m_KeyType(KeyType) {}
 		static UINT __stdcall KeyboardInput(LPVOID);//use to begin a new thread
 	};
@@ -210,6 +216,7 @@ namespace gandalfr
 		CSpeed m_speed;
 	};
 
+
 	class CRoomState
 	{
 	public:
@@ -228,7 +235,7 @@ namespace gandalfr
 		CObstacle m_Obstacle;
 		CSceneBox m_CSceneBox;
 
-		std::map<std::wstring, int> m_runState;//0 to up a key,1 to walk key ,2 to run key;
+		std::map<std::wstring, int> m_runState;//0 to up a key,1 to walk key ,2 to run key;if > 1,it relative key must down
 
 
 	private:

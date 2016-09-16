@@ -105,3 +105,36 @@ bool gandalfr::operator<(const CRectangle & t1, const CRectangle & t2)
 
 	return t1.x == t2.x? t1.y< t2.y : t1.x<t2.x;
 }
+
+int gandalfr::CKeyOp::delKeyNoExe(int signalId)
+{
+	::EnterCriticalSection(&CKeyOp::g_csKeyOp);
+	for (auto it = CKeyOp::m_setKeyOp.begin(); it != CKeyOp::m_setKeyOp.end(); )
+	{
+		if (it->m_signal == signalId)
+		{
+			CKeyOp::m_setKeyOp.erase(it++);
+		}
+		else {
+			it++;
+		}
+	}
+	::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
+	return 0;
+}
+
+int gandalfr::CKeyOp::upKeyNoUp(int signalId)
+{
+	::EnterCriticalSection(&CKeyOp::g_csKeyOp);
+	for (auto it = CKeyOp::m_keyStateSignal.begin(); it != CKeyOp::m_keyStateSignal.end(); it++)
+	{
+		if (it->second == signalId)
+		{
+			m_setKeyOp.insert(CKeyOp(it->first,0,20));
+		}
+	}
+	::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
+	return 0;
+}
+
+
