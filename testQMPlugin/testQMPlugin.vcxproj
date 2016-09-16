@@ -183,6 +183,7 @@
   <ItemGroup>
     <ClInclude Include="Cdmsoft.h" />
     <ClInclude Include="CharRedEye.h" />
+    <ClInclude Include="grade.h" />
     <ClInclude Include="Neural.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Room.h" />

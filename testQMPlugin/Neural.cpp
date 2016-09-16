@@ -9,10 +9,12 @@
 
 using namespace std;
 using namespace gandalfr;
-map<pair<void*, void*>, double> g_weight;
 
+map<pair<void*, void*>, double> g_weight;
 map<void*, set<ActNeural*, comp<ActNeural>> >  g_AnyToAct;
 map<void*, set<ActTemp*, comp<ActTemp>> >  g_AnyToActTemp;
+map<void*, set<MonNeural*, comp<MonNeural>> >  g_AnyToMon;
+CAction g_action;
 
 void CAction::run()
 {
@@ -59,10 +61,10 @@ void CAction::run()
 
 	//run the newAct ' trail or keypress
 	//if ActNeural run,clear the ActTemp after end();
- 	if (newAct != m_curAct )
+ 	if (newAct != m_curActNeural )
 	{
-		m_curAct->end();
-		m_curAct = newAct;
+		m_curActNeural->end();
+		m_curActNeural = newAct;
 		if (typeid(ActTemp) != typeid(newAct->getClassType()))
 		{
 			for (auto it = g_AnyToActTemp[(void*)this].begin(); it != g_AnyToActTemp[(void*)this].end(); it++)
@@ -599,16 +601,15 @@ DWORD CAction::playerRunY(int y, map<wstring, int> &runState, const CSpeed &spee
 
 
 	}
-
-	
-
 	return 0;
 }
+
 
 void ActTemp::run()
 {
 	m_output = m_fnOutput(m_beginTime, m_endTime);
 }
+
 
 void ActTemp::express()
 {
@@ -658,3 +659,17 @@ void ActTemp::end()
 	CKeyOp::upKeyNoUp(m_keySignal);
 }
 
+//add all weight relative to the head
+double Neural::sumUpWeight(void * head)
+{
+	double sum = 0;
+	for (auto it = g_weight.begin(); it != g_weight.end(); it++)
+	{
+		if (it->first.first == head)
+		{
+
+			sum += ((Neural*)(it->first.second))->m_output *  it->second;
+		}
+	}
+	return sum;
+}

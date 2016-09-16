@@ -13,8 +13,10 @@
 
 namespace gandalfr
 {
-	class  CRoomState;
+	class CRoomState;
 	class CMonsterOne;
+	class CTrail;
+
 	class CKeyOp
 	{
 	public:
@@ -38,7 +40,6 @@ namespace gandalfr
 		static UINT __stdcall KeyboardInput(LPVOID);//use to begin a new thread
 	};
 	bool operator < (const CKeyOp &t1, const CKeyOp &t2);
-	bool operator > (const CKeyOp &t1, const CKeyOp &t2);
 
 
 
@@ -52,6 +53,9 @@ namespace gandalfr
 		int width;
 		int height;
 		CRectangle(int x = -1, int y = -1, int width = 0, int height = 0) :x(x), y(y), width(width), height(height) {};
+		static int RectCollide(const CRectangle &A, const CRectangle &B, CRectangle* R = NULL);
+		static int getRectTrail(const CRectangle &player, const CRectangle &rect, CTrail &receive);
+
 	};
 	bool operator < (const CRectangle &t1, const CRectangle &t2);
 
@@ -148,11 +152,9 @@ namespace gandalfr
 		int m_MP;
 		CSpeed m_speed;
 
-		CPlayer();
 		 
 		static int findPlayer(Cdmsoft dm);
 		static CPlayer getPlayer(Cdmsoft dm);
-		int move(CRectangle target);
 
 	};
 
@@ -220,8 +222,6 @@ namespace gandalfr
 	class CRoomState
 	{
 	public:
-		CRoomState();
-		~CRoomState();
 
 		std::vector<CMonsterSet> m_vecMonTrail;
 		std::vector<CGoldSet> m_vecGoldTrail;
@@ -242,6 +242,8 @@ namespace gandalfr
 
 	};
 	
+	//return 1 if coDirection,return 0 if not;
+	int isCoDirection(double player, double area);
 
 
 }

@@ -7,9 +7,12 @@
 #include<cmath>
 #include<set>
 using namespace gandalfr;
-
-
-//CRoomState g_RoomState;
+CRoomState g_RoomState;
+std::vector<CKeyOp> CKeyOp::m_vecCKeyOp; // record the history key
+std::set<CKeyOp >  CKeyOp::m_setKeyOp;  // incoming key
+std::map<std::wstring, DWORD>  CKeyOp::m_keyStateDown;//the key press in the recent time.if is downing,it should be a max time;
+std::map<std::wstring, int>  CKeyOp::m_keyStateSignal;//the key is 0 if not down,else int represent the ActTemp's keySignal;
+CRITICAL_SECTION CKeyOp::g_csKeyOp;
 
 CMonsterSet gandalfr::CMonsterSet::findMonster(Cdmsoft dm, int rangeX, int rangeY, int rangeWidth, int rangeHeight, WCHAR * MonColor, double similar, int PointCount, int monWidth, int monHeight)
 {
@@ -98,12 +101,21 @@ int gandalfr::CDecision::getMonsterOverlay(const CRectangle &rectSkill, std::vec
 }
 
 
+bool gandalfr::operator<(const CKeyOp & t1, const CKeyOp & t2)
+{
+	return false;
+}
 
-
-bool gandalfr::operator<(const CRectangle & t1, const CRectangle & t2)
+bool gandalfr::operator <(const CRectangle & t1, const CRectangle & t2)
 {
 
 	return t1.x == t2.x? t1.y< t2.y : t1.x<t2.x;
+}
+
+
+int gandalfr::CKeyOp::KeyDefaultCallback(int x)
+{
+	return 0;
 }
 
 int gandalfr::CKeyOp::delKeyNoExe(int signalId)
@@ -138,3 +150,81 @@ int gandalfr::CKeyOp::upKeyNoUp(int signalId)
 }
 
 
+//1 to collide,R is the collided Rectangle
+int gandalfr::CRectangle::RectCollide(const CRectangle & A, const CRectangle & B, CRectangle * R)
+{
+	int DelR = 0;
+	if (R == NULL)
+	{
+		R = new CRectangle();
+		DelR = 1;
+	}
+	int collide = 0;
+	R->x = max(A.x, B.x);
+	R->y = max(A.y, B.y);
+	int x = min(A.x + A.width, B.x + B.width);
+	int y = min(A.y + A.height, B.y + B.height);
+	if (R->x >= x || R->y >= y)
+		collide = 0;
+	else
+		collide = 1;
+	R->width = x - R->x;
+	R->height = y - R->y;
+	if (DelR == 1)
+	{
+		delete R;
+	}
+
+	return collide;
+}
+
+
+//player go to the center of rect 's trail
+int gandalfr::CRectangle::getRectTrail(const CRectangle & player, const CRectangle & rect, CTrail & receive)
+{
+
+	int px = player.x + player.width / 2;
+	int py = player.y + player.height / 2;
+
+	int rx = rect.x + rect.width / 2;
+	int ry = rect.y + rect.height / 2;
+
+	receive.x = rx - px;
+	receive.y = ry - py;
+
+	return 0;
+}
+
+int gandalfr::isCoDirection(double player, double area)
+{
+	if (player < 0 && area < 0)
+		return 1;
+	else if (player > 0 && area > 0)
+		return 1;
+	return 0;
+}
+
+int gandalfr::CPlayer::findPlayer(Cdmsoft dm)
+{
+	return 0;
+}
+
+CPlayer gandalfr::CPlayer::getPlayer(Cdmsoft dm)
+{
+	return CPlayer();
+}
+
+CGoldSet gandalfr::CGoldSet::getGoldSet(Cdmsoft dm)
+{
+	return CGoldSet();
+}
+
+CObstacle gandalfr::CObstacle::getObstacle(Cdmsoft dm)
+{
+	return CObstacle();
+}
+
+CSceneBox gandalfr::CSceneBox::getSceneBox(Cdmsoft dm)
+{
+	return CSceneBox();
+}

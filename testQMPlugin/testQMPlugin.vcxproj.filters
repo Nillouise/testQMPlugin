@@ -48,6 +48,9 @@
     <ClInclude Include="Neural.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="grade.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="testQMPlugin.cpp">

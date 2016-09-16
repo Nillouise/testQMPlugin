@@ -4,7 +4,7 @@
 #include"Room.h"
 #include "Neural.h"
 
-namespace gandalfr
+namespace RedEye
 {
 	class CSkShuangDao :public CSkill
 	{
@@ -32,8 +32,6 @@ namespace gandalfr
 		std::vector<CAttackArea> m_area;
 		CAttackArea m_bestArea;
 		std::vector<CTrail> m_vecTrail;
-		
-
 		
 	};
 

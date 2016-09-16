@@ -9,24 +9,23 @@ using namespace std;
 using namespace gandalfr;
 
 
-
-
-
 class Neural
 {
 public:
-
+	virtual Neural* getClassType() { return this; }
 	virtual void run() {}
 	virtual void link(){}
 	virtual void express() {}
 	virtual void end() {}
-	virtual Neural* getClassType(){ return this; }
-	double m_output;
-	double m_base;
+
+	static double sumUpWeight(void* head);
+
+	double m_output;// the Neural weight
+	double m_base;//use to make the m_ouput
 
 	DWORD m_lastRunTime;
 	DWORD m_lastExpressTime;
-	DWORD m_runInterval;
+	DWORD m_runInterval;//the time interval between two actual run
 
 };
 
@@ -35,9 +34,10 @@ class MonNeural:public Neural
 {
 public:
 	virtual MonNeural* getClassType() { return this; }
-	CMonsterSet m_Mon;
+	CMonsterSet m_Mon;//this MonNeural store which monsters should be considerate
 	
 };
+
 
 class MonNearAndAttacking :public MonNeural
 {
@@ -62,6 +62,12 @@ public:
 class ActTemp :public Neural
 {
 public:
+	virtual ActTemp* getClassType() { return this; }
+	ActTemp() {};
+	virtual void run();//ActTemp output only depen on m_fnOutput?didn't relative the other Neural?
+	virtual void express();
+	virtual void end();
+
 	DWORD m_beginTime;
 	DWORD m_endTime;
 
@@ -69,33 +75,22 @@ public:
 	vector<CKeyOp>m_key;
 	int m_keySignal;//it only use in m_key
 
-	
 	double(*m_fnOutput)(DWORD begin, DWORD end);//the function poiter to cal the ActTemp output should be what in this time
 	ActNeural* creator;//who create it
-
-	ActTemp() {};
-	virtual ActTemp* getClassType() { return this; }
-	virtual void run();//ActTemp output only depen on m_fnOutput?didn't relative the other Neural?
-	virtual void express();
-	virtual void end();
 };
 
 
 class CAction
 {
 public:
-	Neural* m_curAct;
-
+	Neural* m_curActNeural;
 	vector<ActNeural*> m_hisActNeural;
 
 	void run();
-	static DWORD executeTrail(const vector<CTrail>& trail);// it must be changed to vector<CTrail>
 
+	static DWORD executeTrail(const vector<CTrail>& trail);
 	static DWORD playerRunX(int x, map<wstring, int> &runState, const CSpeed &speed, const DWORD &beginTime, int runOrWalk);
-
 	static DWORD playerRunY(int y, map<wstring, int> &runState, const CSpeed &speed, const DWORD &beginTime);
-
-
 };
 
 
