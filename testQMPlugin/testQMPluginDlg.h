@@ -37,4 +37,6 @@ public:
 	CString CSLayerWidth;
 	CString CSLayerHeight;
 	afx_msg void OnBnClickedfindmonster();
+	afx_msg void OnBnClickedButton1();
+	afx_msg void OnBnClickedButton2();
 };

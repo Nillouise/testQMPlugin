@@ -15,6 +15,11 @@ map<void*, set<ActNeural*, comp<ActNeural>> >  g_AnyToAct;
 map<void*, set<ActTemp*, comp<ActTemp>> >  g_AnyToActTemp;
 map<void*, set<MonNeural*, comp<MonNeural>> >  g_AnyToMon;
 CAction g_action;
+SelMonster g_selMonster;
+MonNeural* g_monNeural1;
+MonNeural* g_monNeural2;
+
+
 
 void CAction::run()
 {
@@ -607,7 +612,11 @@ DWORD CAction::playerRunY(int y, map<wstring, int> &runState, const CSpeed &spee
 
 void ActTemp::run()
 {
-	m_output = m_fnOutput(m_beginTime, m_endTime);
+	if (m_fnOutput != NULL)
+	{
+		m_output = m_fnOutput(m_beginTime, m_endTime);
+	}
+	
 }
 
 
@@ -651,25 +660,90 @@ void ActTemp::express()
 
 }
 
-
-//
+//it must have correspond Up Key if you use m_key,
 void ActTemp::end()
 {
+	queue<CKeyOp> qKey;
+	map<wstring, int> firstKeyUp;
+	::EnterCriticalSection(&CKeyOp::g_csKeyOp);
+	for (auto iter = CKeyOp::m_setKeyOp.begin(); iter != CKeyOp::m_setKeyOp.end();iter++)
+	{
+		if (iter->m_KeyType == 20 && CKeyOp::m_keyStateSignal[iter->m_Key] == iter->m_signal)
+		{
+			if (firstKeyUp[iter->m_Key] == 0)
+			{
+				CKeyOp upkey(*iter);
+				upkey.m_KeyTime = GetTickCount();
+				qKey.push(upkey);
+			}
+		}
+		firstKeyUp[iter->m_Key] = 1;
+	}
+	::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
 	CKeyOp::delKeyNoExe(m_keySignal);
-	CKeyOp::upKeyNoUp(m_keySignal);
+	::EnterCriticalSection(&CKeyOp::g_csKeyOp);
+	while (!qKey.empty())
+	{
+		CKeyOp::m_setKeyOp.insert(qKey.front());
+		qKey.pop();
+	}
+	::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
+
 }
 
 //add all weight relative to the head
-double Neural::sumUpWeight(void * head)
+double Neural::sumUpRelativeWeight(void * head)
 {
 	double sum = 0;
 	for (auto it = g_weight.begin(); it != g_weight.end(); it++)
 	{
 		if (it->first.first == head)
 		{
-
 			sum += ((Neural*)(it->first.second))->m_output *  it->second;
 		}
 	}
 	return sum;
+}
+
+void Neural::makeWeight(void *point1, void *point2, double x)
+{
+	g_weight[make_pair(point1, point2)] = x;
+	g_weight[make_pair(point2, point1)] = x;
+}
+
+void SelMonster::run()
+{
+	g_monNeural1 = NULL;
+	g_monNeural2 = NULL;
+	double maxMon1 = 0;
+	double maxMon2 = 0;
+	for (auto iter = g_AnyToMon[this].begin(); iter != g_AnyToMon[this].end(); iter++)
+	{
+		(*iter)->run();
+		auto itAct = g_weight.find(make_pair((void*)this, (void*)(*iter)));
+		double curWeight = 0;
+		if (itAct != g_weight.end())
+		{
+			curWeight = (*iter)->m_output * itAct->second;
+		}
+		if (curWeight > maxMon1)
+		{
+			maxMon1 = curWeight;
+			g_monNeural1 = (*iter);
+		}
+		else if (curWeight > maxMon2)
+		{
+			maxMon2 = curWeight;
+			g_monNeural2 = (*iter);
+		}
+	}
+
+
+
+}
+
+void MonAny::run()
+{
+	m_Mon = g_RoomState.m_monster;
+	m_output = 100;
 }

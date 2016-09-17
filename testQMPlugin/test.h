@@ -2,6 +2,7 @@
 #include<iostream>
 #include<sstream>
 #include"Room.h"
+#include"InstanceZones.h"
 using namespace gandalfr;
 namespace test
 {
@@ -11,5 +12,8 @@ namespace test
 
 	
 	std::string RectToString(const CRectangle r);
+
+	int InitialNeural();
+	int runInsZone(Cdmsoft dm);
 
 }

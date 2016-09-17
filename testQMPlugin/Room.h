@@ -33,6 +33,7 @@ namespace gandalfr
 		static std::map<std::wstring, DWORD> m_keyStateDown;//the key press in the recent time.if is downing,it should be a max time;
 		static std::map<std::wstring, int> m_keyStateSignal;//the key is 0 if not down,else int represent the ActTemp's keySignal;
 
+		static int upRunKey(DWORD upTime);// up the left,right,up,down key,if they are downing
 		static int delKeyNoExe(int signalId);
 		static int upKeyNoUp(int signalId);
 
@@ -94,6 +95,7 @@ namespace gandalfr
 		std::vector<CMonsterOne> vec_Mons; // how number could attack
 		int num;
 		CAttackArea(CRectangle rect, double direction, int num) :m_rect(rect), direction(direction), num(num) {}
+		CAttackArea() {}
 	};
 
 
@@ -233,10 +235,11 @@ namespace gandalfr
 		CGoldSet m_gold;
 		CPlayer m_player;
 		CObstacle m_Obstacle;
-		CSceneBox m_CSceneBox;
+		CSceneBox m_CSceneBox;//SceneBox can be attacked
 
 		std::map<std::wstring, int> m_runState;//0 to up a key,1 to walk key ,2 to run key;if > 1,it relative key must down
 
+		void run(Cdmsoft dm);
 
 	private:
 

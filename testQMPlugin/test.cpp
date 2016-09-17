@@ -50,3 +50,17 @@ std::string test::RectToString(const CRectangle r)
 	getline(ss, s);
 	return s;
 }
+
+int test::InitialNeural()
+{
+	insZone.loadNeural();
+
+	return 0;
+}
+
+int test::runInsZone(Cdmsoft dm)
+{
+	insZone.run(dm);
+
+	return 0;
+}

@@ -25,15 +25,17 @@ namespace RedEye
 	class ActShuangDao :public ActNeural
 	{
 	public:
+		virtual ActShuangDao* getClassType() { return this; }
+		ActShuangDao();
+
 		virtual void run();
 		virtual void express();
-		virtual ActShuangDao* getClassType() { return this; }
 		CSkShuangDao m_ShuangDao;
 		std::vector<CAttackArea> m_area;
 		CAttackArea m_bestArea;
 		std::vector<CTrail> m_vecTrail;
 		
 	};
-
+	int loadNeural();
 
 }

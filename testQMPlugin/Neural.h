@@ -18,7 +18,9 @@ public:
 	virtual void express() {}
 	virtual void end() {}
 
-	static double sumUpWeight(void* head);
+	//sum up the neural relative weigh in map g_weight
+	static double sumUpRelativeWeight(void* head);
+	static void makeWeight(void *point1, void *point2, double x);
 
 	double m_output;// the Neural weight
 	double m_base;//use to make the m_ouput
@@ -43,9 +45,23 @@ class MonNearAndAttacking :public MonNeural
 {
 public:
 	virtual MonNearAndAttacking* getClassType() { return this; }
+};
+
+class MonAny :public MonNeural
+{
+public:
+	virtual MonAny* getClassType() { return this; }
 	virtual void run();
 };
 
+
+
+class SelMonster
+{
+public:
+	void run();
+
+};
 
 
 class ActNeural :public Neural
@@ -58,13 +74,14 @@ public:
 
 };
 
-
+//it must have correspond Up Key if you use m_key,
 class ActTemp :public Neural
 {
 public:
 	virtual ActTemp* getClassType() { return this; }
-	ActTemp() {};
-	virtual void run();//ActTemp output only depen on m_fnOutput?didn't relative the other Neural?
+	ActTemp(ActNeural* creator = NULL, double(*fnOutput)(DWORD, DWORD) = NULL) :creator(creator), m_fnOutput(fnOutput) { m_beginTime = GetTickCount(); m_endTime = GetTickCount(); m_output = 0; };
+
+	virtual void run();//ActTemp output only depend on m_fnOutput?didn't relative the other Neural?
 	virtual void express();
 	virtual void end();
 
@@ -86,6 +103,8 @@ public:
 	Neural* m_curActNeural;
 	vector<ActNeural*> m_hisActNeural;
 
+	CAction() { m_curActNeural = NULL;}
+
 	void run();
 
 	static DWORD executeTrail(const vector<CTrail>& trail);
@@ -104,8 +123,12 @@ struct comp
 	}
 };
 
-extern map<pair<void*, void*>, double> g_weight;
+extern map<pair<void*, void*>, double> g_weight;//the inner have correctly order
 extern map<void*, set<ActNeural*, comp<ActNeural>> >  g_AnyToAct;
 extern map<void*, set<ActTemp*, comp<ActTemp>> >  g_AnyToActTemp;
 extern map<void*, set<MonNeural*, comp<MonNeural>> >  g_AnyToMon;
 extern CAction g_action;
+
+extern SelMonster g_selMonster;
+extern MonNeural* g_monNeural1;
+extern MonNeural* g_monNeural2;

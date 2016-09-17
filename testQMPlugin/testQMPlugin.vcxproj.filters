@@ -51,6 +51,9 @@
     <ClInclude Include="grade.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="InstanceZones.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="testQMPlugin.cpp">
@@ -72,6 +75,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CharRedEye.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InstanceZones.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -103,7 +103,8 @@ int gandalfr::CDecision::getMonsterOverlay(const CRectangle &rectSkill, std::vec
 
 bool gandalfr::operator<(const CKeyOp & t1, const CKeyOp & t2)
 {
-	return false;
+
+	return t1.m_KeyTime < t2.m_KeyTime;
 }
 
 bool gandalfr::operator <(const CRectangle & t1, const CRectangle & t2)
@@ -114,6 +115,11 @@ bool gandalfr::operator <(const CRectangle & t1, const CRectangle & t2)
 
 
 int gandalfr::CKeyOp::KeyDefaultCallback(int x)
+{
+	return 0;
+}
+
+int gandalfr::CKeyOp::upRunKey(DWORD upTime)
 {
 	return 0;
 }
@@ -227,4 +233,12 @@ CObstacle gandalfr::CObstacle::getObstacle(Cdmsoft dm)
 CSceneBox gandalfr::CSceneBox::getSceneBox(Cdmsoft dm)
 {
 	return CSceneBox();
+}
+
+void gandalfr::CRoomState::run(Cdmsoft dm)
+{
+	m_monster = CMonsterSet::findMonster(dm);
+
+	m_player.m_rect = CRectangle(100,100, 30, 20);
+
 }

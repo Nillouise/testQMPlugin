@@ -76,6 +76,8 @@ BEGIN_MESSAGE_MAP(CtestQMPluginDlg, CDialogEx)
 	ON_BN_CLICKED(IDOK, &CtestQMPluginDlg::OnBnClickedOk)
 	ON_BN_CLICKED(IDC_OpenConsole, &CtestQMPluginDlg::OnBnClickedOpenconsole)
 	ON_BN_CLICKED(IDC_findMonster, &CtestQMPluginDlg::OnBnClickedfindmonster)
+	ON_BN_CLICKED(IDC_BUTTON1, &CtestQMPluginDlg::OnBnClickedButton1)
+	ON_BN_CLICKED(IDC_BUTTON2, &CtestQMPluginDlg::OnBnClickedButton2)
 END_MESSAGE_MAP()
 
 
@@ -207,4 +209,20 @@ void CtestQMPluginDlg::OnBnClickedfindmonster()
 {
 	// TODO: Add your control notification handler code here
 	test::findmonster(dm);
+}
+
+
+
+void CtestQMPluginDlg::OnBnClickedButton1()
+{
+	// TODO: Add your control notification handler code here
+	test::InitialNeural();
+
+}
+
+
+void CtestQMPluginDlg::OnBnClickedButton2()
+{
+	// TODO: Add your control notification handler code here
+	test::runInsZone(dm);
 }
