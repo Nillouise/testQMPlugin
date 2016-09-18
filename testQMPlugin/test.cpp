@@ -70,7 +70,7 @@ int test::printSetKeyOp()
 {
 	for (auto iter = CKeyOp::m_setKeyOp.begin(); iter != CKeyOp::m_setKeyOp.end(); iter++)
 	{
-		wcout << iter->m_Key << L"\tkeyType:" << iter->m_KeyType <<L"\ttime:"<< iter->m_KeyTime <<"\tsignal:"<< iter->m_signal << endl;
+		wcout << iter->m_Key << L"\tkeyType:" << iter->m_KeyType  <<L"\ttime:"<< (((iter->m_KeyTime) / 100 % 600) / 10.0) <<"\tsignal:"<< iter->m_signal << endl;
 	}
 	return 0;
 }

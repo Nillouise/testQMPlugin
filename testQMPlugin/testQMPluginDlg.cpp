@@ -56,8 +56,8 @@ END_MESSAGE_MAP()
 
 CtestQMPluginDlg::CtestQMPluginDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_TESTQMPLUGIN_DIALOG, pParent)
-	, CSLayerWidth(_T("300"))
-	, CSLayerHeight(_T("300"))
+	, CSLayerWidth(_T("100"))
+	, CSLayerHeight(_T("50"))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }

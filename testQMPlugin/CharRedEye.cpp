@@ -128,7 +128,7 @@ void RedEye::ActShuangDao::express()
 	actAttack->m_beginTime = nowTime;
 	actAttack->creator = this;
 	actAttack->m_base = 10;
-	actAttack->m_fnOutput = NULL;
+	actAttack->m_fnOutput = ActTemp::fnOutMustRunComplete;
 	//it need an generate m_ouput function;
 	
 	if (CRectangle::RectCollide(m_bestArea.m_rect, g_RoomState.m_player.m_rect, &rectDist) == 1)
@@ -140,10 +140,10 @@ void RedEye::ActShuangDao::express()
 		{
 			if (m_bestArea.direction < 0)
 			{
-				actAttack->m_key.push_back(CKeyOp(L"left", nowTime, 0));
+				actAttack->m_key.push_back(CKeyOp(L"left", nowTime, CKeyOp::PRESS));
 			}
 			else {
-				actAttack->m_key.push_back(CKeyOp(L"right", nowTime, 0));
+				actAttack->m_key.push_back(CKeyOp(L"right", nowTime, CKeyOp::PRESS));
 			}
 		}
 		for (auto iter = m_ShuangDao.m_Key.begin(); iter != m_ShuangDao.m_Key.end(); iter++)

@@ -13,7 +13,7 @@ namespace RedEye
 		{
 			m_cooldown = 0;
 			m_NextTime = 0;
-			m_Key.push_back(CKeyOp(L"x",0,10)); //x may be change,it should use a abstract layer
+			m_Key.push_back(CKeyOp(L"x",0, CKeyOp::DOWMAGAIN)); //x may be change,it should use a abstract layer
 		}
 
 	};

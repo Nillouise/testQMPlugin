@@ -82,9 +82,12 @@ public:
 	virtual ActTemp* getClassType() { return this; }
 	ActTemp(ActNeural* creator = NULL, double(*fnOutput)(DWORD begin, DWORD end,Neural*neural) = NULL) :creator(creator), m_fnOutput(fnOutput) { m_beginTime = GetTickCount(); m_endTime = GetTickCount(); m_output = 0; };
 
+	static double fnOutMustRunComplete(DWORD beginTime, DWORD endTime, Neural* neural);
+
 	virtual void run();//ActTemp output only depend on m_fnOutput?didn't relative the other Neural?
 	virtual void express();
 	virtual void end();
+
 
 	DWORD m_beginTime;
 	DWORD m_endTime;

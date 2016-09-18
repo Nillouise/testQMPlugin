@@ -20,11 +20,11 @@ namespace gandalfr
 	class CKeyOp
 	{
 	public:
-
+		enum keyMode { PRESS,DOWMAGAIN,DOWMNOAGAIN,UP};//DOWMAGAIN is if this key down,then up and down again,DOWNNOAGAIN,it only responce to down state,no again
 		std::wstring m_Key;
 		DWORD m_KeyTime;
 		int(*m_KeyCallback)(int x);//when a key press ,it call back 
-		int m_KeyType; // 1 to press,10 to down if this key no down ,then up before down;11 to down ,if down,no down again;20 to up
+		keyMode m_KeyType; // 1 to press,10 to down if this key no down ,then up before down;11 to down ,if down,no down again;20 to up
 		int m_signal;//0 if for run to some area,1 to release skill,you can you other num to approach other effect
 		static int KeyDefaultCallback(int x);
 		static std::vector<CKeyOp> m_vecCKeyOp; // record the history key
@@ -37,7 +37,7 @@ namespace gandalfr
 		static int delKeyNoExe(int signalId);
 		static int upKeyNoUp(int signalId);
 
-		CKeyOp(std::wstring Key = L"", DWORD KeyTime = 0, int KeyType = 0, int(*KeyCallback)(int) = KeyDefaultCallback) :m_Key(Key), m_KeyTime(KeyTime), m_KeyCallback(KeyCallback), m_KeyType(KeyType) {}
+		CKeyOp(std::wstring Key = L"", DWORD KeyTime = 0, keyMode KeyType = CKeyOp::PRESS, int(*KeyCallback)(int) = KeyDefaultCallback) :m_Key(Key), m_KeyTime(KeyTime), m_KeyCallback(KeyCallback), m_KeyType(KeyType) {}
 		static UINT __stdcall KeyboardInput(LPVOID);//use to begin a new thread
 	};
 	bool operator < (const CKeyOp &t1, const CKeyOp &t2);

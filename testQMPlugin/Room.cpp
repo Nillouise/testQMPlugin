@@ -148,7 +148,7 @@ int gandalfr::CKeyOp::upKeyNoUp(int signalId)
 	{
 		if (it->second == signalId)
 		{
-			m_setKeyOp.insert(CKeyOp(it->first,0,20));
+			m_setKeyOp.insert(CKeyOp(it->first,0,CKeyOp::UP));
 		}
 	}
 	::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
