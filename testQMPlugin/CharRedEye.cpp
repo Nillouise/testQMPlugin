@@ -31,14 +31,14 @@ void RedEye::ActShuangDao::run()
 	
 	vector<CAttackArea> selGolRec;//it will have correct monster num,direction
 	//select the suitable attackArea,delete the dulplicate area; 
-	for (auto it = receive.cbegin(); it != receive.cend(); it++)
+	for (auto it = receive.rbegin(); it != receive.rend(); it++)
 	{
 		for (auto it2 = it->begin(); it2 != it->end(); it2++)
 		{
-			selGolRec.push_back(CAttackArea(*it2, 0, 1 + receive.size() - (receive.cend() - it )));
-			for (auto it3 = it + 1; it3 != receive.cend(); it3++)
+			selGolRec.push_back(CAttackArea(*it2, 0,  (receive.rend() - it)));
+			for (auto it3 = it + 1; it3 != receive.rend(); it3++)
 			{
-				for (auto it4 = it3->begin(); it4 != it3->end(); it4++)
+				for (auto it4 = it3->begin(); it4 != it3->end(); )
 				{
 					//calculate the percentage the it2 in it4;
 					CRectangle r;
@@ -49,27 +49,29 @@ void RedEye::ActShuangDao::run()
 					double perArea = (double) (r.width*r.height)/ it2->height*it2->width;
 
 					if (perArea > 0.55) {
-						it4 = receive[receive.size() - (it3-receive.cbegin() ) ].erase(it4);
-
-
+						it4 = it3->erase(it4);
+					}
+					else {
+						it4++;
 					}
 				}
 			}
 		}
 	}
 
+	//generate the side skill area instead of the center skill
 	for (auto it = selGolRec.begin(); it != selGolRec.end(); it++)
 	{
-		auto &area = it->m_rect;
+		auto *area = &it->m_rect;
 		
 		//go to right side
-		if (player.m_rect.x > area.x + area.width / 2)
+		if (player.m_rect.x > area->x + area->width / 2)
 		{
-			area.x = area.x + area.width;
+			area->x = area->x + skillArea.width / 2;
 			it->direction = -1;
 		}
 		else {
-			area.x = area.x - area.width;
+			area->x = area->x - skillArea.width/2;
 			it->direction = 1;
 		}
 	}
@@ -91,7 +93,7 @@ void RedEye::ActShuangDao::run()
 			}
 		}
 		else {
-			curScore -= max(r.width*ga::moveX, r.height*ga::moveY);
+			curScore -= max(abs(r.width)*ga::moveX, abs(r.height)*ga::moveY);
 		}
 		curScore += it->num * ga::OneMonster;
 
@@ -125,7 +127,9 @@ void RedEye::ActShuangDao::express()
 	DWORD nowTime = GetTickCount();
 	actAttack->m_beginTime = nowTime;
 	actAttack->creator = this;
-
+	actAttack->m_base = 10;
+	actAttack->m_fnOutput = NULL;
+	//it need an generate m_ouput function;
 	
 	if (CRectangle::RectCollide(m_bestArea.m_rect, g_RoomState.m_player.m_rect, &rectDist) == 1)
 	{
@@ -170,6 +174,10 @@ int RedEye::loadNeural()
 
 	Neural::makeWeight(actShuangDaoMon1, monAny, 1);
 	Neural::makeWeight(actShuangDaoMon2, monAny, 1);
+
+
+	Neural::makeWeight(actShuangDaoMon1, &g_action, 1);
+	Neural::makeWeight(actShuangDaoMon2, &g_action, 1);
 	Neural::makeWeight(monAny, &g_selMonster, 1);
 
 

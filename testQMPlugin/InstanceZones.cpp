@@ -4,7 +4,7 @@
 #include"Cdmsoft.h"
 
 
-InsZone insZone;
+InsZone g_insZone;
 
 int InsZone::loadNeural()
 {

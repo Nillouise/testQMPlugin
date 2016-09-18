@@ -20,6 +20,7 @@ public:
 
 	//sum up the neural relative weigh in map g_weight
 	static double sumUpRelativeWeight(void* head);
+	//link point1 and point2 in g_weight
 	static void makeWeight(void *point1, void *point2, double x);
 
 	double m_output;// the Neural weight
@@ -55,7 +56,7 @@ public:
 };
 
 
-
+//it didn't have outpu
 class SelMonster
 {
 public:
@@ -79,7 +80,7 @@ class ActTemp :public Neural
 {
 public:
 	virtual ActTemp* getClassType() { return this; }
-	ActTemp(ActNeural* creator = NULL, double(*fnOutput)(DWORD, DWORD) = NULL) :creator(creator), m_fnOutput(fnOutput) { m_beginTime = GetTickCount(); m_endTime = GetTickCount(); m_output = 0; };
+	ActTemp(ActNeural* creator = NULL, double(*fnOutput)(DWORD begin, DWORD end,Neural*neural) = NULL) :creator(creator), m_fnOutput(fnOutput) { m_beginTime = GetTickCount(); m_endTime = GetTickCount(); m_output = 0; };
 
 	virtual void run();//ActTemp output only depend on m_fnOutput?didn't relative the other Neural?
 	virtual void express();
@@ -92,7 +93,7 @@ public:
 	vector<CKeyOp>m_key;
 	int m_keySignal;//it only use in m_key
 
-	double(*m_fnOutput)(DWORD begin, DWORD end);//the function poiter to cal the ActTemp output should be what in this time
+	double(*m_fnOutput)(DWORD begin, DWORD end,Neural* neural);//the function poiter to cal the ActTemp output should be what in this time
 	ActNeural* creator;//who create it
 };
 
@@ -101,7 +102,7 @@ class CAction
 {
 public:
 	Neural* m_curActNeural;
-	vector<ActNeural*> m_hisActNeural;
+	vector<pair<ActNeural*,DWORD> > m_hisActNeural;//record history express ActNeural and the begin time
 
 	CAction() { m_curActNeural = NULL;}
 
@@ -125,7 +126,7 @@ struct comp
 
 extern map<pair<void*, void*>, double> g_weight;//the inner have correctly order
 extern map<void*, set<ActNeural*, comp<ActNeural>> >  g_AnyToAct;
-extern map<void*, set<ActTemp*, comp<ActTemp>> >  g_AnyToActTemp;
+extern map<void*, set<ActTemp*, comp<ActTemp>> >  g_AnyToActTemp;//int this version code,ActTemp only have one in one time
 extern map<void*, set<MonNeural*, comp<MonNeural>> >  g_AnyToMon;
 extern CAction g_action;
 

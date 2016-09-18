@@ -32,7 +32,9 @@ void CAction::run()
 	{
 		(*it)->run();
 		auto itAct = g_weight.find(make_pair((void*)this, (void*)(*it)));
-		double curWeight = 0;
+
+		//cal the curWeight,because ActTemp Neural has not link to caction,caction should use actTemp actual m_output 
+		double curWeight = (*it)->m_output;
 		if (itAct != g_weight.end())
 		{
 			curWeight = (*it)->m_output * itAct->second;
@@ -51,7 +53,7 @@ void CAction::run()
 		(*it)->run();
 
 		auto itAct = g_weight.find(make_pair((void*)this, (void*)(*it)));
-		double curWeight = 0;
+		double curWeight = (*it)->m_output;
 		if (itAct != g_weight.end())
 		{
 			curWeight = (*it)->m_output * itAct->second;
@@ -68,16 +70,19 @@ void CAction::run()
 	//if ActNeural run,clear the ActTemp after end();
  	if (newAct != m_curActNeural )
 	{
-		m_curActNeural->end();
+		if (m_curActNeural != NULL)
+		{
+			m_curActNeural->end();
+		}
 		m_curActNeural = newAct;
-		if (typeid(ActTemp) != typeid(newAct->getClassType()))
+		if (typeid(ActTemp) != typeid(newAct->getClassType()))// if express a new ActNeural
 		{
 			for (auto it = g_AnyToActTemp[(void*)this].begin(); it != g_AnyToActTemp[(void*)this].end(); it++)
 			{
 				delete (*it);
 			}
 			g_AnyToActTemp[(void*)this].clear();
-			m_hisActNeural.push_back((ActNeural*)newAct);
+			m_hisActNeural.push_back( make_pair((ActNeural*)newAct, GetTickCount()));
 		}
 		newAct->express();
 	}
@@ -612,9 +617,10 @@ DWORD CAction::playerRunY(int y, map<wstring, int> &runState, const CSpeed &spee
 
 void ActTemp::run()
 {
+	m_output = Neural::sumUpRelativeWeight(this);
 	if (m_fnOutput != NULL)
 	{
-		m_output = m_fnOutput(m_beginTime, m_endTime);
+		m_output += m_fnOutput(m_beginTime, m_endTime,this);
 	}
 	
 }
@@ -660,7 +666,7 @@ void ActTemp::express()
 
 }
 
-//it must have correspond Up Key if you use m_key,
+//it must have correctly Up Key if you use m_key,
 void ActTemp::end()
 {
 	queue<CKeyOp> qKey;
@@ -679,15 +685,35 @@ void ActTemp::end()
 		}
 		firstKeyUp[iter->m_Key] = 1;
 	}
-	::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
-	CKeyOp::delKeyNoExe(m_keySignal);
-	::EnterCriticalSection(&CKeyOp::g_csKeyOp);
+	//delete all key this actTemp press(no include the trail)
+	for (auto it = CKeyOp::m_setKeyOp.begin(); it != CKeyOp::m_setKeyOp.end(); )
+	{
+		if (it->m_signal == m_keySignal)
+		{
+			CKeyOp::m_setKeyOp.erase(it++);
+		}
+		else {
+			it++;
+		}
+	}
 	while (!qKey.empty())
 	{
 		CKeyOp::m_setKeyOp.insert(qKey.front());
 		qKey.pop();
 	}
 	::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
+
+	//delete all link actTemp's weight
+	for (auto iter = g_weight.begin(); iter != g_weight.end(); )
+	{
+		if (iter->first.first == this || iter->first.second == this)
+		{
+			g_weight.erase(iter++);
+		}
+		else {
+			iter++;
+		}
+	}
 
 }
 
@@ -721,7 +747,7 @@ void SelMonster::run()
 	{
 		(*iter)->run();
 		auto itAct = g_weight.find(make_pair((void*)this, (void*)(*iter)));
-		double curWeight = 0;
+		double curWeight = (*iter)->m_output;
 		if (itAct != g_weight.end())
 		{
 			curWeight = (*iter)->m_output * itAct->second;

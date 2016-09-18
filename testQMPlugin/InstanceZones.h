@@ -8,4 +8,4 @@ public:
 	int run(Cdmsoft dm);
 };
 
-extern InsZone insZone;
+extern InsZone g_insZone;

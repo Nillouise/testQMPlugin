@@ -15,5 +15,6 @@ namespace test
 
 	int InitialNeural();
 	int runInsZone(Cdmsoft dm);
-
+	
+	int printSetKeyOp();
 }

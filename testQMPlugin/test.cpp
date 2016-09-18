@@ -1,5 +1,6 @@
 #include"stdafx.h"
 #include "test.h"
+#include<iostream>
 using namespace gandalfr;
 using namespace std;
 int test::OpenConsole()
@@ -53,14 +54,24 @@ std::string test::RectToString(const CRectangle r)
 
 int test::InitialNeural()
 {
-	insZone.loadNeural();
+	g_insZone.loadNeural();
 
 	return 0;
 }
 
 int test::runInsZone(Cdmsoft dm)
 {
-	insZone.run(dm);
+	g_insZone.run(dm);
 
 	return 0;
 }
+
+int test::printSetKeyOp()
+{
+	for (auto iter = CKeyOp::m_setKeyOp.begin(); iter != CKeyOp::m_setKeyOp.end(); iter++)
+	{
+		wcout << iter->m_Key << L"\tkeyType:" << iter->m_KeyType <<L"\ttime:"<< iter->m_KeyTime <<"\tsignal:"<< iter->m_signal << endl;
+	}
+	return 0;
+}
+
