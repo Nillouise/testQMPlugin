@@ -3,6 +3,7 @@
 #include<sstream>
 #include"Room.h"
 #include"InstanceZones.h"
+#include"Neural.h"
 using namespace gandalfr;
 namespace test
 {
@@ -17,4 +18,8 @@ namespace test
 	int runInsZone(Cdmsoft dm);
 	
 	int printSetKeyOp();
+
+	int printCurNeural();
+
+	int reset();
 }

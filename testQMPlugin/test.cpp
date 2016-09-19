@@ -68,10 +68,27 @@ int test::runInsZone(Cdmsoft dm)
 
 int test::printSetKeyOp()
 {
+	auto &aaa = CKeyOp::m_setKeyOp;
 	for (auto iter = CKeyOp::m_setKeyOp.begin(); iter != CKeyOp::m_setKeyOp.end(); iter++)
 	{
 		wcout << iter->m_Key << L"\tkeyType:" << iter->m_KeyType  <<L"\ttime:"<< (((iter->m_KeyTime) / 100 % 600) / 10.0) <<"\tsignal:"<< iter->m_signal << endl;
 	}
+	return 0;
+}
+
+int test::printCurNeural()
+{
+	if (g_action.m_curActNeural != NULL)
+		cout << "curNeural: " << typeid (*((g_action.m_curActNeural)->getClassType())).name() << " " << g_action.m_curActNeural->m_output << endl;
+	else
+		cout << "NULL" << endl;
+	return 0;
+}
+
+int test::reset()
+{
+	g_action.m_curActNeural = NULL;
+
 	return 0;
 }
 

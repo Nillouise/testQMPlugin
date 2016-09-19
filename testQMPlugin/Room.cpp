@@ -103,8 +103,19 @@ int gandalfr::CDecision::getMonsterOverlay(const CRectangle &rectSkill, std::vec
 
 bool gandalfr::operator<(const CKeyOp & t1, const CKeyOp & t2)
 {
-
-	return t1.m_KeyTime < t2.m_KeyTime;
+	if (t1.m_KeyTime < t2.m_KeyTime)
+		return true;
+	else if (t1.m_KeyTime > t2.m_KeyTime)
+		return false;
+	if (t1.m_Key < t2.m_Key)
+		return true;
+	else if (t1.m_Key > t1.m_Key)
+		return false;
+	if (t1.m_KeyType < t2.m_KeyType)
+		return true;
+	else if (t1.m_KeyType > t2.m_KeyType)
+		return false;
+	return true;
 }
 
 bool gandalfr::operator <(const CRectangle & t1, const CRectangle & t2)

@@ -145,7 +145,11 @@ void RedEye::ActShuangDao::express()
 			else {
 				actAttack->m_key.push_back(CKeyOp(L"right", nowTime, CKeyOp::PRESS));
 			}
+			nowTime += 70;// turn round ' s delay time
 		}
+
+
+		auto aaa = &actAttack->m_key;
 		for (auto iter = m_ShuangDao.m_Key.begin(); iter != m_ShuangDao.m_Key.end(); iter++)
 		{
 			auto key(*iter);

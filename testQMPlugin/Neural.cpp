@@ -672,7 +672,7 @@ void ActTemp::express()
 			}
 		}
 		
-
+		auto &aaa = CKeyOp::m_setKeyOp;
 		::EnterCriticalSection(&CKeyOp::g_csKeyOp);
 		for (auto it = m_key.begin(); it != m_key.end(); it++)
 		{
@@ -680,6 +680,7 @@ void ActTemp::express()
 			CKeyOp::m_setKeyOp.insert(*it);
 		}
 		::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
+		
 	}
 	else {
 		m_endTime = CAction::executeTrail( m_trail );
