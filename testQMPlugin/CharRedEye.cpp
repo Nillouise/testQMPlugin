@@ -157,6 +157,7 @@ void RedEye::ActShuangDao::express()
 		CTrail tra;
 
 		CRectangle::getRectTrail(g_RoomState.m_player.m_rect, m_bestArea.m_rect, tra);
+		actAttack->m_endTime = actAttack->m_beginTime + ga::timeActTempToStart;
 		actAttack->m_trail.push_back(tra);
 	}
 	g_AnyToActTemp[&g_action].insert(actAttack);

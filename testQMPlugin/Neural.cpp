@@ -626,12 +626,20 @@ DWORD CAction::playerRunY(int y, map<wstring, int> &runState, const CSpeed &spee
 
 double ActTemp::fnOutMustRunComplete(DWORD beginTime, DWORD endTime, Neural * neural)
 {
-	return 1000;
+	DWORD nowtime = GetTickCount();
+	double r=0;
+	if (nowtime > beginTime && nowtime < endTime)
+	{
+		r = 1000;
+	}
+	return r;
 }
 
 void ActTemp::run()
 {
 	m_output = Neural::sumUpRelativeWeight(this);
+
+
 	if (m_fnOutput != NULL)
 	{
 		m_output += m_fnOutput(m_beginTime, m_endTime,this);

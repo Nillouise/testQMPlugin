@@ -8,4 +8,6 @@ namespace ga //gor grade
 
 	const double moveX = 0.02;// mul with pixel 
 	const double moveY = 0.03;
+
+	const DWORD timeActTempToStart= 2000;
 }

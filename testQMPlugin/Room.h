@@ -37,7 +37,7 @@ namespace gandalfr
 		static int delKeyNoExe(int signalId);
 		static int upKeyNoUp(int signalId);
 
-		CKeyOp(std::wstring Key = L"", DWORD KeyTime = 0, keyMode KeyType = CKeyOp::PRESS, int(*KeyCallback)(int) = KeyDefaultCallback) :m_Key(Key), m_KeyTime(KeyTime), m_KeyCallback(KeyCallback), m_KeyType(KeyType) {}
+		CKeyOp(std::wstring Key = L"", DWORD KeyTime = 0, keyMode KeyType = CKeyOp::PRESS, int(*KeyCallback)(int) = KeyDefaultCallback) :m_Key(Key), m_KeyTime(KeyTime), m_KeyCallback(KeyCallback), m_KeyType(KeyType),m_signal(0) {}
 		static UINT __stdcall KeyboardInput(LPVOID);//use to begin a new thread
 	};
 	bool operator < (const CKeyOp &t1, const CKeyOp &t2);
