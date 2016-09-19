@@ -14,7 +14,7 @@ std::map<std::wstring, DWORD>  CKeyOp::m_keyStateDown;//the key press in the rec
 std::map<std::wstring, int>  CKeyOp::m_keyStateSignal;//the key is 0 if not down,else int represent the ActTemp's keySignal;
 CRITICAL_SECTION CKeyOp::g_csKeyOp;
 
-CMonsterSet gandalfr::CMonsterSet::findMonster(Cdmsoft dm, int rangeX, int rangeY, int rangeWidth, int rangeHeight, WCHAR * MonColor, double similar, int PointCount, int monWidth, int monHeight)
+CMonsterSet gandalfr::CMonsterSet::getMonsterSet(Cdmsoft dm, int rangeX, int rangeY, int rangeWidth, int rangeHeight, WCHAR * MonColor, double similar, int PointCount, int monWidth, int monHeight)
 {
 
 	static DWORD pretime = GetTickCount();
@@ -115,13 +115,31 @@ bool gandalfr::operator<(const CKeyOp & t1, const CKeyOp & t2)
 		return true;
 	else if (t1.m_KeyType > t2.m_KeyType)
 		return false;
-	return true;
+	return false;
 }
 
 bool gandalfr::operator <(const CRectangle & t1, const CRectangle & t2)
 {
+	if (t1.x < t2.x)
+		return true;
+	else if (t1.x > t2.x)
+		return false;
 
-	return t1.x == t2.x? t1.y< t2.y : t1.x<t2.x;
+	if (t1.y < t2.y)
+		return true;
+	else if (t1.y > t2.y)
+		return false;
+
+	if (t1.width < t2.width)
+		return true;
+	else if (t1.width > t2.width)
+		return false;
+	
+	if (t1.height < t2.height)
+		return true;
+	else if (t1.height > t2.height)
+		return false;	
+	return false;
 }
 
 
@@ -221,35 +239,53 @@ int gandalfr::isCoDirection(double player, double area)
 	return 0;
 }
 
-int gandalfr::CPlayer::findPlayer(Cdmsoft dm)
-{
-	return 0;
-}
 
-CPlayer gandalfr::CPlayer::getPlayer(Cdmsoft dm)
-{
-	return CPlayer();
-}
 
-CGoldSet gandalfr::CGoldSet::getGoldSet(Cdmsoft dm)
-{
-	return CGoldSet();
-}
 
-CObstacle gandalfr::CObstacle::getObstacle(Cdmsoft dm)
-{
-	return CObstacle();
-}
-
-CSceneBox gandalfr::CSceneBox::getSceneBox(Cdmsoft dm)
-{
-	return CSceneBox();
-}
 
 void gandalfr::CRoomState::run(Cdmsoft dm)
 {
-	m_monster = CMonsterSet::findMonster(dm);
+	m_monster = CMonsterSet::getMonsterSet(dm);
+
 
 	m_player.m_rect = CRectangle(100,100, 30, 20);
 
+
+}
+
+CObstacle gandalfr::CObstacle::getObstacle(Cdmsoft dm, int rangeX, int rangeY, int rangeWidth, int rangeHeight, WCHAR * ObsColor, double similar, int PointCount, int obsWidth, int obsHeight)
+{
+	static DWORD pretime = GetTickCount();
+	CString cs = dm.FindColorBlockEx(rangeX, rangeY, rangeWidth, rangeHeight, ObsColor, similar, PointCount, obsWidth, obsHeight);
+	long count = dm.GetResultCount(cs);
+
+	//process the m_vecCMon and m_vecCMonTrail
+	CMonsterSet cr;
+
+	for (int i = 0; i < count; i++)
+	{
+		VARIANT intX, intY;
+		int dm_ret = dm.GetResultPos(cs, i, &intX, &intY);
+
+		int ok = 1;
+		for (auto iter = cr.m_vecCMon.begin(); iter != cr.m_vecCMon.end(); iter++)
+		{
+			if (abs((*iter).m_rect.x - intX.intVal) < obsWidth / 2 && abs((*iter).m_rect.y - intY.intVal) < obsHeight / 2)
+			{
+				ok = 0;
+				break;
+			}
+		}
+		if (ok == 1)
+		{
+			cr.m_vecCMon.push_back(CMonsterOne(CRectangle(intX.intVal, intY.intVal)));
+		}
+	}
+
+//	return cr;
+
+
+
+
+	return CObstacle();
 }

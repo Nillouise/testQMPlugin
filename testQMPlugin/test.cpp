@@ -13,7 +13,7 @@ int test::OpenConsole()
 
 int test::getMonsterOverlay(Cdmsoft dm, CRectangle rectSkill)
 {
-	CMonsterSet monset =  CMonsterSet::findMonster(dm);
+	CMonsterSet monset =  CMonsterSet::getMonsterSet(dm);
 
 	std::vector<std::vector<CRectangle>> receive;
 	CDecision::getMonsterOverlay(rectSkill,receive, monset);
@@ -33,7 +33,7 @@ int test::getMonsterOverlay(Cdmsoft dm, CRectangle rectSkill)
 
 int test::findmonster(Cdmsoft dm)
 {
-	CMonsterSet monset =  CMonsterSet::findMonster(dm);
+	CMonsterSet monset =  CMonsterSet::getMonsterSet(dm);
 	std::cout << "Monster Number: " << monset.m_vecCMon.size() << std::endl;
 	for (auto iter = monset.m_vecCMon.begin(); iter != monset.m_vecCMon.end(); ++iter)
 	{
@@ -61,6 +61,10 @@ int test::InitialNeural()
 
 int test::runInsZone(Cdmsoft dm)
 {
+	while (true)
+	{
+		g_insZone.run(dm);
+	}
 	g_insZone.run(dm);
 
 	return 0;
@@ -89,6 +93,12 @@ int test::reset()
 {
 	g_action.m_curActNeural = NULL;
 
+	return 0;
+}
+
+int test::printImage(Cdmsoft dm)
+{
+	ima::getBlock(dm, vector<wstring>(),vector<ima::CBlock>());
 	return 0;
 }
 

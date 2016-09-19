@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Image">
+      <UniqueIdentifier>{666104b0-ada3-4684-a846-2ed0d772f495}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -54,6 +57,9 @@
     <ClInclude Include="InstanceZones.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="image.h">
+      <Filter>Header Files\Image</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="testQMPlugin.cpp">
@@ -71,13 +77,16 @@
     <ClCompile Include="test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Neural.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CharRedEye.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="InstanceZones.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Neural.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

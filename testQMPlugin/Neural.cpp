@@ -23,6 +23,7 @@ MonNeural* g_monNeural2;
 
 void CAction::run()
 {
+	
 	auto &actTemp =  g_AnyToActTemp[(void*)this];
 	auto &act = g_AnyToAct[(void*)this];
 

@@ -118,7 +118,7 @@ namespace gandalfr
 	public:
 		std::vector<CMonsterOne> m_vecCMon;
 		DWORD m_time;
-		static CMonsterSet findMonster(Cdmsoft dm, int rangeX = 0, int rangeY = 0, int rangeWidth = 800, int rangeHeight = 600, WCHAR *MonColor = L"ff0094-010101", double similar = 1.0, int PointCount = 250, int monWidth = 30, int monHeight = 30);
+		static CMonsterSet getMonsterSet(Cdmsoft dm, int rangeX = 0, int rangeY = 0, int rangeWidth = 800, int rangeHeight = 600, WCHAR *MonColor = L"ff0094-010101", double similar = 1.0, int PointCount = 250, int monWidth = 30, int monHeight = 30);
 	
 	};
 
@@ -155,7 +155,6 @@ namespace gandalfr
 		CSpeed m_speed;
 
 		 
-		static int findPlayer(Cdmsoft dm);
 		static CPlayer getPlayer(Cdmsoft dm);
 
 	};
@@ -165,8 +164,8 @@ namespace gandalfr
 	{
 	public:
 		std::vector<CRectangle> m_vecObstacle;
-		
-		static CObstacle getObstacle(Cdmsoft dm);
+
+		static CObstacle getObstacle(Cdmsoft dm, int rangeX = 0, int rangeY = 0,int rangeWidth = 800,int rangeHeight =600,WCHAR * ObsColor = L"bbccff-010101",double similar =1.0,int PointCount = 2800,int obsWidth =80,int obsHeight = 40);
 		DWORD m_time;
 
 	};

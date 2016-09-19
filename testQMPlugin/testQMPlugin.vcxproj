@@ -184,6 +184,7 @@
     <ClInclude Include="Cdmsoft.h" />
     <ClInclude Include="CharRedEye.h" />
     <ClInclude Include="grade.h" />
+    <ClInclude Include="image.h" />
     <ClInclude Include="InstanceZones.h" />
     <ClInclude Include="Neural.h" />
     <ClInclude Include="Resource.h" />
@@ -196,6 +197,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CharRedEye.cpp" />
+    <ClCompile Include="image.cpp" />
     <ClCompile Include="InstanceZones.cpp" />
     <ClCompile Include="Neural.cpp" />
     <ClCompile Include="Room.cpp" />

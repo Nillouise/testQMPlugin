@@ -81,6 +81,7 @@ BEGIN_MESSAGE_MAP(CtestQMPluginDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON3, &CtestQMPluginDlg::OnBnClickedButton3)
 	ON_BN_CLICKED(IDC_BUTTON4, &CtestQMPluginDlg::OnBnClickedButton4)
 	ON_BN_CLICKED(IDC_BUTTON5, &CtestQMPluginDlg::OnBnClickedButton5)
+	ON_BN_CLICKED(IDC_BUTTON6, &CtestQMPluginDlg::OnBnClickedButton6)
 END_MESSAGE_MAP()
 
 
@@ -250,4 +251,11 @@ void CtestQMPluginDlg::OnBnClickedButton5()
 	// TODO: Add your control notification handler code here
 
 	test::reset();
+}
+
+
+void CtestQMPluginDlg::OnBnClickedButton6()
+{
+	// TODO: Add your control notification handler code here
+	test::printImage(dm);
 }

@@ -4,6 +4,7 @@
 #include"Room.h"
 #include"InstanceZones.h"
 #include"Neural.h"
+#include"image.h"
 using namespace gandalfr;
 namespace test
 {
@@ -22,4 +23,6 @@ namespace test
 	int printCurNeural();
 
 	int reset();
+
+	int printImage(Cdmsoft dm);
 }
