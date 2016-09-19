@@ -25,4 +25,6 @@ namespace test
 	int reset();
 
 	int printImage(Cdmsoft dm);
+
+	int performanceCustomVSdm(Cdmsoft dm);
 }

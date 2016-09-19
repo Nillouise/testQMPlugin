@@ -4,6 +4,11 @@
 using namespace std;
 namespace ima
 {
+	namespace curScreen
+	{
+		byte* g_pbCurScreen = NULL;
+		CRectangle g_rect;
+	}
 #define FROWE(x,width) for(int x = 0;x < width*4;x+=4)
 #define FCOLE(y,height) for(int y = 0;y < height;y++)
 #define FROW(x) for(int x = 0; x < curScreen::g_rect.width*4; x+=4)
@@ -16,7 +21,7 @@ namespace ima
 #define FCOLBD(y,beginy,decrease) for(int y = beginy; y < curScreen::g_rect.height; y=y+decrease)
 
 
-	int ima::getNewScreen(Cdmsoft dm, CRectangle screen = CRectangle(0, 0, 800, 600))
+	int ima::getNewScreen(Cdmsoft dm, CRectangle screen )
 	{
 		curScreen::g_pbCurScreen = (byte*)dm.GetScreenData(screen.x, screen.y, screen.width, screen.height);
 		curScreen::g_rect = screen;
@@ -24,7 +29,7 @@ namespace ima
 	}
 
 	//may be in other computer ,the memory layout is different
-	int ima::CBlock::getBlock(const vector<byte[3]> &sourecolor, set<CBlock>& receive)
+	int ima::CBlock::getBlock(const vector<byte*> &sourecolor, set<CBlock>& receive)
 	{
 		auto &pbyte = curScreen::g_pbCurScreen;
 		auto &rect = curScreen::g_rect;
@@ -37,12 +42,6 @@ namespace ima
 			(*it)[B] = temp;
 		}
 
-		for (size_t i = 0; i < 20; i++)
-		{
-			if (i % 4 == 0)cout << " ";
-			cout << hex << (int)pbyte[i] << "-";
-
-		}
 
 		set<CBlock> griddle;
 		int stepX = 10;
@@ -101,7 +100,7 @@ namespace ima
 		for (auto iter = countBlockAppear.begin(); iter != countBlockAppear.end(); )
 		{
 			if (iter->second < (iter->first.width / stepX) * (iter->first.height /stepY))
-				countBlockAppear.erase(iter);
+				iter = countBlockAppear.erase(iter);
 			else
 				iter++;
 		}

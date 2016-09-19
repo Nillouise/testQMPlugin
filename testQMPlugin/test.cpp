@@ -98,7 +98,39 @@ int test::reset()
 
 int test::printImage(Cdmsoft dm)
 {
-	ima::getBlock(dm, vector<wstring>(),vector<ima::CBlock>());
+
+	ima::CBlock b;
+	vector<byte*> vColor;
+	byte by1[3] = { 0x3a,0x6e,0xa5 };
+	vColor.push_back(by1);
+
+
+	ima::getNewScreen(dm);
+	b.getBlock(vColor, set<ima::CBlock>());
+
+	return 0;
+}
+
+int test::performanceCustomVSdm(Cdmsoft dm)
+{
+	ima::CBlock b;
+	vector<byte*> vColor;
+	byte by1[3] = { 0x3a,0x6e,0xa5 };
+	vColor.push_back(by1);
+
+	DWORD curTime = GetTickCount();
+	for (size_t i = 0; i < 100; i++)
+	{
+		ima::getNewScreen(dm);
+		b.getBlock(vColor, set<ima::CBlock>());
+	}
+	cout << GetTickCount() - curTime<<" ";
+	curTime = GetTickCount();
+	for (size_t i = 0; i < 100; i++)
+	{
+		dm.FindColorBlockEx(0, 0, 800, 600, L"3a6ea5", 1.0, 100, 10, 10);
+	}
+	cout << GetTickCount() - curTime<<endl;
 	return 0;
 }
 
