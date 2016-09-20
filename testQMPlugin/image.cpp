@@ -9,87 +9,89 @@ namespace ima
 		byte* g_pbCurScreen = NULL;
 		CRectangle g_rect;
 	}
-#define FROWE(x,width) for(int x = 0;x < width*4;x+=4)
-#define FCOLE(y,height) for(int y = 0;y < height;y++)
-#define FROW(x) for(int x = 0; x < curScreen::g_rect.width*4; x+=4)
-#define FCOL(y) for(int y = 0; y < curScreen::g_rect.height; y++)
-#define FROWS(x,step) for(int x = 0;x < curScreen::g_rect.width*4;x = x + 4*step)
-#define FCOLS(y,step) for(int y = 0;y < curScreen::g_rect.height;y += step)
-#define FROWB(x,beginx) for(int x = beginx*4; x < curScreen::g_rect.width*4; x+=4)
-#define FCOLB(y,beginy) for(int y = beginy; y < curScreen::g_rect.height; y++)
-#define FROWBD(x,beginx,decrease) for(int x = beginx*4; x < curScreen::g_rect.width*4; x=x + decrease*4)
-#define FCOLBD(y,beginy,decrease) for(int y = beginy; y < curScreen::g_rect.height; y=y+decrease)
-
+//#define FROWE(x,width) for(int x = 0;x < width*4;x+=4)
+//#define FCOLE(y,height) for(int y = 0;y < height;y++)
+//#define FROW(x) for(int x = 0; x < curScreen::g_rect.width*4; x+=4)
+//#define FCOL(y) for(int y = 0; y < curScreen::g_rect.height; y++)
+//#define FROWS(x,step) for(int x = 0;x < curScreen::g_rect.width*4;x = x + 4*step)
+//#define FCOLS(y,step) for(int y = 0;y < curScreen::g_rect.height;y += step)
+//#define FROWB(x,beginx) for(int x = beginx*4; x < curScreen::g_rect.width*4; x+=4)
+//#define FCOLB(y,beginy) for(int y = beginy; y < curScreen::g_rect.height; y++)
+//#define FROWBD(x,beginx,decrease) for(int x = beginx*4; x < curScreen::g_rect.width*4; x=x + decrease*4)
+//#define FCOLBD(y,beginy,decrease) for(int y = beginy; y < curScreen::g_rect.height; y=y+decrease)
+//
 
 	int ima::getNewScreen(Cdmsoft dm, CRectangle screen )
 	{
-		curScreen::g_pbCurScreen = (byte*)dm.GetScreenData(screen.x, screen.y, screen.width, screen.height);
+		curScreen::g_pbCurScreen = (byte*)dm.GetScreenData(screen.x, screen.y, screen.x +screen.width, screen.y + screen.height);
 		curScreen::g_rect = screen;
 		return 0;
 	}
 
 	//may be in other computer ,the memory layout is different
-	int ima::CBlock::getBlock(const vector<byte*> &sourecolor, set<CBlock>& receive)
+	//return set<Cblock> receive is  relative coordinate to the curScreen::g_rect,and it's up-left point is out of the color rect a point;
+	int ima::CBlock::getBlock(const vector<ColRGB> &sourecolor, set<CBlock>& receive)
 	{
 		auto &pbyte = curScreen::g_pbCurScreen;
 		auto &rect = curScreen::g_rect;
-		auto color(sourecolor);
 		//because the memory layout is bgr,it must convert rgb to bgr(may be in other computer ,layout is unanimous;
-		for (auto it = color.begin(); it != color.end(); it++)
-		{
-			auto temp = (*it)[R];
-			(*it)[R] = (*it)[B];
-			(*it)[B] = temp;
-		}
+		//now it is fix,because,the out of ima namespace will use a correct enum type to regonize memory
 
 
 		set<CBlock> griddle;
 		int stepX = 10;
 		int stepY = 10;
-		FROWS(x, stepX)
-			FCOLS(y, stepY)
-		{
-			for (auto it = color.begin(); it != color.end(); it++)
+		for(int y = 0;y < rect.height;y += stepY)
+			for(int x = 0;x<rect.width;x += stepX)
 			{
-				if (compareTwoColor(*it, getColorWhole(x, y)))
+				for (auto it = sourecolor.begin(); it != sourecolor.end(); it++)
 				{
-					CBlock toBlo(x, y, 0, 0, *it);
-					griddle.insert(toBlo);
+					if (compareTwoColor(it->col, getColorWhole(x, y)))
+					{
+						CBlock toBlo(x, y, 0, 0, *it);
+						griddle.insert(toBlo);
+					}
 				}
 			}
-		}
 
 		map<CBlock,int> countBlockAppear;
 		for (auto iter = griddle.begin(); iter != griddle.end(); iter++)
 		{
 			const int &griX = iter->x;
 			const int &griY = iter->y;
-			auto &griRGB = iter->m_color;
+			auto &griRGB = iter->m_color.col;
 			int upY = 0;
 			int downY = 0;
 			int leftX = 0;
 			int rightX = 0;
 			int x;
-			for (x = griX; x >= curScreen::g_rect.x; x--)
+			for (x = griX; x >= rect.x; x--)
 			{
+				if (x == -1 || leftX == -1)
+				{
+					int dffd = 0;
+				}
 				if (compareTwoColor(getColorWhole(x, griY), griRGB) == false)
 					break;
 			}
 			leftX = x;
-			for (x = griX; x <= curScreen::g_rect.x + curScreen::g_rect.width; x++)
+
+			for (x = griX; x <= rect.x + rect.width; x++)
 			{
 				if (compareTwoColor(getColorWhole(x, griY), griRGB) == false)
 					break;
 			}
 			rightX = x;
+
+
 			int y;
-			for (y = griY; y >= curScreen::g_rect.y; y--)
+			for (y = griY; y >= rect.y; y--)
 			{
 				if (compareTwoColor(getColorWhole(griX, y), griRGB) == false)
 					break;
 			}
 			upY = y;
-			for (y = griY; y >= curScreen::g_rect.y + curScreen::g_rect.height; y++)
+			for (y = griY; y <= rect.y + rect.height; y++)
 			{
 				if (compareTwoColor(getColorWhole(griX, y), griRGB) == false)
 					break;
@@ -99,12 +101,17 @@ namespace ima
 		}
 		for (auto iter = countBlockAppear.begin(); iter != countBlockAppear.end(); )
 		{
-			if (iter->second < (iter->first.width / stepX) * (iter->first.height /stepY))
+			if (iter->second < (iter->first.width / stepX) * (iter->first.height / stepY))
+			{
 				iter = countBlockAppear.erase(iter);
+			}
 			else
+			{
 				iter++;
+			}
+				
 		}
-		for (auto iter = countBlockAppear.begin(); iter != countBlockAppear.end(); )
+		for (auto iter = countBlockAppear.begin(); iter != countBlockAppear.end();iter++ )
 		{
 			receive.insert(iter->first);
 		}

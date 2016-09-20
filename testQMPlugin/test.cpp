@@ -100,9 +100,9 @@ int test::printImage(Cdmsoft dm)
 {
 
 	ima::CBlock b;
-	vector<byte*> vColor;
-	byte by1[3] = { 0x3a,0x6e,0xa5 };
-	vColor.push_back(by1);
+	vector<ima::ColRGB> vColor;
+	ima::ColRGB col1(0x3a,0x6e,0xa5);
+	vColor.push_back(col1);
 
 
 	ima::getNewScreen(dm);
@@ -114,23 +114,34 @@ int test::printImage(Cdmsoft dm)
 int test::performanceCustomVSdm(Cdmsoft dm)
 {
 	ima::CBlock b;
-	vector<byte*> vColor;
-	byte by1[3] = { 0x3a,0x6e,0xa5 };
-	vColor.push_back(by1);
+	vector<ima::ColRGB> vColor;
+	vColor.push_back(ima::ColRGB(0xff, 0x00, 0x94));
 
 	DWORD curTime = GetTickCount();
-	for (size_t i = 0; i < 100; i++)
+	size_t i;
+	for (i = 0; i < 1; i++)
 	{
 		ima::getNewScreen(dm);
-		b.getBlock(vColor, set<ima::CBlock>());
+		set<ima::CBlock> receive;
+
+		b.getBlock(vColor, receive);
+
+		if (i == 0)
+		{
+			for (auto iter = receive.begin(); iter != receive.end(); iter++)
+			{
+				cout << iter->x << " " << iter->y << " " << iter->width << " " << iter->height << " :::";
+			}
+			cout << endl;
+		}
 	}
-	cout << GetTickCount() - curTime<<" ";
+	cout<<"custom color block search function in "<<i<<" call:" << GetTickCount() - curTime << " " << endl;
 	curTime = GetTickCount();
-	for (size_t i = 0; i < 100; i++)
+	for (size_t i = 0; i < 1; i++)
 	{
-		dm.FindColorBlockEx(0, 0, 800, 600, L"3a6ea5", 1.0, 100, 10, 10);
+		dm.FindColorBlockEx(0, 0, 800, 600, L"ff0094", 1.0, 100, 10, 10);
 	}
-	cout << GetTickCount() - curTime<<endl;
+	cout<<"dm's color block search function in " << i << " call:" << GetTickCount() - curTime<<endl;
 	return 0;
 }
 
