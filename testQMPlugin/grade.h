@@ -16,7 +16,10 @@ namespace ga //gor grade
 	extern const ima::ColRGB roomObs;
 	extern const ima::ColRGB roomSceneBox;
 
-	extern const int discardWidth;
+	extern const int discardWidth;// how small object no to considerate .use in RoomState get Room object
 	extern const int discardHeight;
+
+	extern const double imgDigestibility;
+	extern const double imgDppetite;
 
 }

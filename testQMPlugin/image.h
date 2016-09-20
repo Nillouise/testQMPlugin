@@ -84,4 +84,17 @@ namespace ima
 		}
 		return false;
 	}
+	inline bool BigEatSmall(const CBlock &eater, const CBlock &food)
+	{
+		if (compareTwoColor(eater.m_color.col, food.m_color.col))
+		{
+			if (eater.x <= food.x && eater.y <= food.y && eater.x + eater.width >= food.x + food.width && eater.y + eater.height <= food.y + food.height)
+				return true;
+			else
+				return false;
+		}
+		else
+			return false;
+	}
+
 }

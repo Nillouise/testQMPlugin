@@ -1,6 +1,7 @@
 #include"stdafx.h"
 #include "image.h"
 #include <iomanip>
+#include"grade.h"
 using namespace std;
 namespace ima
 {
@@ -111,6 +112,44 @@ namespace ima
 		//	}
 		//		
 		//}
+		for (auto iter = countBlockAppear.begin(); iter != countBlockAppear.end(); iter++)
+		{
+			for (auto iter2 = countBlockAppear.begin(); iter2 != countBlockAppear.end(); )
+			{
+				if (iter2 == iter)
+					continue;
+				if (BigEatSmall(iter->first, iter2->first))
+				{
+					double smallArea = iter2->first.width* iter2->first.height;
+					double BigArea = iter->first.width * iter->first.height;
+					iter->second += smallArea / BigArea *  iter2->second * ga::imgDigestibility;
+					if (iter->second >= BigArea * ga::imgDppetite )
+					{
+						iter2 = countBlockAppear.erase(iter2);
+					}
+					else {
+						iter2++;
+					}
+				}
+			}
+			for (auto iter2 = countBlockAppear.begin(); iter2 != countBlockAppear.end(); )
+			{
+				if (iter2 == iter)
+					continue;
+				if (BigEatSmall(iter->first, iter2->first))
+				{
+					double BigArea = iter->first.width * iter->first.height;
+					if (iter->second >= BigArea * ga::imgDppetite)
+					{
+						iter2 = countBlockAppear.erase(iter2);
+					}
+					else {
+						iter2++;
+					}
+				}
+			}
+		}
+
 		for (auto iter = countBlockAppear.begin(); iter != countBlockAppear.end();iter++ )
 		{
 			receive.insert(iter->first);
