@@ -157,6 +157,33 @@ int test::getAndPrintRoomState(Cdmsoft dm)
 	ima::getNewScreen(dm);
 	g_RoomState.getAllRectStateInRoom(dm);
 
+	cout << "Gold:" << endl;
+	for (auto iter = g_RoomState.m_Gold.m_vecGold.begin(); iter != g_RoomState.m_Gold.m_vecGold.end(); iter++)
+	{
+		cout << test::RectToString(iter->m_rect)<<"\t";
+	}
+	cout << endl;
+
+	cout << "Monster:" << endl;
+	for (auto iter = g_RoomState.m_Monster.m_vecCMon.begin(); iter != g_RoomState.m_Monster.m_vecCMon.end(); iter++)
+	{
+		cout << test::RectToString(iter->m_rect)<<"\t";
+	}
+	cout << endl;
+
+	cout << "Obstacle:" << endl;
+	for (auto iter = g_RoomState.m_Obstacle.m_vecObstacle.begin(); iter != g_RoomState.m_Obstacle.m_vecObstacle.end(); iter++)
+	{
+		cout << test::RectToString(iter->m_rect);
+	}
+	cout << endl;
+
+	cout << "SceneBox:" << endl;
+	for (auto iter = g_RoomState.m_SceneBox.m_vecCSceneBox.begin(); iter != g_RoomState.m_SceneBox.m_vecCSceneBox.end(); iter++)
+	{
+		cout << test::RectToString(iter->m_rect);
+	}
+	cout << endl;
 
 
 	return 0;

@@ -99,18 +99,18 @@ namespace ima
 			downY = y;
 			countBlockAppear[CBlock(leftX, upY, rightX - leftX, downY - upY, griRGB)]++;
 		}
-		for (auto iter = countBlockAppear.begin(); iter != countBlockAppear.end(); )
-		{
-			if (iter->second < (iter->first.width / stepX) * (iter->first.height / stepY))
-			{
-				iter = countBlockAppear.erase(iter);
-			}
-			else
-			{
-				iter++;
-			}
-				
-		}
+		//for (auto iter = countBlockAppear.begin(); iter != countBlockAppear.end(); )
+		//{
+		//	if (iter->second < (iter->first.width / stepX) * (iter->first.height / stepY))
+		//	{
+		//		iter = countBlockAppear.erase(iter);
+		//	}
+		//	else
+		//	{
+		//		iter++;
+		//	}
+		//		
+		//}
 		for (auto iter = countBlockAppear.begin(); iter != countBlockAppear.end();iter++ )
 		{
 			receive.insert(iter->first);
