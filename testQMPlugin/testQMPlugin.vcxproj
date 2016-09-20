@@ -197,6 +197,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CharRedEye.cpp" />
+    <ClCompile Include="grade.cpp" />
     <ClCompile Include="image.cpp" />
     <ClCompile Include="InstanceZones.cpp" />
     <ClCompile Include="Neural.cpp" />

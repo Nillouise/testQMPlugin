@@ -8,7 +8,6 @@
 #include<cmath>
 #include<map>
 #include<set>
-#include"image.h"
 
 
 

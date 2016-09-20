@@ -2,20 +2,21 @@
 #include"image.h"
 namespace ga //gor grade
 {
-	const double OneMonster = 10;
-	const double NeednMove = 10;// don't need  move
-	const double NeednChangeDirection = 3;
+	extern const double OneMonster;
+	extern const double NeednMove;
+	extern const double NeednChangeDirection;
 
-	const double moveX = 0.02;// mul with pixel 
-	const double moveY = 0.03;
+	extern const double moveX;// mul with pixel 
+	extern const double moveY;
 
-	const DWORD timeActTempToStart= 2000;
+	extern const DWORD timeActTempToStart;
 
-	const ima::ColRGB roomMon(0xff,0x00,0x94);
-	const ima::ColRGB roomGold(0xdd, 0xdd, 0xdd);//it in no use
-	const ima::ColRGB roomObs(0xb5, 0xce, 0xff);
-	const ima::ColRGB roomSceneBox(0xff, 0x99, 0xbb);
+	extern const ima::ColRGB roomMon;
+	extern const ima::ColRGB roomGold;//it in no use
+	extern const ima::ColRGB roomObs;
+	extern const ima::ColRGB roomSceneBox;
 
-	const int discardWidth = 3;
-	const int discardHeight = 3;
+	extern const int discardWidth;
+	extern const int discardHeight;
+
 }
