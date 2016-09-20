@@ -83,6 +83,7 @@ BEGIN_MESSAGE_MAP(CtestQMPluginDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON5, &CtestQMPluginDlg::OnBnClickedButton5)
 	ON_BN_CLICKED(IDC_BUTTON6, &CtestQMPluginDlg::OnBnClickedButton6)
 	ON_BN_CLICKED(IDC_BUTTON7, &CtestQMPluginDlg::OnBnClickedButton7)
+	ON_BN_CLICKED(IDC_BUTTON8, &CtestQMPluginDlg::OnBnClickedButton8)
 END_MESSAGE_MAP()
 
 
@@ -192,7 +193,6 @@ void CtestQMPluginDlg::OnBnClickedOk()
 	// TODO: Add your control notification handler code here
 
 
-	dm.RightClick();
 
 	test::findmonster(dm);
 	UpdateData(TRUE);
@@ -266,4 +266,12 @@ void CtestQMPluginDlg::OnBnClickedButton7()
 {
 	// TODO: Add your control notification handler code here
 	test::performanceCustomVSdm(dm);
+}
+
+
+void CtestQMPluginDlg::OnBnClickedButton8()
+{
+	// TODO: Add your control notification handler code here
+	test::getAndPrintRoomState(dm);
+
 }

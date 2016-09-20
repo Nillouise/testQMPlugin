@@ -14,6 +14,7 @@ namespace ima
 		extern byte* g_pbCurScreen;
 		extern CRectangle g_rect;
 	}
+	int getNewScreen(Cdmsoft dm, CRectangle screen = CRectangle(0, 0, 800, 600));
 	class ColRGB
 	{
 	public:
@@ -54,7 +55,6 @@ namespace ima
 		bool operator < (const CBlock &t1)const;
 	};
 
-	int getNewScreen(Cdmsoft dm, CRectangle screen = CRectangle(0, 0, 800, 600));
 
 	//template<class T>
 	//bool convertRGB2BGR(vector<T*>& color)

@@ -152,3 +152,13 @@ int test::performanceCustomVSdm(Cdmsoft dm)
 	return 0;
 }
 
+int test::getAndPrintRoomState(Cdmsoft dm)
+{
+	ima::getNewScreen(dm);
+	g_RoomState.getAllRectStateInRoom(dm);
+
+
+
+	return 0;
+}
+

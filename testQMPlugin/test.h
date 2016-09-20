@@ -27,4 +27,7 @@ namespace test
 	int printImage(Cdmsoft dm);
 
 	int performanceCustomVSdm(Cdmsoft dm);
+
+	int getAndPrintRoomState(Cdmsoft dm);
+
 }
