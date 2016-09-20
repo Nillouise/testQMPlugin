@@ -8,6 +8,7 @@
 #include<cmath>
 #include<map>
 #include<set>
+#include"image.h"
 
 
 
@@ -105,7 +106,7 @@ namespace gandalfr
 		CRectangle m_rect;
 		double m_hitTime;   // represent the hit time;
 		DWORD m_lastHitedTime;// last hit time
-		CTrail m_trail;
+		CTrail m_trail;//this monster's move trail;
 		double m_bati;  // -1.0 to 1.0 represent the bati probility;
 		double m_attackState; // -1.0 to 1.0 represent if it is attacking you;  
 		int m_type;  //represent if it is a boss monster or something 
@@ -136,7 +137,7 @@ namespace gandalfr
 	class CGoldSet
 	{
 	public:
-		std::vector<CGoldOne> m_vecCMon;
+		std::vector<CGoldOne> m_vecGold;
 		DWORD time;
 
 		static CGoldSet getGoldSet(Cdmsoft dm);
@@ -159,25 +160,38 @@ namespace gandalfr
 
 	};
 
-
-	class CObstacle
+	class CObstacleOne
 	{
 	public:
-		std::vector<CRectangle> m_vecObstacle;
+		CRectangle m_rect;
+		CObstacleOne(CRectangle rect):m_rect(rect){}
+	};
 
-		static CObstacle getObstacle(Cdmsoft dm, int rangeX = 0, int rangeY = 0,int rangeWidth = 800,int rangeHeight =600,WCHAR * ObsColor = L"bbccff-010101",double similar =1.0,int PointCount = 2800,int obsWidth =80,int obsHeight = 40);
+	class CObstacleSet
+	{
+	public:
+		std::vector<CObstacleOne> m_vecObstacle;
 		DWORD m_time;
+
+		static CObstacleSet getObstacle(Cdmsoft dm, int rangeX = 0, int rangeY = 0,int rangeWidth = 800,int rangeHeight =600,WCHAR * ObsColor = L"bbccff-010101",double similar =1.0,int PointCount = 2800,int obsWidth =80,int obsHeight = 40);
 
 	};
 
-
-	class CSceneBox
+	class CSceneBoxOne
 	{
 	public:
-		std::vector<CRectangle> m_vecCSceneBox;
-		
-		static CSceneBox getSceneBox(Cdmsoft dm);
+		CRectangle m_rect;
+		CSceneBoxOne(CRectangle rect) :m_rect(rect) {}
+	};
+
+
+	class CSceneBoxSet
+	{
+	public:
+		std::vector<CSceneBoxOne> m_vecCSceneBox;
 		DWORD m_time;
+		static CSceneBoxSet getSceneBox(Cdmsoft dm);
+		
 	};
 
 
@@ -227,19 +241,20 @@ namespace gandalfr
 		std::vector<CMonsterSet> m_vecMonTrail;
 		std::vector<CGoldSet> m_vecGoldTrail;
 		std::vector<CPlayer> m_vecPlayerTrail;
-		std::vector<CObstacle> m_vecObstacleTrail;
-		std::vector<CSceneBox> m_vecSceneBoxTrail;
+		std::vector<CObstacleSet> m_vecObstacleTrail;
+		std::vector<CSceneBoxSet> m_vecSceneBoxTrail;
 
-		CMonsterSet m_monster;
-		CGoldSet m_gold;
-		CPlayer m_player;
-		CObstacle m_Obstacle;
-		CSceneBox m_CSceneBox;//SceneBox can be attacked
+		CMonsterSet m_Monster;
+		CGoldSet m_Gold;
+		CPlayer m_Player;
+		CObstacleSet m_Obstacle;
+		CSceneBoxSet m_SceneBox;//SceneBox can be attacked
 
 		std::map<std::wstring, int> m_runState;//0 to up a key,1 to walk key ,2 to run key;if > 1,it relative key must down
 
 		void run(Cdmsoft dm);
-
+		int getAllRectStateInRoom(Cdmsoft dm);
+		void clearOldState();
 	private:
 
 	};

@@ -6,6 +6,8 @@
 #include<functional>
 #include<cmath>
 #include<set>
+#include"image.h"
+#include"grade.h"
 using namespace gandalfr;
 CRoomState g_RoomState;
 std::vector<CKeyOp> CKeyOp::m_vecCKeyOp; // record the history key
@@ -49,7 +51,7 @@ CMonsterSet gandalfr::CMonsterSet::getMonsterSet(Cdmsoft dm, int rangeX, int ran
 
 
 //reflect to CMonster::m_vecCMon,responsible to CMonster is not empty;
-int gandalfr::CDecision::getMonsterOverlay(const CRectangle &rectSkill, std::vector<std::vector<CRectangle>> &receive , const CMonsterSet &monset =g_RoomState.m_monster )
+int gandalfr::CDecision::getMonsterOverlay(const CRectangle &rectSkill, std::vector<std::vector<CRectangle>> &receive , const CMonsterSet &monset =g_RoomState.m_Monster )
 {
 	//preprocess the monster collide with rectSkill and  calculate the 1 monster range.
 	receive.push_back(std::vector<CRectangle>());
@@ -118,7 +120,7 @@ bool gandalfr::operator<(const CKeyOp & t1, const CKeyOp & t2)
 	return false;
 }
 
-bool gandalfr::operator <(const CRectangle & t1, const CRectangle & t2)
+bool gandalfr::operator <(const CRectangle & t1, const CRectangle & t2) 
 {
 	if (t1.x < t2.x)
 		return true;
@@ -245,15 +247,88 @@ int gandalfr::isCoDirection(double player, double area)
 
 void gandalfr::CRoomState::run(Cdmsoft dm)
 {
-	m_monster = CMonsterSet::getMonsterSet(dm);
+	m_Monster = CMonsterSet::getMonsterSet(dm);
 
 
-	m_player.m_rect = CRectangle(100,100, 30, 20);
+	m_Player.m_rect = CRectangle(100,100, 30, 20);
 
 
 }
 
-CObstacle gandalfr::CObstacle::getObstacle(Cdmsoft dm, int rangeX, int rangeY, int rangeWidth, int rangeHeight, WCHAR * ObsColor, double similar, int PointCount, int obsWidth, int obsHeight)
+//return the rectState numer;
+int gandalfr::CRoomState::getAllRectStateInRoom(Cdmsoft dm)
+{
+	ima::getNewScreen(dm);
+	vector<ima::ColRGB> vBlo;
+	vBlo.push_back(ga::roomMon);
+	vBlo.push_back(ga::roomObs);
+	vBlo.push_back(ga::roomSceneBox);
+	vBlo.push_back(ga::roomGold);
+
+	set<ima::CBlock> receive;
+	ima::CBlock::getBlock(vBlo,receive);
+
+	//clear the tiny object
+	for (auto iter = receive.begin(); iter != receive.end(); )
+	{
+		if (iter->height < ga::discardHeight || iter->width < ga::discardWidth)
+		{
+			iter = receive.erase(iter);
+		}
+		else {
+			iter++;
+		}
+	}
+	CMonsterSet newMon;
+	CObstacleSet newObs;
+	CSceneBoxSet newSceneBox;
+	CGoldSet newGold;
+
+	//use colorblock to generate relative Object like monster,obstacle,SceneBox,Gold
+	int count = 0;
+	for (auto iter = receive.begin(); iter != receive.end();iter++ )
+	{
+		count++;
+		if (iter->m_color == ga::roomMon)
+		{
+			newMon.m_vecCMon.push_back(CMonsterOne (*iter));
+		}
+		else if (iter->m_color == ga::roomObs)
+		{
+			newObs.m_vecObstacle.push_back(CObstacleOne(*iter));
+		}
+		else if (iter->m_color == ga::roomSceneBox)
+		{
+			newSceneBox.m_vecCSceneBox.push_back(CSceneBoxOne(*iter));
+		}
+		else if (iter->m_color == ga::roomGold)
+		{
+			newGold.m_vecGold.push_back(CGoldOne(*iter));
+		}
+		else {
+			count--;
+		}
+	}
+	m_vecMonTrail.push_back(newMon);
+	m_Monster = newMon;
+	m_vecObstacleTrail.push_back(newObs);
+	m_Obstacle = newObs;
+	m_vecSceneBoxTrail.push_back(newSceneBox);
+	m_SceneBox = newSceneBox;
+	m_vecGoldTrail.push_back(newGold);
+	m_Gold = newGold;
+
+	return count;
+}
+
+void gandalfr::CRoomState::clearOldState()
+{
+	
+
+
+}
+
+CObstacleSet gandalfr::CObstacleSet::getObstacle(Cdmsoft dm, int rangeX, int rangeY, int rangeWidth, int rangeHeight, WCHAR * ObsColor, double similar, int PointCount, int obsWidth, int obsHeight)
 {
 	static DWORD pretime = GetTickCount();
 	CString cs = dm.FindColorBlockEx(rangeX, rangeY, rangeWidth, rangeHeight, ObsColor, similar, PointCount, obsWidth, obsHeight);
@@ -287,5 +362,5 @@ CObstacle gandalfr::CObstacle::getObstacle(Cdmsoft dm, int rangeX, int rangeY, i
 
 
 
-	return CObstacle();
+	return CObstacleSet();
 }

@@ -121,8 +121,8 @@ DWORD CAction::executeTrail(const vector<CTrail>& trail)
 	DWORD nowTime = GetTickCount();
 	for (auto it = trail.begin(); it != trail.end(); it++)
 	{
-		DWORD curTimeX = playerRunX((*it).x, runState, g_RoomState.m_player.m_speed, nowTime, runOrWalk);
-		DWORD curTimeY = playerRunY((*it).y, runState, g_RoomState.m_player.m_speed, nowTime);
+		DWORD curTimeX = playerRunX((*it).x, runState, g_RoomState.m_Player.m_speed, nowTime, runOrWalk);
+		DWORD curTimeY = playerRunY((*it).y, runState, g_RoomState.m_Player.m_speed, nowTime);
 		nowTime += max(curTimeX, curTimeY);
 	}
 
@@ -794,6 +794,6 @@ void SelMonster::run()
 
 void MonAny::run()
 {
-	m_Mon = g_RoomState.m_monster;
+	m_Mon = g_RoomState.m_Monster;
 	m_output = 100;
 }

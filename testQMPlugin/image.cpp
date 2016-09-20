@@ -118,4 +118,42 @@ namespace ima
 
 		return 0;
 	}
+
+	bool CBlock::operator<(const CBlock & t1) const
+	{
+		if (x < t1.x)
+			return true;
+		else if (x > t1.x)
+			return false;
+
+		if (y < t1.y)
+			return true;
+		else if (y > t1.y)
+			return false;
+
+		if (width < t1.width)
+			return true;
+		else if (width > t1.width)
+			return false;
+
+		if (height < t1.height)
+			return true;
+		else if (height > t1.height)
+			return false;
+
+		if (m_color.col[ColRGB::R] < t1.m_color.col[ColRGB::R])
+			return true;
+		else if (m_color.col[ColRGB::R] > t1.m_color.col[ColRGB::R])
+			return false;
+		if (m_color.col[ColRGB::G] < t1.m_color.col[ColRGB::G])
+			return true;
+		else if (m_color.col[ColRGB::G] > t1.m_color.col[ColRGB::G])
+			return false;
+		if (m_color.col[ColRGB::B] < t1.m_color.col[ColRGB::B])
+			return true;
+		else if (m_color.col[ColRGB::B] > t1.m_color.col[ColRGB::B])
+			return false;
+		return false;
+	}
+
 }

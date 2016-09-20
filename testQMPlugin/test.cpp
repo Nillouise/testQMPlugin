@@ -1,6 +1,7 @@
 #include"stdafx.h"
 #include "test.h"
 #include<iostream>
+#include<iomanip>
 using namespace gandalfr;
 using namespace std;
 int test::OpenConsole()
@@ -123,25 +124,31 @@ int test::performanceCustomVSdm(Cdmsoft dm)
 	{
 		ima::getNewScreen(dm);
 		set<ima::CBlock> receive;
-
 		b.getBlock(vColor, receive);
 
 		if (i == 0)
 		{
 			for (auto iter = receive.begin(); iter != receive.end(); iter++)
 			{
-				cout << iter->x << " " << iter->y << " " << iter->width << " " << iter->height << " :::";
+				cout<<dec << setw(4) << setfill(' ') << iter->x <<dec << setw(4) << setfill(' ') <<dec << iter->y<<dec << setw(4) << setfill(' ') << iter->width <<dec << setw(4) << setfill(' ') << iter->height<<"  "<< setw(2)<< setfill('0')<< hex<<(int) iter->m_color.col[ima::ColRGB::R] << setw(2) << setfill('0') << hex << (int)iter->m_color.col[ima::ColRGB::G] << setw(2) << setfill('0') <<hex << (int)iter->m_color.col[ima::ColRGB::B];
+				if (distance(receive.begin(), iter) % 3 == 2)
+				{
+					cout << endl;
+				}
+				else {
+					cout << "   ";
+				}
 			}
 			cout << endl;
 		}
 	}
-	cout<<"custom color block search function in "<<i<<" call:" << GetTickCount() - curTime << " " << endl;
+	cout<<"custom color block search function in "<<i<<" call:" << dec << GetTickCount() - curTime << " " << endl;
 	curTime = GetTickCount();
 	for (size_t i = 0; i < 1; i++)
 	{
 		dm.FindColorBlockEx(0, 0, 800, 600, L"ff0094", 1.0, 100, 10, 10);
 	}
-	cout<<"dm's color block search function in " << i << " call:" << GetTickCount() - curTime<<endl;
+	cout<<"dm's color block search function in " << i << " call:" << dec << GetTickCount() - curTime<<endl;
 	return 0;
 }
 

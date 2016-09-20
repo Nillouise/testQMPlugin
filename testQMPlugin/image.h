@@ -36,6 +36,11 @@ namespace ima
 			col[B] = C.col[B];
 		}
 		~ColRGB() { delete oriPb; }
+
+		bool operator==(const ColRGB &t1) const {
+			return col[R] == t1.col[R] && col[G] == t1.col[G] && col[B] == t1.col[B];
+		}
+
 	private:
 		byte *oriPb;
 	};
@@ -46,6 +51,7 @@ namespace ima
 		CBlock(int x = 0, int y = 0, int width = 0, int height = 0, const ColRGB pb = ColRGB()) :CRectangle(x, y, width, height),m_color(pb){}
 		ColRGB m_color;
 		static int getBlock(const vector<ColRGB> &color, set<CBlock> &receive);
+		bool operator < (const CBlock &t1)const;
 	};
 
 	int getNewScreen(Cdmsoft dm, CRectangle screen = CRectangle(0, 0, 800, 600));

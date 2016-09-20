@@ -27,7 +27,7 @@ void RedEye::ActShuangDao::run()
 	CDecision::getMonsterOverlay( skillArea, receive,(**m_MonToAttack).m_Mon );// it should use MonNeural
 
 
-	auto &player = g_RoomState.m_player;
+	auto &player = g_RoomState.m_Player;
 	
 	vector<CAttackArea> selGolRec;//it will have correct monster num,direction
 	//select the suitable attackArea,delete the dulplicate area; 
@@ -131,12 +131,12 @@ void RedEye::ActShuangDao::express()
 	actAttack->m_fnOutput = ActTemp::fnOutMustRunComplete;
 	//it need an generate m_ouput function;
 	
-	if (CRectangle::RectCollide(m_bestArea.m_rect, g_RoomState.m_player.m_rect, &rectDist) == 1)
+	if (CRectangle::RectCollide(m_bestArea.m_rect, g_RoomState.m_Player.m_rect, &rectDist) == 1)
 	{
 		CKeyOp::upRunKey(0);//no continue to press run key;
 		//attack immediatly
 		actAttack->m_endTime = nowTime + 2000;
-		if (isCoDirection(g_RoomState.m_player.m_direction, m_bestArea.direction) == 0)
+		if (isCoDirection(g_RoomState.m_Player.m_direction, m_bestArea.direction) == 0)
 		{
 			if (m_bestArea.direction < 0)
 			{
@@ -160,7 +160,7 @@ void RedEye::ActShuangDao::express()
 	else {
 		CTrail tra;
 
-		CRectangle::getRectTrail(g_RoomState.m_player.m_rect, m_bestArea.m_rect, tra);
+		CRectangle::getRectTrail(g_RoomState.m_Player.m_rect, m_bestArea.m_rect, tra);
 		actAttack->m_endTime = actAttack->m_beginTime + ga::timeActTempToStart;
 		actAttack->m_trail.push_back(tra);
 	}
