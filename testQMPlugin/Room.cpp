@@ -12,7 +12,7 @@ using namespace gandalfr;
 CRoomState g_RoomState;
 std::vector<CKeyOp> CKeyOp::m_vecCKeyOp; // record the history key
 std::set<CKeyOp >  CKeyOp::m_setKeyOp;  // incoming key
-std::map<std::wstring, DWORD>  CKeyOp::m_keyStateDown;//the key press in the recent time.if is downing,it should be a max time;
+std::map<std::wstring, DWORD>  CKeyOp::m_keyRecentProcess;//the key press in the recent time.if is downing,it should be a max time;
 std::map<std::wstring, int>  CKeyOp::m_keyStateSignal;//the key is 0 if not down,else int represent the ActTemp's keySignal;
 CRITICAL_SECTION CKeyOp::g_csKeyOp;
 
@@ -145,7 +145,9 @@ bool gandalfr::operator <(const CRectangle & t1, const CRectangle & t2)
 }
 
 
-int gandalfr::CKeyOp::KeyDefaultCallback(int x)
+
+
+int gandalfr::CKeyOp::KeyDefaultCallback(DWORD x)
 {
 	return 0;
 }
@@ -155,7 +157,7 @@ int gandalfr::CKeyOp::upRunKey(DWORD upTime)
 	return 0;
 }
 
-int gandalfr::CKeyOp::delKeyNoExe(int signalId)
+int gandalfr::CKeyOp::UpSlefKeyAnddelKeyNoExe(int signalId)
 {
 	::EnterCriticalSection(&CKeyOp::g_csKeyOp);
 	for (auto it = CKeyOp::m_setKeyOp.begin(); it != CKeyOp::m_setKeyOp.end(); )
@@ -183,6 +185,113 @@ int gandalfr::CKeyOp::upKeyNoUp(int signalId)
 		}
 	}
 	::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
+	return 0;
+}
+
+UINT gandalfr::CKeyOp::KeyboardInput(LPVOID)
+{
+	//it should  register the dm at the head;
+	Cdmsoft dm;
+
+
+	while (true)
+	{
+		::EnterCriticalSection(&g_csKeyOp);
+		int timeToBreak = 1;
+
+		vector<CKeyOp> generateKey;
+		for (auto iter = m_setKeyOp.begin(); iter != m_setKeyOp.end(); iter++)
+		{
+			if (iter->m_KeyTime <= m_nowTime)
+			{
+				if (m_nowTime > m_keyRecentProcess[iter->m_Key] + ga::key_ProInterval)
+				{
+					if (iter->m_KeyType == UP )
+					{
+						if (m_keyStateSignal[iter->m_Key] >= 0)
+						{
+							processKey(dm, iter->m_Key, iter->m_KeyType, iter->m_signal);
+							iter->m_KeyCallback(m_nowTime);
+							iter = m_setKeyOp.erase(iter);
+							continue;
+						}
+						else {
+							iter = m_setKeyOp.erase(iter);
+							continue;
+						}
+					}
+					else if (iter->m_KeyType == DOWMNOAGAIN)
+					{
+						if (m_keyStateSignal[iter->m_Key] == 0)
+						{
+							processKey(dm, iter->m_Key, iter->m_KeyType, iter->m_signal);
+							iter->m_KeyCallback(m_nowTime);
+							iter = m_setKeyOp.erase(iter);
+							continue;
+						}
+						else {
+							iter = m_setKeyOp.erase(iter);
+							continue;
+						}
+					}
+					else if (iter->m_KeyType == PRESS)
+					{
+						if (m_keyStateSignal[iter->m_Key] >= 0)//if it is downing
+						{
+							processKey(dm, iter->m_Key, UP, iter->m_signal);
+							CKeyOp nextKey(*iter);
+							auto iter2 = iter;
+							iter2++;
+							nextKey.m_KeyTime = iter2->m_KeyTime - 1;
+							generateKey.push_back(nextKey);
+							iter++;
+						}
+						else {
+							processKey(dm, iter->m_Key, DOWMNOAGAIN, iter->m_signal);
+							CKeyOp nextKey(*iter);
+							auto iter2 = iter;
+							iter2++;
+							nextKey.m_KeyTime = iter2->m_KeyTime - 1;
+							nextKey.m_KeyType = UP;
+							generateKey.push_back(nextKey);
+							iter = m_setKeyOp.erase(iter);
+						}
+					}
+					else if (iter->m_KeyType == DOWMAGAIN)
+					{
+						if (m_keyStateSignal[iter->m_Key] >= 0)//if it is downing
+						{
+							processKey(dm, iter->m_Key, UP, iter->m_signal);
+							CKeyOp nextKey(*iter);
+							auto iter2 = iter;
+							iter2++;
+							nextKey.m_KeyTime = iter2->m_KeyTime - 1;
+							nextKey.m_KeyType = DOWMNOAGAIN;
+							generateKey.push_back(nextKey);
+							iter++;
+						}
+						else {
+							processKey(dm, iter->m_Key, DOWMNOAGAIN, iter->m_signal);
+							iter = m_setKeyOp.erase(iter);
+						}
+					}
+				}
+				else {
+					iter++;
+				}
+			}
+			else {
+				break;
+			}
+		}
+
+		for (auto iter = generateKey.begin(); iter != generateKey.end(); iter++)
+		{
+			m_setKeyOp.insert(*iter);
+		}
+		::LeaveCriticalSection(&g_csKeyOp);
+	}
+
 	return 0;
 }
 
@@ -247,12 +356,9 @@ int gandalfr::isCoDirection(double player, double area)
 
 void gandalfr::CRoomState::run(Cdmsoft dm)
 {
-	m_Monster = CMonsterSet::getMonsterSet(dm);
-
-
+	ima::getNewScreen(dm);
+	getAllRectStateInRoom(dm);
 	m_Player.m_rect = CRectangle(100,100, 30, 20);
-
-
 }
 
 //return the rectState numer;

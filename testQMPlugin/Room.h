@@ -17,6 +17,7 @@ namespace gandalfr
 	class CMonsterOne;
 	class CTrail;
 
+	
 	class CKeyOp
 	{
 	public:
@@ -26,18 +27,40 @@ namespace gandalfr
 		int(*m_KeyCallback)(int x);//when a key press ,it call back 
 		keyMode m_KeyType; // 1 to press,10 to down if this key no down ,then up before down;11 to down ,if down,no down again;20 to up
 		int m_signal;//0 if for run to some area,1 to release skill,you can you other num to approach other effect
-		static int KeyDefaultCallback(int x);
+		
+		static void processKey(Cdmsoft dm, const std::wstring &key, const keyMode &mode,const int &signal)//process this key op include set keyStateDown and m_keyStateSignal;
+		{
+			if (mode == DOWMNOAGAIN)
+			{
+				dm.KeyDownChar(key.c_str());
+				m_keyStateSignal[key] = signal;
+				m_keyRecentProcess[key] = m_nowTime;
+				return;
+			}
+			if (mode == UP)
+			{
+				dm.KeyUpChar(key.c_str());
+				m_keyStateSignal[key] = -1;
+				m_keyRecentProcess[key] = m_nowTime;
+				return;
+			}
+
+		}
+
+		static int KeyDefaultCallback(DWORD x);
 		static std::vector<CKeyOp> m_vecCKeyOp; // record the history key
 		static std::set<CKeyOp > m_setKeyOp;  // incoming key
 		static CRITICAL_SECTION g_csKeyOp;
-		static std::map<std::wstring, DWORD> m_keyStateDown;//the key press in the recent time.if is downing,it should be a max time;
-		static std::map<std::wstring, int> m_keyStateSignal;//the key is 0 if not down,else int represent the ActTemp's keySignal;
+		static std::map<std::wstring, DWORD> m_keyRecentProcess;//the key press in the recent time.if is downing,it should be a max time;
+		static std::map<std::wstring, int> m_keyStateSignal;//the key is -1 if not down,else int represent the ActTemp's keySignal;
 
+		static int fillVecUpRunKey(std::vector<CKeyOp> &vec);
 		static int upRunKey(DWORD upTime);// up the left,right,up,down key,if they are downing
-		static int delKeyNoExe(int signalId);
+		static int UpSlefKeyAnddelKeyNoExe(int signalId);
 		static int upKeyNoUp(int signalId);
 
-		CKeyOp(std::wstring Key = L"", DWORD KeyTime = 0, keyMode KeyType = CKeyOp::PRESS, int(*KeyCallback)(int) = KeyDefaultCallback) :m_Key(Key), m_KeyTime(KeyTime), m_KeyCallback(KeyCallback), m_KeyType(KeyType),m_signal(0) {}
+		static DWORD m_nowTime;
+		CKeyOp(std::wstring Key = L"", DWORD KeyTime = 0, keyMode KeyType = CKeyOp::PRESS, int(*KeyCallback)(DWORD) = KeyDefaultCallback) :m_Key(Key), m_KeyTime(KeyTime), m_KeyCallback(KeyCallback), m_KeyType(KeyType),m_signal(0) {}
 		static UINT __stdcall KeyboardInput(LPVOID);//use to begin a new thread
 	};
 	bool operator < (const CKeyOp &t1, const CKeyOp &t2);

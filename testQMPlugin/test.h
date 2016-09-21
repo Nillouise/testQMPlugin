@@ -28,6 +28,7 @@ namespace test
 
 	int performanceCustomVSdm(Cdmsoft dm);
 
-	int getAndPrintRoomState(Cdmsoft dm);
+	int PrintRoomState(Cdmsoft dm);
 
+	int estimateTotalRun(Cdmsoft dm);
 }

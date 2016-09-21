@@ -40,10 +40,17 @@ namespace ima
 
 
 		set<CBlock> griddle;
-		int stepX = 10;
-		int stepY = 10;
-		for(int y = 0;y < rect.height;y += stepY)
-			for(int x = 0;x<rect.width;x += stepX)
+		bool swich = true;
+		for (int y = 0; y < rect.height; y += ga::stepY)
+		{
+			int x = 0;
+			if (swich)
+			{
+				x = ga::stepX / 2;
+			}
+			swich = !swich;
+
+			for (; x<rect.width; x += ga::stepX)
 			{
 				for (auto it = sourecolor.begin(); it != sourecolor.end(); it++)
 				{
@@ -54,8 +61,9 @@ namespace ima
 					}
 				}
 			}
+		}
 
-		map<CBlock,int> countBlockAppear;
+		map<CBlock,double> countBlockAppear;
 		for (auto iter = griddle.begin(); iter != griddle.end(); iter++)
 		{
 			const int &griX = iter->x;
@@ -68,10 +76,6 @@ namespace ima
 			int x;
 			for (x = griX; x >= rect.x; x--)
 			{
-				if (x == -1 || leftX == -1)
-				{
-					int dffd = 0;
-				}
 				if (compareTwoColor(getColorWhole(x, griY), griRGB) == false)
 					break;
 			}
@@ -99,7 +103,10 @@ namespace ima
 			}
 			downY = y;
 			countBlockAppear[CBlock(leftX, upY, rightX - leftX, downY - upY, griRGB)]++;
+
+
 		}
+
 		//for (auto iter = countBlockAppear.begin(); iter != countBlockAppear.end(); )
 		//{
 		//	if (iter->second < (iter->first.width / stepX) * (iter->first.height / stepY))
@@ -110,47 +117,65 @@ namespace ima
 		//	{
 		//		iter++;
 		//	}
-		//		
 		//}
+
+
+		//generate the large area cover small area point;
+		auto eatMap(countBlockAppear);
 		for (auto iter = countBlockAppear.begin(); iter != countBlockAppear.end(); iter++)
 		{
-			for (auto iter2 = countBlockAppear.begin(); iter2 != countBlockAppear.end(); )
+			for (auto iter2 = eatMap.begin(); iter2 != eatMap.end(); iter2++)
 			{
-				if (iter2 == iter)
+				if (CBlock::compare( iter2->first, iter->first))
 					continue;
 				if (BigEatSmall(iter->first, iter2->first))
 				{
 					double smallArea = iter2->first.width* iter2->first.height;
 					double BigArea = iter->first.width * iter->first.height;
 					iter->second += smallArea / BigArea *  iter2->second * ga::imgDigestibility;
-					if (iter->second >= BigArea * ga::imgDppetite )
-					{
-						iter2 = countBlockAppear.erase(iter2);
-					}
-					else {
-						iter2++;
-					}
-				}
-			}
-			for (auto iter2 = countBlockAppear.begin(); iter2 != countBlockAppear.end(); )
-			{
-				if (iter2 == iter)
-					continue;
-				if (BigEatSmall(iter->first, iter2->first))
-				{
-					double BigArea = iter->first.width * iter->first.height;
-					if (iter->second >= BigArea * ga::imgDppetite)
-					{
-						iter2 = countBlockAppear.erase(iter2);
-					}
-					else {
-						iter2++;
-					}
 				}
 			}
 		}
+		//delete the "duplicate" area expression
+		for (auto iter = eatMap.begin(); iter != eatMap.end();)
+		{
+			int ok = 1;
+			for (auto iter2 = eatMap.begin(); iter2 != eatMap.end(); )
+			{
+				if (iter2 == iter)
+				{
+					iter2++;
+					continue;
+				}
 
-		for (auto iter = countBlockAppear.begin(); iter != countBlockAppear.end();iter++ )
+				if (BigEatSmall(iter->first, iter2->first))
+				{
+					double BigArea = iter->first.width * iter->first.height;
+					
+
+					if (iter->second >= BigArea/(ga::stepX *ga::stepY) * ga::imgDppetite)
+					{
+		//				iter2 = eatMap.erase(iter2);
+						iter2++;
+					}
+					else {
+						iter = eatMap.erase(iter);
+						ok == 0;
+						break;
+					}
+				}
+				else {
+					iter2++;
+				}
+
+			}
+			if (ok == 1)
+			{
+				iter++;
+			}
+		}
+
+		for (auto iter = eatMap.begin(); iter != eatMap.end();iter++ )
 		{
 			receive.insert(iter->first);
 		}
@@ -192,6 +217,18 @@ namespace ima
 			return true;
 		else if (m_color.col[ColRGB::B] > t1.m_color.col[ColRGB::B])
 			return false;
+		return false;
+	}
+
+	bool CBlock::compare(const CBlock & t1,const CBlock &t2)
+	{
+		if (t1.x == t2.x && t1.y == t2.y && t1.width == t2.width && t1.height == t2.height
+			&& t1.m_color.col[ColRGB::R] == t2.m_color.col[ColRGB::R]
+			&& t1.m_color.col[ColRGB::G] == t2.m_color.col[ColRGB::G]
+			&& t1.m_color.col[ColRGB::B] == t2.m_color.col[ColRGB::B])
+		{
+			return true;
+		}
 		return false;
 	}
 

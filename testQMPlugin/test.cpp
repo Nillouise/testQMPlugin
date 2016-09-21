@@ -62,10 +62,6 @@ int test::InitialNeural()
 
 int test::runInsZone(Cdmsoft dm)
 {
-	while (true)
-	{
-		g_insZone.run(dm);
-	}
 	g_insZone.run(dm);
 
 	return 0;
@@ -84,7 +80,7 @@ int test::printSetKeyOp()
 int test::printCurNeural()
 {
 	if (g_action.m_curActNeural != NULL)
-		cout << "curNeural: " << typeid (*((g_action.m_curActNeural)->getClassType())).name() << " " << g_action.m_curActNeural->m_output << endl;
+		cout << "curNeural: " << typeid (*((g_action.m_curActNeural)->getClassType())).name() << " output:" << g_action.m_curActNeural->m_output << endl;
 	else
 		cout << "NULL" << endl;
 	return 0;
@@ -152,10 +148,8 @@ int test::performanceCustomVSdm(Cdmsoft dm)
 	return 0;
 }
 
-int test::getAndPrintRoomState(Cdmsoft dm)
+int test::PrintRoomState(Cdmsoft dm)
 {
-	ima::getNewScreen(dm);
-	g_RoomState.getAllRectStateInRoom(dm);
 
 	cout << "Gold:" << endl;
 	for (auto iter = g_RoomState.m_Gold.m_vecGold.begin(); iter != g_RoomState.m_Gold.m_vecGold.end(); iter++)
@@ -174,18 +168,27 @@ int test::getAndPrintRoomState(Cdmsoft dm)
 	cout << "Obstacle:" << endl;
 	for (auto iter = g_RoomState.m_Obstacle.m_vecObstacle.begin(); iter != g_RoomState.m_Obstacle.m_vecObstacle.end(); iter++)
 	{
-		cout << test::RectToString(iter->m_rect);
+		cout << test::RectToString(iter->m_rect)<<"\t";
 	}
 	cout << endl;
 
 	cout << "SceneBox:" << endl;
 	for (auto iter = g_RoomState.m_SceneBox.m_vecCSceneBox.begin(); iter != g_RoomState.m_SceneBox.m_vecCSceneBox.end(); iter++)
 	{
-		cout << test::RectToString(iter->m_rect);
+		cout << test::RectToString(iter->m_rect)<<"\t";
 	}
 	cout << endl;
 
 
+	return 0;
+}
+
+int test::estimateTotalRun(Cdmsoft dm)
+{
+
+	DWORD curTime = ::GetTickCount();
+	g_insZone.run(dm);
+	cout << ::GetTickCount() - curTime << endl;
 	return 0;
 }
 

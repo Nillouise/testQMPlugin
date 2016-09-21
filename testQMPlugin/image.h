@@ -53,6 +53,7 @@ namespace ima
 		ColRGB m_color;
 		static int getBlock(const vector<ColRGB> &color, set<CBlock> &receive);
 		bool operator < (const CBlock &t1)const;
+		static bool compare(const CBlock & t1, const CBlock &t2);
 	};
 
 

@@ -2,24 +2,29 @@
 #include"image.h"
 namespace ga //gor grade
 {
-	extern const double OneMonster;
-	extern const double NeednMove;
-	extern const double NeednChangeDirection;
+	extern double OneMonster;
+	extern double NeednMove;
+	extern double NeednChangeDirection;
 
-	extern const double moveX;// mul with pixel 
-	extern const double moveY;
+	extern double moveX;//monster estimate point mul with pixel 
+	extern double moveY;//
 
-	extern const DWORD timeActTempToStart;
+	extern DWORD timeActTempToStart;//the time when actTemp created,the endtime it should have
 
 	extern const ima::ColRGB roomMon;
 	extern const ima::ColRGB roomGold;//it in no use
 	extern const ima::ColRGB roomObs;
 	extern const ima::ColRGB roomSceneBox;
 
-	extern const int discardWidth;// how small object no to considerate .use in RoomState get Room object
-	extern const int discardHeight;
+	extern int discardWidth;// how small object no to considerate .use in RoomState get Room object
+	extern int discardHeight;
 
-	extern const double imgDigestibility;
-	extern const double imgDppetite;
+	extern double imgDigestibility;
+	extern double imgDppetite;
+
+	extern int stepX;
+	extern int stepY;
+
+	extern DWORD key_ProInterval;
 
 }
