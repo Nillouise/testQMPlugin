@@ -15,6 +15,10 @@ std::set<CKeyOp >  CKeyOp::m_setKeyOp;  // incoming key
 std::map<std::wstring, DWORD>  CKeyOp::m_keyRecentProcess;//the key press in the recent time.if is downing,it should be a max time;
 std::map<std::wstring, int>  CKeyOp::m_keyStateSignal;//the key is 0 if not down,else int represent the ActTemp's keySignal;
 CRITICAL_SECTION CKeyOp::g_csKeyOp;
+bool CKeyOp::m_RunTheKeyBoard;
+DWORD CKeyOp::m_nowTime;
+
+
 
 CMonsterSet gandalfr::CMonsterSet::getMonsterSet(Cdmsoft dm, int rangeX, int rangeY, int rangeWidth, int rangeHeight, WCHAR * MonColor, double similar, int PointCount, int monWidth, int monHeight)
 {
@@ -188,17 +192,24 @@ int gandalfr::CKeyOp::upKeyNoUp(int signalId)
 	return 0;
 }
 
-UINT gandalfr::CKeyOp::KeyboardInput(LPVOID)
+UINT gandalfr::CKeyOp::KeyboardInput(PVOID)
 {
-	//it should  register the dm at the head;
+	////register the dm ;
+	::CoInitialize(NULL);//初始化线程COM库
 	Cdmsoft dm;
+	dm.CreateDispatch(L"dm.dmsoft");
+
+	////initial the static value
+	m_RunTheKeyBoard = true;
+	m_setKeyOp.clear();
+	m_keyRecentProcess.clear();
+	m_keyStateSignal.clear();
 
 
-	while (true)
+	while (m_RunTheKeyBoard)
 	{
 		::EnterCriticalSection(&g_csKeyOp);
-		int timeToBreak = 1;
-
+		m_nowTime = ::GetTickCount();
 		vector<CKeyOp> generateKey;
 		for (auto iter = m_setKeyOp.begin(); iter != m_setKeyOp.end(); iter++)
 		{
@@ -208,17 +219,13 @@ UINT gandalfr::CKeyOp::KeyboardInput(LPVOID)
 				{
 					if (iter->m_KeyType == UP )
 					{
-						if (m_keyStateSignal[iter->m_Key] >= 0)
+						if (m_keyStateSignal[iter->m_Key] > 0)
 						{
 							processKey(dm, iter->m_Key, iter->m_KeyType, iter->m_signal);
 							iter->m_KeyCallback(m_nowTime);
-							iter = m_setKeyOp.erase(iter);
-							continue;
 						}
-						else {
-							iter = m_setKeyOp.erase(iter);
-							continue;
-						}
+						iter = m_setKeyOp.erase(iter);
+						continue;
 					}
 					else if (iter->m_KeyType == DOWMNOAGAIN)
 					{
@@ -226,17 +233,13 @@ UINT gandalfr::CKeyOp::KeyboardInput(LPVOID)
 						{
 							processKey(dm, iter->m_Key, iter->m_KeyType, iter->m_signal);
 							iter->m_KeyCallback(m_nowTime);
-							iter = m_setKeyOp.erase(iter);
-							continue;
 						}
-						else {
-							iter = m_setKeyOp.erase(iter);
-							continue;
-						}
+						iter = m_setKeyOp.erase(iter);
+						continue;
 					}
 					else if (iter->m_KeyType == PRESS)
 					{
-						if (m_keyStateSignal[iter->m_Key] >= 0)//if it is downing
+						if (m_keyStateSignal[iter->m_Key] > 0)//if it is downing,0 is not downing
 						{
 							processKey(dm, iter->m_Key, UP, iter->m_signal);
 							CKeyOp nextKey(*iter);
@@ -259,7 +262,7 @@ UINT gandalfr::CKeyOp::KeyboardInput(LPVOID)
 					}
 					else if (iter->m_KeyType == DOWMAGAIN)
 					{
-						if (m_keyStateSignal[iter->m_Key] >= 0)//if it is downing
+						if (m_keyStateSignal[iter->m_Key] >  0)//if it is downing,0 is not downing
 						{
 							processKey(dm, iter->m_Key, UP, iter->m_signal);
 							CKeyOp nextKey(*iter);
@@ -290,8 +293,12 @@ UINT gandalfr::CKeyOp::KeyboardInput(LPVOID)
 			m_setKeyOp.insert(*iter);
 		}
 		::LeaveCriticalSection(&g_csKeyOp);
+
 	}
 
+
+
+	//::CoUninitialize();//关闭线程的COM库，此函数应和CoInitialize成对使用。
 	return 0;
 }
 
@@ -469,4 +476,27 @@ CObstacleSet gandalfr::CObstacleSet::getObstacle(Cdmsoft dm, int rangeX, int ran
 
 
 	return CObstacleSet();
+}
+
+void gandalfr::CKeyOp::processKey(Cdmsoft dm, const std::wstring & key, const keyMode & mode, const int & signal)
+{
+
+
+	if (mode == DOWMNOAGAIN)
+	{
+		dm.KeyDownChar(key.c_str());
+		m_vecCKeyOp.push_back(CKeyOp(key, m_nowTime, DOWMNOAGAIN));
+		m_keyStateSignal[key] = signal;
+		m_keyRecentProcess[key] = m_nowTime;
+		return;
+	}
+	if (mode == UP)
+	{
+		dm.KeyUpChar(key.c_str());
+		m_vecCKeyOp.push_back(CKeyOp(key, m_nowTime, UP));
+		m_keyStateSignal[key] = 0;
+		m_keyRecentProcess[key] = m_nowTime;
+		return;
+	}
+
 }

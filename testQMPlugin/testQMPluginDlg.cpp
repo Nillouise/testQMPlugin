@@ -85,6 +85,8 @@ BEGIN_MESSAGE_MAP(CtestQMPluginDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON7, &CtestQMPluginDlg::OnBnClickedButton7)
 	ON_BN_CLICKED(IDC_BUTTON8, &CtestQMPluginDlg::OnBnClickedButton8)
 	ON_BN_CLICKED(IDC_BUTTON9, &CtestQMPluginDlg::OnBnClickedButton9)
+	ON_BN_CLICKED(IDCANCEL, &CtestQMPluginDlg::OnBnClickedCancel)
+	ON_BN_CLICKED(IDC_BUTTON10, &CtestQMPluginDlg::OnBnClickedButton10)
 END_MESSAGE_MAP()
 
 
@@ -129,7 +131,7 @@ BOOL CtestQMPluginDlg::OnInitDialog()
 	dm.Reg(L"dieofai3e4c4149f6970cd69b4fc3af7ac85de4", L"0001");
 
 	test::OpenConsole();
-
+	::InitializeCriticalSection(&CKeyOp::g_csKeyOp);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -282,4 +284,18 @@ void CtestQMPluginDlg::OnBnClickedButton9()
 {
 	// TODO: Add your control notification handler code here
 	test::estimateTotalRun(dm);
+}
+
+
+void CtestQMPluginDlg::OnBnClickedCancel()
+{
+	// TODO: Add your control notification handler code here
+	CDialogEx::OnCancel();
+}
+
+
+void CtestQMPluginDlg::OnBnClickedButton10()
+{
+	// TODO: Add your control notification handler code here
+	test::beginKeyboardThread();
 }

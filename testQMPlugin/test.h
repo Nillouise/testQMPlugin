@@ -31,4 +31,8 @@ namespace test
 	int PrintRoomState(Cdmsoft dm);
 
 	int estimateTotalRun(Cdmsoft dm);
+
+	int acturalRun(Cdmsoft dm);
+
+	UINT beginKeyboardThread();
 }

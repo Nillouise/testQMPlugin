@@ -654,7 +654,7 @@ void ActTemp::express()
 	if (m_trail.empty() == true)
 	{
 		//generate it's only keySignal
-		int signal = 2;// the least number 
+		int signal = 3;//0 can not be use ,1 is run state,2 is release skill the least number 
 		for (;; signal++)
 		{
 			int ok = 1;

@@ -8,7 +8,6 @@ InsZone g_insZone;
 
 int InsZone::loadNeural()
 {
-	::InitializeCriticalSection(&CKeyOp::g_csKeyOp);
 	RedEye::loadNeural();
 	
 	return 0;

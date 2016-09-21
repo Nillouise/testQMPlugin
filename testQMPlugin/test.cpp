@@ -192,3 +192,30 @@ int test::estimateTotalRun(Cdmsoft dm)
 	return 0;
 }
 
+int test::acturalRun(Cdmsoft dm)
+{
+	static UINT uId;
+	static int oneThread = 0;
+	if (oneThread == 0)
+	{
+		_beginthreadex(NULL, 0, CKeyOp::KeyboardInput, NULL, 0, NULL);
+		oneThread = 1;
+	}
+
+	
+
+	return 0;
+}
+
+UINT test::beginKeyboardThread()
+{
+	static UINT uId;
+	static int oneThread = 0;
+	if (oneThread == 0)
+	{
+		_beginthreadex(NULL, 0, CKeyOp::KeyboardInput, NULL, 0, &uId);
+		oneThread = 1;
+	}
+	return uId;
+}
+

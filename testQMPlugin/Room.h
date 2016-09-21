@@ -22,46 +22,34 @@ namespace gandalfr
 	{
 	public:
 		enum keyMode { PRESS,DOWMAGAIN,DOWMNOAGAIN,UP};//DOWMAGAIN is if this key down,then up and down again,DOWNNOAGAIN,it only responce to down state,no again
+
 		std::wstring m_Key;
 		DWORD m_KeyTime;
-		int(*m_KeyCallback)(int x);//when a key press ,it call back 
-		keyMode m_KeyType; // 1 to press,10 to down if this key no down ,then up before down;11 to down ,if down,no down again;20 to up
-		int m_signal;//0 if for run to some area,1 to release skill,you can you other num to approach other effect
+		int(*m_KeyCallback)(DWORD x);//when a key press ,it call back£¬the process while pass the process time
+		keyMode m_KeyType;
+		int m_signal;//1 if for run to some area,2 to release skill,you can you other num to approach other effect
 		
-		static void processKey(Cdmsoft dm, const std::wstring &key, const keyMode &mode,const int &signal)//process this key op include set keyStateDown and m_keyStateSignal;
-		{
-			if (mode == DOWMNOAGAIN)
-			{
-				dm.KeyDownChar(key.c_str());
-				m_keyStateSignal[key] = signal;
-				m_keyRecentProcess[key] = m_nowTime;
-				return;
-			}
-			if (mode == UP)
-			{
-				dm.KeyUpChar(key.c_str());
-				m_keyStateSignal[key] = -1;
-				m_keyRecentProcess[key] = m_nowTime;
-				return;
-			}
+		static DWORD m_nowTime;
+		static bool m_RunTheKeyBoard;//if it is false,the keyboard thread will exit
 
-		}
 
 		static int KeyDefaultCallback(DWORD x);
+
 		static std::vector<CKeyOp> m_vecCKeyOp; // record the history key
 		static std::set<CKeyOp > m_setKeyOp;  // incoming key
 		static CRITICAL_SECTION g_csKeyOp;
 		static std::map<std::wstring, DWORD> m_keyRecentProcess;//the key press in the recent time.if is downing,it should be a max time;
-		static std::map<std::wstring, int> m_keyStateSignal;//the key is -1 if not down,else int represent the ActTemp's keySignal;
+		static std::map<std::wstring, int> m_keyStateSignal;//the key is 0 if not down,else int represent the ActTemp's keySignal;
 
-		static int fillVecUpRunKey(std::vector<CKeyOp> &vec);
+		static int fillVecUpRunKeyCurrentTime(std::vector<CKeyOp> &vec);
 		static int upRunKey(DWORD upTime);// up the left,right,up,down key,if they are downing
 		static int UpSlefKeyAnddelKeyNoExe(int signalId);
 		static int upKeyNoUp(int signalId);
 
-		static DWORD m_nowTime;
-		CKeyOp(std::wstring Key = L"", DWORD KeyTime = 0, keyMode KeyType = CKeyOp::PRESS, int(*KeyCallback)(DWORD) = KeyDefaultCallback) :m_Key(Key), m_KeyTime(KeyTime), m_KeyCallback(KeyCallback), m_KeyType(KeyType),m_signal(0) {}
-		static UINT __stdcall KeyboardInput(LPVOID);//use to begin a new thread
+		static void processKey(Cdmsoft dm, const std::wstring &key, const keyMode &mode, const int &signal);//process this key op include set keyStateDown and m_keyStateSignal;
+
+		CKeyOp(std::wstring Key = L"", DWORD KeyTime = 0, keyMode KeyType = CKeyOp::PRESS, int(*KeyCallback)(DWORD) = KeyDefaultCallback,int signal = 1) :m_Key(Key), m_KeyTime(KeyTime), m_KeyCallback(KeyCallback), m_KeyType(KeyType), m_signal(signal) {}
+		static UINT __stdcall KeyboardInput(PVOID);//use to begin a new thread
 	};
 	bool operator < (const CKeyOp &t1, const CKeyOp &t2);
 
@@ -178,8 +166,7 @@ namespace gandalfr
 		CSpeed m_speed;
 
 		 
-		static CPlayer getPlayer(Cdmsoft dm);
-
+		static CPlayer getPlayer(Cdmsoft dm);\
 	};
 
 	class CObstacleOne
@@ -213,7 +200,6 @@ namespace gandalfr
 		std::vector<CSceneBoxOne> m_vecCSceneBox;
 		DWORD m_time;
 		static CSceneBoxSet getSceneBox(Cdmsoft dm);
-		
 	};
 
 
