@@ -84,7 +84,10 @@ int test::printSetKeyOp()
 int test::printCurNeural()
 {
 	if (g_action.m_curActNeural != NULL)
+	{
 		cout << "curNeural: " << typeid (*((g_action.m_curActNeural)->getClassType())).name() << " output:" << g_action.m_curActNeural->m_output << endl;
+
+	}
 	else
 		cout << "NULL" << endl;
 	return 0;
@@ -182,7 +185,9 @@ int test::PrintRoomState(Cdmsoft dm)
 		cout << test::RectToString(iter->m_rect)<<"\t";
 	}
 	cout << endl;
+	cout << "Player:" << endl;
 
+	cout << RectToString(g_RoomState.m_Player.m_rect) << endl;
 
 	return 0;
 }
@@ -207,6 +212,7 @@ UINT test::beginKeyboardThread()
 	if (oneThread == 0)
 	{
 		_beginthreadex(NULL, 0, CKeyOp::KeyboardInput, NULL, 0, &uId);
+		cout << "begin KyeBoard Thread" << endl;
 		oneThread = 1;
 	}
 	return uId;
@@ -219,8 +225,8 @@ UINT test::beginNeuralThread()
 	{
 		gtest_RunTheWholeNeural = 1;
 		_beginthreadex(NULL, 0, ThreadRunWhole, NULL, 0, &uId);
+		cout << "begin Neural Thread" << endl;
 	}
-
 	return uId;
 }
 
@@ -260,6 +266,7 @@ unsigned int __stdcall test::ThreadRunWhole(PVOID pM)
 		g_insZone.run(dm);
 	}
 	::CoUninitialize();
+	cout << "exit the neural thread";
 	return 0;
 }
 

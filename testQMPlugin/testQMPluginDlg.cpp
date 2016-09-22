@@ -294,6 +294,8 @@ void CtestQMPluginDlg::OnBnClickedButton9()
 void CtestQMPluginDlg::OnBnClickedCancel()
 {
 	// TODO: Add your control notification handler code here
+	test::exitTheNeuralThread();
+	Sleep(2000);
 	CDialogEx::OnCancel();
 }
 

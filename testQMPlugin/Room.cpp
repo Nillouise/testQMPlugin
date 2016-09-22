@@ -157,8 +157,15 @@ int gandalfr::CKeyOp::KeyDefaultCallback(DWORD x)
 	return 0;
 }
 
-int gandalfr::CKeyOp::upRunKey(DWORD upTime)
+
+
+int gandalfr::CKeyOp::fillVecUpRunKeyCurrentTime(std::vector<CKeyOp>& vec, const DWORD timeToUpKey)
 {
+	vec.push_back(CKeyOp(L"left", timeToUpKey, CKeyOp::UP));
+	vec.push_back(CKeyOp(L"up", timeToUpKey, CKeyOp::UP));
+	vec.push_back(CKeyOp(L"right", timeToUpKey, CKeyOp::UP));
+	vec.push_back(CKeyOp(L"down", timeToUpKey, CKeyOp::UP));
+
 	return 0;
 }
 
@@ -378,7 +385,10 @@ void gandalfr::CRoomState::run(Cdmsoft dm)
 	ima::getNewScreen(dm);
 	getAllRectStateInRoom(dm);
 	m_Player.m_rect = CRectangle(100,100, 30, 20);
+
+	::EnterCriticalSection(&CKeyOp::g_csKeyOp);
 	setRunStateCorrectly();
+	::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
 }
 
 //use the ima::g_pbCurScreen return the rectState numer;
@@ -524,6 +534,101 @@ int gandalfr::CRoomState::setRunStateCorrectly()
 	else if ((downTime > upTime &&downUp == 0)||(downUp==0&&upUp==1))
 		state[L"down"] = 1;
 
+
+
+	return 0;
+}
+
+double gandalfr::CRoomState::getPlayerDirectionUseKeyOp()
+{
+	auto &keyOp = CKeyOp::m_vecCKeyOp;
+
+	int leftIndex = -1;
+	auto leftType = CKeyOp::DOWMNOAGAIN;
+	for (size_t i = keyOp.size()-1 ; i >= 0; i--)
+	{
+		if (keyOp[i].m_Key == L"left")
+		{
+			leftIndex = i;
+			leftType = keyOp[i].m_KeyType;
+			break;
+		}
+	}
+
+	int rightIndex = -1;
+	auto rightType = CKeyOp::DOWMNOAGAIN;
+	for (size_t i = keyOp.size() - 1; i >= 0; i--)
+	{
+		if (keyOp[i].m_Key == L"right")
+		{
+			rightIndex = i;
+			rightType = keyOp[i].m_KeyType;
+			break;
+		}
+	}
+
+	if (leftIndex == -1)
+	{
+		if (rightIndex == -1)
+		{
+			return 0.0;
+		}
+		return 1.0;//right side
+	}
+	else {
+		if (rightIndex == -1)
+			return -1.0;//left side
+	}
+
+	if (rightType == CKeyOp::DOWMNOAGAIN)
+	{
+		if (leftType == CKeyOp::DOWMNOAGAIN)
+		{
+			return keyOp[rightIndex].m_KeyTime > keyOp[leftIndex].m_KeyTime ? 1.0 : -1.0;
+		}
+		return 1.0;
+	}
+	else {
+		if (leftType == CKeyOp::DOWMNOAGAIN)
+		{
+			return -1.0;
+		}
+		else {// this need to find the pre key to decide which side
+			//int leftIndex2 = leftIndex;
+			//auto leftType2 = CKeyOp::DOWMNOAGAIN;
+			//for (size_t i = leftIndex - 1; i >= 0; i--)
+			//{
+			//	if (keyOp[i].m_Key == L"left")
+			//	{
+			//		leftIndex2 = i;
+			//		leftType2 = keyOp[i].m_KeyType;
+			//	}
+			//}
+			//int rightIndex2 = rightIndex;
+			//auto rightType2 = CKeyOp::DOWMNOAGAIN;
+			//for (size_t i = rightIndex - 1; i >= 0; i--)
+			//{
+			//	if (keyOp[i].m_Key == L"right")
+			//	{
+			//		rightIndex2 = i;
+			//		rightType2 = keyOp[i].m_KeyType;
+			//	}
+			//}
+			if (keyOp[leftIndex].m_KeyTime > keyOp[rightIndex].m_KeyTime)
+			{
+				return -1.0;
+			}
+			else {
+				return 1.0;
+			}
+
+		}
+	}
+
+
+
+
+
 	return 0;
 }
 
@@ -576,6 +681,7 @@ void gandalfr::CKeyOp::processKey(Cdmsoft dm, const std::wstring & key, const ke
 		m_vecCKeyOp.push_back(CKeyOp(key, m_nowTime, DOWMNOAGAIN));
 		m_keyStateSignal[key] = signal;
 		m_keyRecentProcess[key] = m_nowTime;
+		wcout << key << L":down" << L"\t";
 		return;
 	}
 	if (mode == UP)
@@ -584,6 +690,7 @@ void gandalfr::CKeyOp::processKey(Cdmsoft dm, const std::wstring & key, const ke
 		m_vecCKeyOp.push_back(CKeyOp(key, m_nowTime, UP));
 		m_keyStateSignal[key] = 0;
 		m_keyRecentProcess[key] = m_nowTime;
+		wcout << key << L":up" << L"\t";
 		return;
 	}
 

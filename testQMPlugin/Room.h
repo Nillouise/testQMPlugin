@@ -41,8 +41,8 @@ namespace gandalfr
 		static std::map<std::wstring, DWORD> m_keyRecentProcess;//the key press in the recent time.if is downing,it should be a max time;
 		static std::map<std::wstring, int> m_keyStateSignal;//the key is 0 if not down,else int represent the ActTemp's keySignal;
 
-		static int fillVecUpRunKeyCurrentTime(std::vector<CKeyOp> &vec);
-		static int upRunKey(DWORD upTime);// up the left,right,up,down key,if they are downing
+		static int fillVecUpRunKeyCurrentTime(std::vector<CKeyOp> &vec,DWORD timeToUpKey);//use in actTemp to up the run key.
+	//	static int upRunKey(DWORD upTime);// up the left,right,up,down key,if they are downing
 		static int UpSlefKeyAnddelKeyNoExe(int signalId);
 		static int upKeyNoUp(int signalId);
 
@@ -264,6 +264,7 @@ namespace gandalfr
 		int getAllRectStateInRoom(Cdmsoft dm);
 
 		int setRunStateCorrectly();
+		double getPlayerDirectionUseKeyOp();
 
 		void clearOldState();
 	private:

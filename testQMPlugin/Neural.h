@@ -22,6 +22,8 @@ public:
 	static double sumUpRelativeWeight(void* head);
 	//link point1 and point2 in g_weight
 	static void makeWeight(void *point1, void *point2, double x);
+	static void makeWeight(void *point1, void*point2, double p1Top2, double p2Top1);
+
 
 	double m_selfOutput;//the run calculate this output;
 	double m_output;// the Neural weight that involve all include m_base ,m_selfOutput and other link

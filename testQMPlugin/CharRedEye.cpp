@@ -43,6 +43,7 @@ void RedEye::ActShuangDao::run()
 					CRectangle r;
 					if (CRectangle::RectCollide(*it2, *it4, &r) == 0)
 					{
+						it4++;
 						continue;
 					}
 					double perArea = (double) (r.width*r.height)/ it2->height*it2->width;
@@ -117,14 +118,10 @@ void RedEye::ActShuangDao::cal()
 	
 	//add the monster source weight;
 	//it is interesting,in sumUpRelatveWeight,I add all the edge include the all MonNeural.Now, I add again the one of them,it should mul a large coefficient
+	if(*m_MonToAttack != NULL)
 	m_output += ga::coefficient_monNeural * (*m_MonToAttack)->m_output + g_weight[make_pair(this, *m_MonToAttack)];
 
 }
-
-
-
-
-
 
 
 void RedEye::ActShuangDao::express()
@@ -140,7 +137,7 @@ void RedEye::ActShuangDao::express()
 	
 	if (CRectangle::RectCollide(m_bestArea.m_rect, g_RoomState.m_Player.m_rect, &rectDist) == 1)
 	{
-		CKeyOp::upRunKey(0);//no continue to press run key;
+//		CKeyOp::upRunKey(0);//no continue to press run key;
 		//attack immediatly
 		actAttack->m_endTime = nowTime + 2000;
 		if (isCoDirection(g_RoomState.m_Player.m_direction, m_bestArea.direction) == 0)
@@ -184,8 +181,8 @@ int RedEye::loadNeural()
 
 	MonAny* monAny = new MonAny();
 
-	Neural::makeWeight(actShuangDaoMon1, monAny, 1);
-	Neural::makeWeight(actShuangDaoMon2, monAny, 1);
+	Neural::makeWeight(actShuangDaoMon1, monAny, 1,0);
+	Neural::makeWeight(actShuangDaoMon2, monAny, 1,0);
 
 
 	Neural::makeWeight(actShuangDaoMon1, &g_action, 1);
@@ -197,8 +194,5 @@ int RedEye::loadNeural()
 
 	g_AnyToAct[&g_action].insert(actShuangDaoMon1);
 	g_AnyToAct[&g_action].insert(actShuangDaoMon2);
-
-
-
 	return 0;
 }

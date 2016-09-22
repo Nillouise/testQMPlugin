@@ -775,6 +775,7 @@ double Neural::sumUpRelativeWeight(void * head)
 	{
 		if (it->first.first == head)
 		{
+			auto a = ((Neural*)(it->first.second));
 			sum += ((Neural*)(it->first.second))->m_output *  it->second;
 		}
 	}
@@ -785,6 +786,12 @@ void Neural::makeWeight(void *point1, void *point2, double x)
 {
 	g_weight[make_pair(point1, point2)] = x;
 	g_weight[make_pair(point2, point1)] = x;
+}
+
+void Neural::makeWeight(void * point1, void * point2, double p1Top2, double p2Top1)
+{
+	g_weight[make_pair(point1, point2)] = p1Top2;
+	g_weight[make_pair(point2, point1)] = p2Top1;
 }
 
 void SelMonster::run()
@@ -834,7 +841,7 @@ void SelMonster::run()
 void MonAny::run()
 {
 	m_Mon = g_RoomState.m_Monster;
-	m_selfOutput = 100;
+	m_selfOutput = 3.33;
 }
 
 void MonAny::cal()
