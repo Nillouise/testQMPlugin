@@ -23,7 +23,6 @@ void RedEye::ActShuangDao::run()
 		m_output = 0;
 		return;
 	}
-		
 	CDecision::getMonsterOverlay( skillArea, receive,(**m_MonToAttack).m_Mon );// it should use MonNeural
 
 
@@ -77,7 +76,7 @@ void RedEye::ActShuangDao::run()
 	}
 
 	CAttackArea bestArea(CRectangle(), 0, 0);
-	double bestScore = DBL_MIN;
+	double bestScore = -DBL_MAX;
 	for (auto it = selGolRec.begin(); it != selGolRec.end(); it++)
 	{
 		double curScore = 0;
@@ -106,11 +105,19 @@ void RedEye::ActShuangDao::run()
 
 	}
 	m_bestArea = bestArea;
-	m_output = bestScore;
-	m_output += sumUpRelativeWeight(this);
-	m_output += m_base;
+	
+	m_selfOutput = m_base;
+	m_selfOutput += bestScore;
+}
+
+void RedEye::ActShuangDao::cal()
+{
+	m_output = m_selfOutput;
+	m_output += Neural::sumUpRelativeWeight(this);
+	
 	//add the monster source weight;
-	m_output += (*m_MonToAttack)->m_output + g_weight[make_pair(this,*m_MonToAttack)] ;
+	//it is interesting,in sumUpRelatveWeight,I add all the edge include the all MonNeural.Now, I add again the one of them,it should mul a large coefficient
+	m_output += ga::coefficient_monNeural * (*m_MonToAttack)->m_output + g_weight[make_pair(this, *m_MonToAttack)];
 
 }
 

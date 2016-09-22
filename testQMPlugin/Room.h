@@ -262,6 +262,9 @@ namespace gandalfr
 
 		void run(Cdmsoft dm);
 		int getAllRectStateInRoom(Cdmsoft dm);
+
+		int setRunStateCorrectly();
+
 		void clearOldState();
 	private:
 

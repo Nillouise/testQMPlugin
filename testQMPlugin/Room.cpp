@@ -9,6 +9,7 @@
 #include"image.h"
 #include"grade.h"
 using namespace gandalfr;
+using namespace std;
 CRoomState g_RoomState;
 std::vector<CKeyOp> CKeyOp::m_vecCKeyOp; // record the history key
 std::set<CKeyOp >  CKeyOp::m_setKeyOp;  // incoming key
@@ -377,12 +378,12 @@ void gandalfr::CRoomState::run(Cdmsoft dm)
 	ima::getNewScreen(dm);
 	getAllRectStateInRoom(dm);
 	m_Player.m_rect = CRectangle(100,100, 30, 20);
+	setRunStateCorrectly();
 }
 
-//return the rectState numer;
+//use the ima::g_pbCurScreen return the rectState numer;
 int gandalfr::CRoomState::getAllRectStateInRoom(Cdmsoft dm)
 {
-	ima::getNewScreen(dm);
 	vector<ima::ColRGB> vBlo;
 	vBlo.push_back(ga::roomMon);
 	vBlo.push_back(ga::roomObs);
@@ -445,12 +446,88 @@ int gandalfr::CRoomState::getAllRectStateInRoom(Cdmsoft dm)
 	return count;
 }
 
-void gandalfr::CRoomState::clearOldState()
+DWORD getKeyRunState(const wstring &key,int begin, DWORD &time, int &Up)
 {
-	
-
-
+	auto &hisKey = CKeyOp::m_vecCKeyOp;
+	time = 0;
+	Up = 1;
+	int preDownTime = 0;
+	for (int i = begin; i < hisKey.size(); i++)
+	{
+		if (i == -1)
+		{
+			continue;
+		}
+		if (hisKey[i].m_Key == L"left")
+		{
+			if (hisKey[i].m_KeyType == CKeyOp::DOWMNOAGAIN)
+			{
+				begin = i;
+				preDownTime = time;
+				time = hisKey[i].m_KeyTime;
+				Up = 0;
+			}
+			else
+			{
+				Up = 1;
+			}
+		}
+	}
+	return preDownTime;
 }
+
+int gandalfr::CRoomState::setRunStateCorrectly()
+{
+	auto &hisKey = CKeyOp::m_vecCKeyOp;
+	auto &state = g_RoomState.m_runState;
+
+	// these is corresponse key ' index
+	static int upperKey = -1;
+	static int downKey = -1;
+	static int leftKey = -1;
+	static int rightkey = -1;
+
+	DWORD leftTime = 0;//the lasteast down time;
+	int leftUp = 1;//if left key is up,it is 1;
+	DWORD preLeftDown =  getKeyRunState(L"left", leftKey, leftTime, leftUp);
+	DWORD rightTime = 0;
+	int rightUp = 1;//if left key is up,it is 1;
+	DWORD preRightDown =  getKeyRunState(L"right", rightkey, rightTime, rightUp);
+
+	if (leftUp == 1)
+		state[L"left"] = 0;
+	if(rightUp == 1)
+		state[L"right"] = 0;
+	if (leftTime - preLeftDown < ga::startRunNeedTime && leftUp == 0 && rightTime < preLeftDown)
+		state[L"left"] = 2;
+	else if (rightTime - preRightDown < ga::startRunNeedTime && rightUp == 0 && leftTime < preRightDown)
+		state[L"right"] = 2;
+	else if ((leftTime > rightTime &&leftUp == 0) || (leftUp==0 &&rightUp == 1 ))
+		state[L"left"] = 1;
+	else if ((rightTime > leftTime &&rightUp == 0 )|| (rightUp == 0&& leftUp==1))
+		state[L"right"] = 1;
+
+
+	DWORD upTime = 0;
+	int upUp = 1;
+	DWORD preUpDown = getKeyRunState(L"up", upperKey, upTime, upUp);
+	DWORD downTime = 0;
+	int downUp = 1;
+	DWORD preDownDown = getKeyRunState(L"down", downKey, downTime, downUp);
+
+	if (upUp == 1)
+		state[L"up"] = 0;
+	if (downUp == 1)
+		state[L"down"] = 0;
+	if ((upTime > downTime && upUp == 0)||(upUp==0 &&downUp == 1))
+		state[L"up"] = 1;
+	else if ((downTime > upTime &&downUp == 0)||(downUp==0&&upUp==1))
+		state[L"down"] = 1;
+
+	return 0;
+}
+
+
 
 CObstacleSet gandalfr::CObstacleSet::getObstacle(Cdmsoft dm, int rangeX, int rangeY, int rangeWidth, int rangeHeight, WCHAR * ObsColor, double similar, int PointCount, int obsWidth, int obsHeight)
 {

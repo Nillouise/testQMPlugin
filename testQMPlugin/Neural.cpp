@@ -6,7 +6,7 @@
 #include<map>
 #include<set>
 #include<float.h>
-
+#include"grade.h"
 using namespace std;
 using namespace gandalfr;
 
@@ -27,11 +27,35 @@ void CAction::run()
 	auto &actTemp =  g_AnyToActTemp[(void*)this];
 	auto &act = g_AnyToAct[(void*)this];
 
-	double maxWeight = DBL_MIN;
+	double maxWeight = -DBL_MAX;
 	Neural* newAct = NULL;
+
+	//run and cal the linked Neural output;
 	for (auto it = actTemp.begin(); it != actTemp.end(); it++)//find the biggest weight
 	{
 		(*it)->run();
+	}
+
+	for (auto it = act.begin(); it != act.end(); it++)//find the biggest weight
+	{
+		(*it)->run();
+	}
+	for (size_t i = 0; i < 2; i++)
+	{
+		for (auto it = actTemp.begin(); it != actTemp.end(); it++)//find the biggest weight
+		{
+			(*it)->cal();
+		}
+
+		for (auto it = act.begin(); it != act.end(); it++)//find the biggest weight
+		{
+			(*it)->cal();
+		}
+	}
+
+
+	for (auto it = actTemp.begin(); it != actTemp.end(); it++)//find the biggest weight
+	{
 		auto itAct = g_weight.find(make_pair((void*)this, (void*)(*it)));
 
 		//cal the curWeight,because ActTemp Neural has not link to caction,caction should use actTemp actual m_output 
@@ -47,11 +71,9 @@ void CAction::run()
 		}
 	}
 
-
-
 	for (auto it = act.begin(); it != act.end(); it++)//find the biggest weight
 	{
-		(*it)->run();
+
 
 		auto itAct = g_weight.find(make_pair((void*)this, (void*)(*it)));
 		double curWeight = (*it)->m_output;
@@ -96,9 +118,8 @@ void CAction::run()
 //take a trail ,immediatly run ,and return the end time
 DWORD CAction::executeTrail(const vector<CTrail>& trail)
 {
-	//this function have a problem that it not fit the real keyboard ,because it hasn't the correctly press interval abstract
 
-	//it shounld only delete the run state key
+	//it is right,beacuse the actTemp key no in trail state,it will manage it's own self key
 	::EnterCriticalSection(&CKeyOp::g_csKeyOp);
 	CKeyOp::m_setKeyOp.clear();
 	::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
@@ -638,12 +659,11 @@ double ActTemp::fnOutMustRunComplete(DWORD beginTime, DWORD endTime, Neural * ne
 
 void ActTemp::run()
 {
-	m_output = Neural::sumUpRelativeWeight(this);
-
+	m_selfOutput = m_base;
 
 	if (m_fnOutput != NULL)
 	{
-		m_output += m_fnOutput(m_beginTime, m_endTime,this);
+		m_selfOutput += m_fnOutput(m_beginTime, m_endTime,this);
 	}
 	
 }
@@ -741,6 +761,12 @@ void ActTemp::end()
 
 }
 
+void ActTemp::cal()
+{
+	m_output = m_selfOutput;
+	m_output += Neural::sumUpRelativeWeight(this);
+}
+
 //add all weight relative to the head
 double Neural::sumUpRelativeWeight(void * head)
 {
@@ -767,9 +793,22 @@ void SelMonster::run()
 	g_monNeural2 = NULL;
 	double maxMon1 = 0;
 	double maxMon2 = 0;
+
 	for (auto iter = g_AnyToMon[this].begin(); iter != g_AnyToMon[this].end(); iter++)
 	{
 		(*iter)->run();
+	}
+	for (size_t i = 0; i < 2; i++)
+	{
+		for (auto iter = g_AnyToMon[this].begin(); iter != g_AnyToMon[this].end(); iter++)
+		{
+			(*iter)->cal();
+		}
+	}
+
+
+	for (auto iter = g_AnyToMon[this].begin(); iter != g_AnyToMon[this].end(); iter++)
+	{
 		auto itAct = g_weight.find(make_pair((void*)this, (void*)(*iter)));
 		double curWeight = (*iter)->m_output;
 		if (itAct != g_weight.end())
@@ -795,5 +834,11 @@ void SelMonster::run()
 void MonAny::run()
 {
 	m_Mon = g_RoomState.m_Monster;
-	m_output = 100;
+	m_selfOutput = 100;
+}
+
+void MonAny::cal()
+{
+	m_output = m_selfOutput;
+	m_output += Neural::sumUpRelativeWeight(this);
 }

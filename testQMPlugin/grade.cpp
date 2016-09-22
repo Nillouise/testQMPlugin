@@ -26,4 +26,8 @@ namespace ga
 	int stepY = 10;
 
 	DWORD key_ProInterval = 200;
+
+	double coefficient_monNeural = 10;
+
+	DWORD startRunNeedTime = 450;
 }

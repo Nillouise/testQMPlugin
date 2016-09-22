@@ -14,7 +14,7 @@ class Neural
 public:
 	virtual Neural* getClassType() { return this; }
 	virtual void run() {}
-	virtual void link(){}
+	virtual void cal() {}
 	virtual void express() {}
 	virtual void end() {}
 
@@ -23,7 +23,8 @@ public:
 	//link point1 and point2 in g_weight
 	static void makeWeight(void *point1, void *point2, double x);
 
-	double m_output;// the Neural weight
+	double m_selfOutput;//the run calculate this output;
+	double m_output;// the Neural weight that involve all include m_base ,m_selfOutput and other link
 	double m_base;//use to make the m_ouput
 
 	DWORD m_lastRunTime;
@@ -46,6 +47,8 @@ class MonNearAndAttacking :public MonNeural
 {
 public:
 	virtual MonNearAndAttacking* getClassType() { return this; }
+	virtual void run();
+	virtual void cal();
 };
 
 class MonAny :public MonNeural
@@ -53,6 +56,7 @@ class MonAny :public MonNeural
 public:
 	virtual MonAny* getClassType() { return this; }
 	virtual void run();
+	virtual void cal();
 };
 
 
@@ -87,7 +91,7 @@ public:
 	virtual void run();//ActTemp output only depend on m_fnOutput?didn't relative the other Neural?
 	virtual void express();
 	virtual void end();
-
+	virtual void cal();
 
 	DWORD m_beginTime;
 	DWORD m_endTime;
