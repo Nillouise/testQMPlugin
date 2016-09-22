@@ -13,6 +13,7 @@ namespace test
 	int findmonster(Cdmsoft dm);
 
 	
+	
 	std::string RectToString(const CRectangle r);
 
 	int InitialNeural();
@@ -34,5 +35,17 @@ namespace test
 
 	int acturalRun(Cdmsoft dm);
 
+
+	extern int gtest_RunTheWholeNeural;
+	extern int gtest_pauseNeuralThread;
 	UINT beginKeyboardThread();
+
+	UINT beginNeuralThread();
+	int pauseNeuralThread();
+	int restartNeuralThread();
+	int exitTheNeuralThread();
+
+	unsigned int __stdcall ThreadRunWhole(PVOID pM);
+
+
 }

@@ -206,12 +206,13 @@ UINT gandalfr::CKeyOp::KeyboardInput(PVOID)
 	m_keyStateSignal.clear();
 
 
+
 	while (m_RunTheKeyBoard)
 	{
 		::EnterCriticalSection(&g_csKeyOp);
 		m_nowTime = ::GetTickCount();
 		vector<CKeyOp> generateKey;
-		for (auto iter = m_setKeyOp.begin(); iter != m_setKeyOp.end(); iter++)
+		for (auto iter = m_setKeyOp.begin(); iter != m_setKeyOp.end(); )
 		{
 			if (iter->m_KeyTime <= m_nowTime)
 			{
@@ -245,7 +246,11 @@ UINT gandalfr::CKeyOp::KeyboardInput(PVOID)
 							CKeyOp nextKey(*iter);
 							auto iter2 = iter;
 							iter2++;
-							nextKey.m_KeyTime = iter2->m_KeyTime - 1;
+							if (iter2 != m_setKeyOp.end())
+							{
+								nextKey.m_KeyTime = iter2->m_KeyTime - 1;
+							}
+							
 							generateKey.push_back(nextKey);
 							iter++;
 						}
@@ -254,7 +259,10 @@ UINT gandalfr::CKeyOp::KeyboardInput(PVOID)
 							CKeyOp nextKey(*iter);
 							auto iter2 = iter;
 							iter2++;
-							nextKey.m_KeyTime = iter2->m_KeyTime - 1;
+							if (iter2 != m_setKeyOp.end())
+							{
+								nextKey.m_KeyTime = iter2->m_KeyTime - 1;
+							}
 							nextKey.m_KeyType = UP;
 							generateKey.push_back(nextKey);
 							iter = m_setKeyOp.erase(iter);
@@ -268,7 +276,10 @@ UINT gandalfr::CKeyOp::KeyboardInput(PVOID)
 							CKeyOp nextKey(*iter);
 							auto iter2 = iter;
 							iter2++;
-							nextKey.m_KeyTime = iter2->m_KeyTime - 1;
+							if (iter2 != m_setKeyOp.end())
+							{
+								nextKey.m_KeyTime = iter2->m_KeyTime - 1;
+							}
 							nextKey.m_KeyType = DOWMNOAGAIN;
 							generateKey.push_back(nextKey);
 							iter++;
@@ -298,7 +309,7 @@ UINT gandalfr::CKeyOp::KeyboardInput(PVOID)
 
 
 
-	//::CoUninitialize();//关闭线程的COM库，此函数应和CoInitialize成对使用。
+	::CoUninitialize();//关闭线程的COM库，此函数应和CoInitialize成对使用。
 	return 0;
 }
 

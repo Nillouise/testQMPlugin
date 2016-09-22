@@ -4,6 +4,10 @@
 #include<iomanip>
 using namespace gandalfr;
 using namespace std;
+
+int test::gtest_RunTheWholeNeural;
+int test::gtest_pauseNeuralThread;
+
 int test::OpenConsole()
 {
 	AllocConsole();
@@ -187,25 +191,14 @@ int test::estimateTotalRun(Cdmsoft dm)
 {
 
 	DWORD curTime = ::GetTickCount();
+
 	g_insZone.run(dm);
+
 	cout << ::GetTickCount() - curTime << endl;
 	return 0;
 }
 
-int test::acturalRun(Cdmsoft dm)
-{
-	static UINT uId;
-	static int oneThread = 0;
-	if (oneThread == 0)
-	{
-		_beginthreadex(NULL, 0, CKeyOp::KeyboardInput, NULL, 0, NULL);
-		oneThread = 1;
-	}
 
-	
-
-	return 0;
-}
 
 UINT test::beginKeyboardThread()
 {
@@ -218,4 +211,59 @@ UINT test::beginKeyboardThread()
 	}
 	return uId;
 }
+
+UINT test::beginNeuralThread()
+{
+	static UINT uId;
+	if (gtest_RunTheWholeNeural == 0)
+	{
+		gtest_RunTheWholeNeural = 1;
+		_beginthreadex(NULL, 0, ThreadRunWhole, NULL, 0, &uId);
+	}
+
+	return uId;
+}
+
+int test::pauseNeuralThread()
+{
+	gtest_pauseNeuralThread = 1;
+	return 0;
+}
+
+int test::restartNeuralThread()
+{
+	gtest_pauseNeuralThread = 0;
+	return 0;
+}
+
+int test::exitTheNeuralThread()
+{
+	gtest_RunTheWholeNeural = 0;
+	gtest_pauseNeuralThread = 0;
+	return 0;
+}
+
+unsigned int __stdcall test::ThreadRunWhole(PVOID pM)
+{
+	::CoInitialize(NULL);//初始化线程COM库
+	Cdmsoft dm;
+	dm.CreateDispatch(L"dm.dmsoft");
+	gtest_RunTheWholeNeural = 1;
+	gtest_pauseNeuralThread = 0;
+
+	while (gtest_RunTheWholeNeural)
+	{
+		while (gtest_pauseNeuralThread==1)
+		{
+			Sleep(10);
+		}
+		g_insZone.run(dm);
+	}
+	::CoUninitialize();
+	return 0;
+}
+
+
+
+
 

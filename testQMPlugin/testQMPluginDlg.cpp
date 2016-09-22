@@ -87,6 +87,10 @@ BEGIN_MESSAGE_MAP(CtestQMPluginDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON9, &CtestQMPluginDlg::OnBnClickedButton9)
 	ON_BN_CLICKED(IDCANCEL, &CtestQMPluginDlg::OnBnClickedCancel)
 	ON_BN_CLICKED(IDC_BUTTON10, &CtestQMPluginDlg::OnBnClickedButton10)
+	ON_BN_CLICKED(IDC_BUTTON11, &CtestQMPluginDlg::OnBnClickedButton11)
+	ON_BN_CLICKED(IDC_BUTTON12, &CtestQMPluginDlg::OnBnClickedButton12)
+	ON_BN_CLICKED(IDC_BUTTON13, &CtestQMPluginDlg::OnBnClickedButton13)
+	ON_BN_CLICKED(IDC_BUTTON14, &CtestQMPluginDlg::OnBnClickedButton14)
 END_MESSAGE_MAP()
 
 
@@ -298,4 +302,32 @@ void CtestQMPluginDlg::OnBnClickedButton10()
 {
 	// TODO: Add your control notification handler code here
 	test::beginKeyboardThread();
+}
+
+
+void CtestQMPluginDlg::OnBnClickedButton11()
+{
+	// TODO: Add your control notification handler code here
+	test::beginNeuralThread();
+}
+
+
+void CtestQMPluginDlg::OnBnClickedButton12()
+{
+	// TODO: Add your control notification handler code here
+	test::exitTheNeuralThread();
+}
+
+
+void CtestQMPluginDlg::OnBnClickedButton13()
+{
+	// TODO: Add your control notification handler code here
+	test::pauseNeuralThread();
+}
+
+
+void CtestQMPluginDlg::OnBnClickedButton14()
+{
+	// TODO: Add your control notification handler code here
+	test::restartNeuralThread();
 }
