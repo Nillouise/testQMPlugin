@@ -15,7 +15,7 @@ namespace test
 	std::string RectToString(const CRectangle r);
 
 	int InitialNeural();
-	int runInsZone(Cdmsoft dm);
+	int runInsZone(Cdmsoft dm);// it also can run while the neural thread is running
 	
 	int printSetKeyOp();
 
@@ -23,20 +23,18 @@ namespace test
 
 	int reset();
 
-	int printImage(Cdmsoft dm);
-
-	int performanceCustomVSdm(Cdmsoft dm);
 
 	int PrintRoomState(Cdmsoft dm);
 
-	int estimateTotalRun(Cdmsoft dm);
+	int estimateTotalRun(Cdmsoft dm);//a total run need how much time
 
-	int acturalRun(Cdmsoft dm);
 
 
 	extern int gtest_RunTheWholeNeural;
 	extern int gtest_pauseNeuralThread;
 	UINT beginKeyboardThread();
+	UINT exitKeyBoardThread();
+
 
 	UINT beginNeuralThread();
 	int pauseNeuralThread();

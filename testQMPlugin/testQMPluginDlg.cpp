@@ -202,7 +202,7 @@ void CtestQMPluginDlg::OnBnClickedOk()
 
 
 	UpdateData(TRUE);
-	test::getMonsterOverlay(dm, gandalfr::CRectangle(0,0, ::_ttoi(CSLayerWidth) , ::_ttoi(CSLayerHeight) ));
+//	test::getMonsterOverlay(dm, gandalfr::CRectangle(0,0, ::_ttoi(CSLayerWidth) , ::_ttoi(CSLayerHeight) ));
 //	gandalfr::CMonster::m_vecCMon.push_back(gandalfr::CMonster(gandalfr::CRectangle()));
 //	CDialogEx::OnCancel();
 }
@@ -219,7 +219,7 @@ void CtestQMPluginDlg::OnBnClickedOpenconsole()
 void CtestQMPluginDlg::OnBnClickedfindmonster()
 {
 	// TODO: Add your control notification handler code here
-	test::findmonster(dm);
+//	test::findmonster(dm);
 }
 
 
@@ -264,14 +264,14 @@ void CtestQMPluginDlg::OnBnClickedButton5()
 void CtestQMPluginDlg::OnBnClickedButton6()
 {
 	// TODO: Add your control notification handler code here
-	test::printImage(dm);
+//	test::printImage(dm);
 }
 
 
 void CtestQMPluginDlg::OnBnClickedButton7()
 {
 	// TODO: Add your control notification handler code here
-	test::performanceCustomVSdm(dm);
+//	test::performanceCustomVSdm(dm);
 }
 
 

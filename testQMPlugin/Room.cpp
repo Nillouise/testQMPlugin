@@ -185,6 +185,8 @@ UINT gandalfr::CKeyOp::KeyboardInput(PVOID)
 
 	while (m_RunTheKeyBoard)
 	{
+		Sleep(10);//pause time that other thread can process the key.
+
 		::EnterCriticalSection(&g_csKeyOp);
 		m_nowTime = ::GetTickCount();
 		vector<CKeyOp> generateKey;

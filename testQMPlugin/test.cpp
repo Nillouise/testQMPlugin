@@ -7,7 +7,7 @@ using namespace std;
 
 int test::gtest_RunTheWholeNeural;
 int test::gtest_pauseNeuralThread;
-CRITICAL_SECTION cs_testNeuralThread;
+CRITICAL_SECTION test::cs_testNeuralThread;
 
 
 int test::OpenConsole()
@@ -15,16 +15,6 @@ int test::OpenConsole()
 	AllocConsole();
 	freopen("conout$", "w", stdout);
 	std::cout << "i'm cout" << std::endl;
-	return 0;
-}
-
-int test::getMonsterOverlay(Cdmsoft dm, gandalfr::CRectangle rectSkill)
-{
-	return 0;
-}
-
-int test::findmonster(Cdmsoft dm)
-{
 	return 0;
 }
 
@@ -67,10 +57,10 @@ int test::printSetKeyOp()
 
 int test::printCurNeural()
 {
-	if (g_action.m_curActNeural != NULL)
+	auto p = g_action.m_curActNeural;
+	if (p != NULL)
 	{
-		cout << "curNeural: " << typeid (*((g_action.m_curActNeural)->getClassType())).name() << " output:" << g_action.m_curActNeural->m_output << endl;
-
+		cout << "curNeural: " << typeid (*((p)->getClassType())).name() << " output:" << g_action.m_curActNeural->m_output << endl;
 	}
 	else
 		cout << "NULL" << endl;
@@ -85,60 +75,8 @@ int test::reset()
 	return 0;
 }
 
-int test::printImage(Cdmsoft dm)
-{
-
-	ima::CBlock b;
-	vector<ima::ColRGB> vColor;
-	ima::ColRGB col1(0x3a,0x6e,0xa5);
-	vColor.push_back(col1);
 
 
-	ima::getNewScreen(dm);
-	b.getBlock(vColor, set<ima::CBlock>());
-
-	return 0;
-}
-
-int test::performanceCustomVSdm(Cdmsoft dm)
-{
-	ima::CBlock b;
-	vector<ima::ColRGB> vColor;
-	vColor.push_back(ima::ColRGB(0xff, 0x00, 0x94));
-
-	DWORD curTime = GetTickCount();
-	size_t i;
-	for (i = 0; i < 1; i++)
-	{
-		ima::getNewScreen(dm);
-		set<ima::CBlock> receive;
-		b.getBlock(vColor, receive);
-
-		if (i == 0)
-		{
-			for (auto iter = receive.begin(); iter != receive.end(); iter++)
-			{
-				cout<<dec << setw(4) << setfill(' ') << iter->x <<dec << setw(4) << setfill(' ') <<dec << iter->y<<dec << setw(4) << setfill(' ') << iter->width <<dec << setw(4) << setfill(' ') << iter->height<<"  "<< setw(2)<< setfill('0')<< hex<<(int) iter->m_color.col[ima::ColRGB::R] << setw(2) << setfill('0') << hex << (int)iter->m_color.col[ima::ColRGB::G] << setw(2) << setfill('0') <<hex << (int)iter->m_color.col[ima::ColRGB::B];
-				if (distance(receive.begin(), iter) % 3 == 2)
-				{
-					cout << endl;
-				}
-				else {
-					cout << "   ";
-				}
-			}
-			cout << endl;
-		}
-	}
-	cout<<"custom color block search function in "<<i<<" call:" << dec << GetTickCount() - curTime << " " << endl;
-	curTime = GetTickCount();
-	for (size_t i = 0; i < 1; i++)
-	{
-		dm.FindColorBlockEx(0, 0, 800, 600, L"ff0094", 1.0, 100, 10, 10);
-	}
-	cout<<"dm's color block search function in " << i << " call:" << dec << GetTickCount() - curTime<<endl;
-	return 0;
-}
 
 int test::PrintRoomState(Cdmsoft dm)
 {
@@ -184,8 +122,9 @@ int test::estimateTotalRun(Cdmsoft dm)
 	::EnterCriticalSection(&cs_testNeuralThread);
 	DWORD curTime = ::GetTickCount();
 	g_insZone.run(dm);
+	cout << "run total one round need millisecond " << ::GetTickCount() - curTime << endl;
 	::LeaveCriticalSection(&cs_testNeuralThread);
-	cout<<"run total one round need millisecond " << ::GetTickCount() - curTime << endl;
+
 	return 0;
 }
 
@@ -202,6 +141,14 @@ UINT test::beginKeyboardThread()
 		oneThread = 1;
 	}
 	return uId;
+}
+
+UINT test::exitKeyBoardThread()
+{
+	CKeyOp::m_RunTheKeyBoard = false;
+	cout << "exit The keyBoard Thread" << endl;
+
+	return 0;
 }
 
 UINT test::beginNeuralThread()
