@@ -164,7 +164,7 @@ namespace gandalfr
 		CSpeed m_speed;//default speed:int RunX = 953, int RunY = 110, int WalkX = 300, int WalkY = 110
 
 		 
-		static CPlayer getPlayer(Cdmsoft dm);
+		static CPlayer getPlayer();
 	};
 
 	class CObstacleOne

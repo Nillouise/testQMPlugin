@@ -71,6 +71,8 @@ int test::reset()
 {
 	::EnterCriticalSection(&cs_testNeuralThread);
 	g_action.m_curActNeural = NULL;
+	g_AnyToActTemp[&g_action].clear();
+
 	::LeaveCriticalSection(&cs_testNeuralThread);
 	return 0;
 }

@@ -354,7 +354,7 @@ void gandalfr::CRoomState::run(Cdmsoft dm)
 {
 	ima::getNewScreen(dm);
 	getAllRectStateInRoom(dm);
-	m_Player.m_rect = CRectangle(100,100, 30, 20);
+	m_Player.m_rect = CPlayer::getPlayer().m_rect ;
 
 	::EnterCriticalSection(&CKeyOp::g_csKeyOp);
 	setRunStateCorrectly();
@@ -516,7 +516,7 @@ double gandalfr::CRoomState::getPlayerDirectionUseKeyOp()
 
 	int leftIndex = -1;
 	auto leftType = CKeyOp::DOWMNOAGAIN;
-	for (size_t i = keyOp.size()-1 ; i >= 0; i--)
+	for (int i = keyOp.size()-1 ; i >= 0; i--)
 	{
 		if (keyOp[i].m_Key == L"left")
 		{
@@ -528,7 +528,7 @@ double gandalfr::CRoomState::getPlayerDirectionUseKeyOp()
 
 	int rightIndex = -1;
 	auto rightType = CKeyOp::DOWMNOAGAIN;
-	for (size_t i = keyOp.size() - 1; i >= 0; i--)
+	for (int i = keyOp.size() - 1; i >= 0; i--)
 	{
 		if (keyOp[i].m_Key == L"right")
 		{
@@ -567,7 +567,7 @@ double gandalfr::CRoomState::getPlayerDirectionUseKeyOp()
 		else {// this need to find the pre key to decide which side
 			//int leftIndex2 = leftIndex;
 			//auto leftType2 = CKeyOp::DOWMNOAGAIN;
-			//for (size_t i = leftIndex - 1; i >= 0; i--)
+			//for (int i = leftIndex - 1; i >= 0; i--)
 			//{
 			//	if (keyOp[i].m_Key == L"left")
 			//	{
@@ -577,7 +577,7 @@ double gandalfr::CRoomState::getPlayerDirectionUseKeyOp()
 			//}
 			//int rightIndex2 = rightIndex;
 			//auto rightType2 = CKeyOp::DOWMNOAGAIN;
-			//for (size_t i = rightIndex - 1; i >= 0; i--)
+			//for (int i = rightIndex - 1; i >= 0; i--)
 			//{
 			//	if (keyOp[i].m_Key == L"right")
 			//	{
@@ -625,5 +625,35 @@ void gandalfr::CKeyOp::processKey(Cdmsoft dm, const std::wstring & key, const ke
 		m_keyRecentProcess[key] = m_nowTime;
 		return;
 	}
+
+}
+
+CPlayer gandalfr::CPlayer::getPlayer()
+{
+	CPlayer player;
+	auto &pbyte = ima::curScreen::g_pbCurScreen;
+	auto &rect = ima::curScreen::g_rect;
+
+	ima::ColRGB white(0xff, 0xff, 0xff);
+
+	for (int y = rect.height; y >= 0; y--)
+	{
+		int ok = 0;
+		for (int x = rect.width; x >= 0; x--)
+		{
+			if (ima::compareTwoColor(white.col, ima::getColorWhole(x, y)))
+			{
+				player.m_rect.x = x - 25;
+				player.m_rect.y = y + 50;
+				player.m_rect.width = 50;
+				player.m_rect.height = 30;
+				ok = 1;
+				break;
+			}
+		}
+		if (ok == 1)
+			break;
+	}
+	return player;
 
 }
