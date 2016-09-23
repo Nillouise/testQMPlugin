@@ -129,8 +129,11 @@ DWORD CAction::executeTrail(const vector<CTrail>& trail)
 	int runLength = 0;
 	for (auto it = trail.begin(); it != trail.end(); it++)
 	{
+		int prelength = runLength;
 		runLength += it->x;
-		if (abs(runLength) > 300)
+		if (abs(prelength) > abs(runLength))
+			break;
+		if (abs(runLength) > 300  )
 		{
 			runOrWalk = 1;
 			break;
@@ -678,6 +681,7 @@ void ActTemp::express()
 		for (;; signal++)
 		{
 			int ok = 1;
+			::EnterCriticalSection(&CKeyOp::g_csKeyOp);
 			for (auto iter = CKeyOp::m_setKeyOp.begin(); iter != CKeyOp::m_setKeyOp.end(); iter++)
 			{
 				if (iter->m_signal == signal)
@@ -686,6 +690,7 @@ void ActTemp::express()
 					break;
 				}
 			}
+			::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
 			if (ok == 1)
 			{
 				m_keySignal = signal;
@@ -693,7 +698,6 @@ void ActTemp::express()
 			}
 		}
 		
-		auto &aaa = CKeyOp::m_setKeyOp;
 		::EnterCriticalSection(&CKeyOp::g_csKeyOp);
 		for (auto it = m_key.begin(); it != m_key.end(); it++)
 		{
@@ -715,10 +719,12 @@ void ActTemp::end()
 {
 	queue<CKeyOp> qKey;
 	map<wstring, int> firstKeyUp;
+
+	//find the no up key that this actTemp down
 	::EnterCriticalSection(&CKeyOp::g_csKeyOp);
 	for (auto iter = CKeyOp::m_setKeyOp.begin(); iter != CKeyOp::m_setKeyOp.end();iter++)
 	{
-		if (iter->m_KeyType == 20 && CKeyOp::m_keyStateSignal[iter->m_Key] == iter->m_signal)
+		if (iter->m_KeyType == CKeyOp::UP && CKeyOp::m_keyStateSignal[iter->m_Key] == iter->m_signal)
 		{
 			if (firstKeyUp[iter->m_Key] == 0)
 			{
@@ -775,7 +781,6 @@ double Neural::sumUpRelativeWeight(void * head)
 	{
 		if (it->first.first == head)
 		{
-			auto a = ((Neural*)(it->first.second));
 			sum += ((Neural*)(it->first.second))->m_output *  it->second;
 		}
 	}
@@ -841,7 +846,7 @@ void SelMonster::run()
 void MonAny::run()
 {
 	m_Mon = g_RoomState.m_Monster;
-	m_selfOutput = 3.33;
+	m_selfOutput = m_base + 3.33;
 }
 
 void MonAny::cal()

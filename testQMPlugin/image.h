@@ -53,7 +53,7 @@ namespace ima
 		ColRGB m_color;
 		static int getBlock(const vector<ColRGB> &color, set<CBlock> &receive);
 		bool operator < (const CBlock &t1)const;
-		static bool compare(const CBlock & t1, const CBlock &t2);
+		static bool compare(const CBlock & t1, const CBlock &t2);// identy two block is the same
 	};
 
 
@@ -70,7 +70,7 @@ namespace ima
 	//}
 	inline byte getColorRGB(const int &x, const int &y, const ColRGB::RGBTYPE &color)
 	{
-		return *(curScreen::g_pbCurScreen + y * curScreen::g_rect.width + x * 4 + color);
+		return *(curScreen::g_pbCurScreen + y * curScreen::g_rect.width*4 + x * 4 + color);
 	}
 	inline byte* getColorWhole(const int &x, const int &y)
 	{

@@ -9,7 +9,7 @@ namespace ga
 	 double moveX = 0.02;// mul with pixel 
 	 double moveY = 0.03;
 
-	 DWORD timeActTempToStart = 2000;
+	 DWORD timeActTempToStart = 330;
 
 	const ima::ColRGB roomMon(0xff, 0x00, 0x94);
 	const ima::ColRGB roomGold(0xdd, 0xdd, 0xdd);//it in no use

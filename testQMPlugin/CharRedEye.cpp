@@ -15,12 +15,12 @@ RedEye::ActShuangDao::ActShuangDao()
 void RedEye::ActShuangDao::run()
 {
 	
-	CRectangle skillArea(0, 0, 100, 50);
+	CRectangle skillArea(0, 0, 80, 50);
 	vector<vector<CRectangle>> receive;
 	
 	if ((*m_MonToAttack) == NULL)
 	{
-		m_output = 0;
+		m_selfOutput = m_base;
 		return;
 	}
 	CDecision::getMonsterOverlay( skillArea, receive,(**m_MonToAttack).m_Mon );// it should use MonNeural
@@ -119,7 +119,7 @@ void RedEye::ActShuangDao::cal()
 	//add the monster source weight;
 	//it is interesting,in sumUpRelatveWeight,I add all the edge include the all MonNeural.Now, I add again the one of them,it should mul a large coefficient
 	if(*m_MonToAttack != NULL)
-	m_output += ga::coefficient_monNeural * (*m_MonToAttack)->m_output + g_weight[make_pair(this, *m_MonToAttack)];
+		m_output += ga::coefficient_monNeural * ((*m_MonToAttack)->m_output)  * g_weight[make_pair(this, *m_MonToAttack)];
 
 }
 
@@ -153,11 +153,10 @@ void RedEye::ActShuangDao::express()
 		}
 
 
-		auto aaa = &actAttack->m_key;
 		for (auto iter = m_ShuangDao.m_Key.begin(); iter != m_ShuangDao.m_Key.end(); iter++)
 		{
 			auto key(*iter);
-			key.m_KeyTime = nowTime;
+			key.m_KeyTime = nowTime + iter->m_KeyTime;
 			actAttack->m_key.push_back(key);
 		}
 	}

@@ -183,39 +183,39 @@ namespace ima
 		return 0;
 	}
 
-	bool CBlock::operator<(const CBlock & t1) const
+	bool CBlock::operator<(const CBlock & t2) const
 	{
-		if (x < t1.x)
+		if (x < t2.x)
 			return true;
-		else if (x > t1.x)
+		else if (x > t2.x)
 			return false;
 
-		if (y < t1.y)
+		if (y < t2.y)
 			return true;
-		else if (y > t1.y)
+		else if (y > t2.y)
 			return false;
 
-		if (width < t1.width)
+		if (width < t2.width)
 			return true;
-		else if (width > t1.width)
+		else if (width > t2.width)
 			return false;
 
-		if (height < t1.height)
+		if (height < t2.height)
 			return true;
-		else if (height > t1.height)
+		else if (height > t2.height)
 			return false;
 
-		if (m_color.col[ColRGB::R] < t1.m_color.col[ColRGB::R])
+		if (m_color.col[ColRGB::R] < t2.m_color.col[ColRGB::R])
 			return true;
-		else if (m_color.col[ColRGB::R] > t1.m_color.col[ColRGB::R])
+		else if (m_color.col[ColRGB::R] > t2.m_color.col[ColRGB::R])
 			return false;
-		if (m_color.col[ColRGB::G] < t1.m_color.col[ColRGB::G])
+		if (m_color.col[ColRGB::G] < t2.m_color.col[ColRGB::G])
 			return true;
-		else if (m_color.col[ColRGB::G] > t1.m_color.col[ColRGB::G])
+		else if (m_color.col[ColRGB::G] > t2.m_color.col[ColRGB::G])
 			return false;
-		if (m_color.col[ColRGB::B] < t1.m_color.col[ColRGB::B])
+		if (m_color.col[ColRGB::B] < t2.m_color.col[ColRGB::B])
 			return true;
-		else if (m_color.col[ColRGB::B] > t1.m_color.col[ColRGB::B])
+		else if (m_color.col[ColRGB::B] > t2.m_color.col[ColRGB::B])
 			return false;
 		return false;
 	}

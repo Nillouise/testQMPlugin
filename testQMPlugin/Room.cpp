@@ -11,7 +11,7 @@
 using namespace gandalfr;
 using namespace std;
 CRoomState g_RoomState;
-std::vector<CKeyOp> CKeyOp::m_vecCKeyOp; // record the history key
+std::vector<CKeyOp> CKeyOp::m_hisCKeyOp; // record the history key
 std::set<CKeyOp >  CKeyOp::m_setKeyOp;  // incoming key
 std::map<std::wstring, DWORD>  CKeyOp::m_keyRecentProcess;//the key press in the recent time.if is downing,it should be a max time;
 std::map<std::wstring, int>  CKeyOp::m_keyStateSignal;//the key is 0 if not down,else int represent the ActTemp's keySignal;
@@ -21,38 +21,6 @@ DWORD CKeyOp::m_nowTime;
 
 
 
-CMonsterSet gandalfr::CMonsterSet::getMonsterSet(Cdmsoft dm, int rangeX, int rangeY, int rangeWidth, int rangeHeight, WCHAR * MonColor, double similar, int PointCount, int monWidth, int monHeight)
-{
-
-	static DWORD pretime = GetTickCount();
-	CString cs = dm.FindColorBlockEx(rangeX, rangeY, rangeWidth, rangeHeight, MonColor, similar, PointCount, monWidth, monHeight);
-	long count = dm.GetResultCount(cs);
-
-	//process the m_vecCMon and m_vecCMonTrail
-	CMonsterSet cr;
-	
-	for (int i = 0; i < count; i++)
-	{
-		VARIANT intX, intY;
-		int dm_ret = dm.GetResultPos(cs, i, &intX, &intY);
-
-		int ok = 1;
-		for (auto iter = cr.m_vecCMon.begin(); iter != cr.m_vecCMon.end(); iter++)
-		{
-			if (abs((*iter).m_rect.x - intX.intVal) < monWidth / 2 && abs((*iter).m_rect.y - intY.intVal) < monHeight / 2)
-			{
-				ok = 0;
-				break;
-			}
-		}
-		if (ok == 1)
-		{
-			cr.m_vecCMon.push_back(CMonsterOne(CRectangle(intX.intVal, intY.intVal)));
-		}
-	}
-
-	return cr;
-}
 
 
 //reflect to CMonster::m_vecCMon,responsible to CMonster is not empty;
@@ -228,7 +196,7 @@ UINT gandalfr::CKeyOp::KeyboardInput(PVOID)
 				{
 					if (iter->m_KeyType == UP )
 					{
-						if (m_keyStateSignal[iter->m_Key] > 0)
+						if (m_keyStateSignal[iter->m_Key] > 0)// 0 is up ing.
 						{
 							processKey(dm, iter->m_Key, iter->m_KeyType, iter->m_signal);
 							iter->m_KeyCallback(m_nowTime);
@@ -258,9 +226,9 @@ UINT gandalfr::CKeyOp::KeyboardInput(PVOID)
 							{
 								nextKey.m_KeyTime = iter2->m_KeyTime - 1;
 							}
-							
 							generateKey.push_back(nextKey);
 							iter++;
+							continue;
 						}
 						else {
 							processKey(dm, iter->m_Key, DOWMNOAGAIN, iter->m_signal);
@@ -367,7 +335,7 @@ int gandalfr::CRectangle::getRectTrail(const CRectangle & player, const CRectang
 	return 0;
 }
 
-int gandalfr::isCoDirection(double player, double area)
+double gandalfr::isCoDirection(double player, double area)
 {
 	if (player < 0 && area < 0)
 		return 1;
@@ -388,10 +356,11 @@ void gandalfr::CRoomState::run(Cdmsoft dm)
 
 	::EnterCriticalSection(&CKeyOp::g_csKeyOp);
 	setRunStateCorrectly();
+	m_Player.m_direction =  getPlayerDirectionUseKeyOp();
 	::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
 }
 
-//use the ima::g_pbCurScreen return the rectState numer;
+//use the ima::g_pbCurScreen return the rectState numer;no process the player.
 int gandalfr::CRoomState::getAllRectStateInRoom(Cdmsoft dm)
 {
 	vector<ima::ColRGB> vBlo;
@@ -458,7 +427,7 @@ int gandalfr::CRoomState::getAllRectStateInRoom(Cdmsoft dm)
 
 DWORD getKeyRunState(const wstring &key,int begin, DWORD &time, int &Up)
 {
-	auto &hisKey = CKeyOp::m_vecCKeyOp;
+	auto &hisKey = CKeyOp::m_hisCKeyOp;
 	time = 0;
 	Up = 1;
 	int preDownTime = 0;
@@ -488,7 +457,7 @@ DWORD getKeyRunState(const wstring &key,int begin, DWORD &time, int &Up)
 
 int gandalfr::CRoomState::setRunStateCorrectly()
 {
-	auto &hisKey = CKeyOp::m_vecCKeyOp;
+	auto &hisKey = CKeyOp::m_hisCKeyOp;
 	auto &state = g_RoomState.m_runState;
 
 	// these is corresponse key ' index
@@ -541,7 +510,7 @@ int gandalfr::CRoomState::setRunStateCorrectly()
 
 double gandalfr::CRoomState::getPlayerDirectionUseKeyOp()
 {
-	auto &keyOp = CKeyOp::m_vecCKeyOp;
+	auto &keyOp = CKeyOp::m_hisCKeyOp;
 
 	int leftIndex = -1;
 	auto leftType = CKeyOp::DOWMNOAGAIN;
@@ -634,63 +603,24 @@ double gandalfr::CRoomState::getPlayerDirectionUseKeyOp()
 
 
 
-CObstacleSet gandalfr::CObstacleSet::getObstacle(Cdmsoft dm, int rangeX, int rangeY, int rangeWidth, int rangeHeight, WCHAR * ObsColor, double similar, int PointCount, int obsWidth, int obsHeight)
-{
-	static DWORD pretime = GetTickCount();
-	CString cs = dm.FindColorBlockEx(rangeX, rangeY, rangeWidth, rangeHeight, ObsColor, similar, PointCount, obsWidth, obsHeight);
-	long count = dm.GetResultCount(cs);
 
-	//process the m_vecCMon and m_vecCMonTrail
-	CMonsterSet cr;
-
-	for (int i = 0; i < count; i++)
-	{
-		VARIANT intX, intY;
-		int dm_ret = dm.GetResultPos(cs, i, &intX, &intY);
-
-		int ok = 1;
-		for (auto iter = cr.m_vecCMon.begin(); iter != cr.m_vecCMon.end(); iter++)
-		{
-			if (abs((*iter).m_rect.x - intX.intVal) < obsWidth / 2 && abs((*iter).m_rect.y - intY.intVal) < obsHeight / 2)
-			{
-				ok = 0;
-				break;
-			}
-		}
-		if (ok == 1)
-		{
-			cr.m_vecCMon.push_back(CMonsterOne(CRectangle(intX.intVal, intY.intVal)));
-		}
-	}
-
-//	return cr;
-
-
-
-
-	return CObstacleSet();
-}
 
 void gandalfr::CKeyOp::processKey(Cdmsoft dm, const std::wstring & key, const keyMode & mode, const int & signal)
 {
-
-
 	if (mode == DOWMNOAGAIN)
 	{
 		dm.KeyDownChar(key.c_str());
-		m_vecCKeyOp.push_back(CKeyOp(key, m_nowTime, DOWMNOAGAIN));
+		m_hisCKeyOp.push_back(CKeyOp(key, m_nowTime, DOWMNOAGAIN));
 		m_keyStateSignal[key] = signal;
 		m_keyRecentProcess[key] = m_nowTime;
-		wcout << key << L":down" << L"\t";
 		return;
 	}
 	if (mode == UP)
 	{
 		dm.KeyUpChar(key.c_str());
-		m_vecCKeyOp.push_back(CKeyOp(key, m_nowTime, UP));
+		m_hisCKeyOp.push_back(CKeyOp(key, m_nowTime, UP));
 		m_keyStateSignal[key] = 0;
 		m_keyRecentProcess[key] = m_nowTime;
-		wcout << key << L":up" << L"\t";
 		return;
 	}
 

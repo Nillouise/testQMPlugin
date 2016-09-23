@@ -134,7 +134,7 @@ BOOL CtestQMPluginDlg::OnInitDialog()
 	dm.CreateDispatch(clsid);
 	dm.Reg(L"dieofai3e4c4149f6970cd69b4fc3af7ac85de4", L"0001");
 
-	test::OpenConsole();
+	test::initialTest();
 	::InitializeCriticalSection(&CKeyOp::g_csKeyOp);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
@@ -201,7 +201,6 @@ void CtestQMPluginDlg::OnBnClickedOk()
 
 
 
-	test::findmonster(dm);
 	UpdateData(TRUE);
 	test::getMonsterOverlay(dm, gandalfr::CRectangle(0,0, ::_ttoi(CSLayerWidth) , ::_ttoi(CSLayerHeight) ));
 //	gandalfr::CMonster::m_vecCMon.push_back(gandalfr::CMonster(gandalfr::CRectangle()));

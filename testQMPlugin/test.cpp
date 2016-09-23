@@ -7,6 +7,8 @@ using namespace std;
 
 int test::gtest_RunTheWholeNeural;
 int test::gtest_pauseNeuralThread;
+CRITICAL_SECTION cs_testNeuralThread;
+
 
 int test::OpenConsole()
 {
@@ -16,36 +18,16 @@ int test::OpenConsole()
 	return 0;
 }
 
-int test::getMonsterOverlay(Cdmsoft dm, CRectangle rectSkill)
+int test::getMonsterOverlay(Cdmsoft dm, gandalfr::CRectangle rectSkill)
 {
-	CMonsterSet monset =  CMonsterSet::getMonsterSet(dm);
-
-	std::vector<std::vector<CRectangle>> receive;
-	CDecision::getMonsterOverlay(rectSkill,receive, monset);
-
-	cout <<"Layer number:"<< receive.size()<<endl;
-	for (auto iter = receive.rbegin(); iter != receive.rend(); iter++)
-	{
-		cout << "layer"<< receive.size() -  (iter-receive.rbegin()) << endl;
-		for (auto iterj = (*iter).begin(); iterj != (*iter).end(); iterj++)
-		{
-			cout << RectToString((*iterj)) << endl;
-		}
-	}
-
 	return 0;
 }
 
 int test::findmonster(Cdmsoft dm)
 {
-	CMonsterSet monset =  CMonsterSet::getMonsterSet(dm);
-	std::cout << "Monster Number: " << monset.m_vecCMon.size() << std::endl;
-	for (auto iter = monset.m_vecCMon.begin(); iter != monset.m_vecCMon.end(); ++iter)
-	{
-		cout << RectToString((*iter).m_rect) << endl;
-	}
 	return 0;
 }
+
 
 std::string test::RectToString(const CRectangle r)
 {
@@ -66,18 +48,20 @@ int test::InitialNeural()
 
 int test::runInsZone(Cdmsoft dm)
 {
+	::EnterCriticalSection(&cs_testNeuralThread);
 	g_insZone.run(dm);
-
+	::LeaveCriticalSection(&cs_testNeuralThread);
 	return 0;
 }
 
 int test::printSetKeyOp()
 {
-	auto &aaa = CKeyOp::m_setKeyOp;
+	::EnterCriticalSection(&CKeyOp::g_csKeyOp);
 	for (auto iter = CKeyOp::m_setKeyOp.begin(); iter != CKeyOp::m_setKeyOp.end(); iter++)
 	{
 		wcout << iter->m_Key << L"\tkeyType:" << iter->m_KeyType  <<L"\ttime:"<< (((iter->m_KeyTime) / 100 % 600) / 10.0) <<"\tsignal:"<< iter->m_signal << endl;
 	}
+	::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
 	return 0;
 }
 
@@ -95,8 +79,9 @@ int test::printCurNeural()
 
 int test::reset()
 {
+	::EnterCriticalSection(&cs_testNeuralThread);
 	g_action.m_curActNeural = NULL;
-
+	::LeaveCriticalSection(&cs_testNeuralThread);
 	return 0;
 }
 
@@ -157,7 +142,7 @@ int test::performanceCustomVSdm(Cdmsoft dm)
 
 int test::PrintRoomState(Cdmsoft dm)
 {
-
+	::EnterCriticalSection(&cs_testNeuralThread);
 	cout << "Gold:" << endl;
 	for (auto iter = g_RoomState.m_Gold.m_vecGold.begin(); iter != g_RoomState.m_Gold.m_vecGold.end(); iter++)
 	{
@@ -188,6 +173,7 @@ int test::PrintRoomState(Cdmsoft dm)
 	cout << "Player:" << endl;
 
 	cout << RectToString(g_RoomState.m_Player.m_rect) << endl;
+	::LeaveCriticalSection(&cs_testNeuralThread);
 
 	return 0;
 }
@@ -195,11 +181,11 @@ int test::PrintRoomState(Cdmsoft dm)
 int test::estimateTotalRun(Cdmsoft dm)
 {
 
+	::EnterCriticalSection(&cs_testNeuralThread);
 	DWORD curTime = ::GetTickCount();
-
 	g_insZone.run(dm);
-
-	cout << ::GetTickCount() - curTime << endl;
+	::LeaveCriticalSection(&cs_testNeuralThread);
+	cout<<"run total one round need millisecond " << ::GetTickCount() - curTime << endl;
 	return 0;
 }
 
@@ -232,12 +218,14 @@ UINT test::beginNeuralThread()
 
 int test::pauseNeuralThread()
 {
+	cout << "pause Neural thread" << endl;
 	gtest_pauseNeuralThread = 1;
 	return 0;
 }
 
 int test::restartNeuralThread()
 {
+	cout << "restart Neural Thread" << endl;
 	gtest_pauseNeuralThread = 0;
 	return 0;
 }
@@ -263,10 +251,20 @@ unsigned int __stdcall test::ThreadRunWhole(PVOID pM)
 		{
 			Sleep(10);
 		}
+
+		::EnterCriticalSection(&cs_testNeuralThread);
 		g_insZone.run(dm);
+		::LeaveCriticalSection(&cs_testNeuralThread);
 	}
 	::CoUninitialize();
-	cout << "exit the neural thread";
+	cout << "exit the neural thread successfully" << endl;
+	return 0;
+}
+
+int test::initialTest()
+{
+	::InitializeCriticalSection(&cs_testNeuralThread);
+	OpenConsole();
 	return 0;
 }
 

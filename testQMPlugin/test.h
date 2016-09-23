@@ -9,8 +9,6 @@ using namespace gandalfr;
 namespace test
 {
 	int OpenConsole();
-	int getMonsterOverlay(Cdmsoft dm,gandalfr::CRectangle rectSkill);
-	int findmonster(Cdmsoft dm);
 
 	
 	
@@ -46,6 +44,9 @@ namespace test
 	int exitTheNeuralThread();
 
 	unsigned int __stdcall ThreadRunWhole(PVOID pM);
+	extern CRITICAL_SECTION cs_testNeuralThread;
+
+	int initialTest();
 
 
 }
