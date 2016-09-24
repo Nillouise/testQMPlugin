@@ -163,7 +163,7 @@ namespace gandalfr
 		int m_MP;
 		CSpeed m_speed;//default speed:int RunX = 953, int RunY = 110, int WalkX = 300, int WalkY = 110
 
-		 
+		CPlayer() { m_rect = CRectangle(0, 0, 30, 20); }
 		static CPlayer getPlayer();
 	};
 

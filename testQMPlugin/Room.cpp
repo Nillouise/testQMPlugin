@@ -633,27 +633,43 @@ CPlayer gandalfr::CPlayer::getPlayer()
 	CPlayer player;
 	auto &pbyte = ima::curScreen::g_pbCurScreen;
 	auto &rect = ima::curScreen::g_rect;
+	map<void*, int> signalToOffsetY;
+	signalToOffsetY[ga::imgPlayerH] = 102;
+	signalToOffsetY[ga::imgPlayerKou] = 85;
+	signalToOffsetY[ga::imgPlayerKou] = 58;
 
-	ima::ColRGB white(0xff, 0xff, 0xff);
+	CRectangle searchArea(0, 0, 4, 600);
 
-	for (int y = rect.height; y >= 0; y--)
+	for (size_t y = 0; y < rect.height; y++)
 	{
 		int ok = 0;
-		for (int x = rect.width; x >= 0; x--)
+		for (size_t x = 0; x <rect.width; x++)
 		{
-			if (ima::compareTwoColor(white.col, ima::getColorWhole(x, y)))
+			if (ima::compareTwoColor(ga::Col84ffff.col,ima::getColorWhole(x,y)) == true)
 			{
-				player.m_rect.x = x - 25;
-				player.m_rect.y = y + 50;
-				player.m_rect.width = 50;
-				player.m_rect.height = 30;
-				ok = 1;
-				break;
+				searchArea.x = x - 1;
+				searchArea.y = y;
+				searchArea.width = 4;
+				searchArea.height = rect.height - y;
+				ok = 1;	break;
 			}
 		}
-		if (ok == 1)
-			break;
+		if (ok == 1)break;
 	}
+
+	if (ima::searchRGBRectInScreen(&ga::imgPlayerH[0][0], searchArea, 3, 3, player.m_rect.x, player.m_rect.y) == true)
+	{
+		player.m_rect.y += signalToOffsetY[ga::imgPlayerH];
+	}
+	else if (ima::searchRGBRectInScreen(&ga::imgPlayerKou[0][0], searchArea, 3, 3, player.m_rect.x, player.m_rect.y) == true)
+	{
+		player.m_rect.y += signalToOffsetY[ga::imgPlayerKou];
+	}
+	else if (ima::searchRGBRectInScreen(&ga::imgPlayerShi[0][0], searchArea, 3, 3, player.m_rect.x, player.m_rect.y) == true)
+	{
+		player.m_rect.y += signalToOffsetY[ga::imgPlayerShi];
+	}
+
 	return player;
 
 }

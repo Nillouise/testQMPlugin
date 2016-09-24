@@ -204,6 +204,7 @@ unsigned int __stdcall test::ThreadRunWhole(PVOID pM)
 		::EnterCriticalSection(&cs_testNeuralThread);
 		g_insZone.run(dm);
 		::LeaveCriticalSection(&cs_testNeuralThread);
+		test::printBestAreaAndPlayer();
 	}
 	::CoUninitialize();
 	cout << "exit the neural thread successfully" << endl;
@@ -214,6 +215,25 @@ int test::initialTest()
 {
 	::InitializeCriticalSection(&cs_testNeuralThread);
 	OpenConsole();
+	return 0;
+}
+
+int test::printBestAreaAndPlayer()
+{
+	static int  NeuralSize = 0;
+	static int lastPrintTime = 0;
+	::EnterCriticalSection(&cs_testNeuralThread);
+
+	if ( g_action.m_hisActNeural.size()>NeuralSize || ::GetTickCount() -  lastPrintTime > 2000)
+	{
+		auto attackArea = ((RedEye::ActShuangDao*) g_action.m_hisActNeural[g_action.m_hisActNeural.size() - 1].first)->m_bestArea;
+		cout<<"Num "<< g_action.m_hisActNeural.size()<<" :" << RectToString(attackArea.m_rect)<<" direction:"<<attackArea.direction << endl;
+		cout <<"player "<< RectToString(g_RoomState.m_Player.m_rect) << endl;
+		NeuralSize = g_action.m_hisActNeural.size();
+		lastPrintTime = GetTickCount();
+	}
+
+	::LeaveCriticalSection(&cs_testNeuralThread);
 	return 0;
 }
 

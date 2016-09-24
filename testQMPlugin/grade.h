@@ -30,4 +30,10 @@ namespace ga //gor grade
 	extern double coefficient_monNeural;//to avoid the efficient that the other Monneural that no real effect the actNeural,mul the actual process monNeural efficient 
 
 	extern DWORD startRunNeedTime;//how least time that two down operate it need to begin a runstate 
+
+	extern ima::ColRGB imgPlayerH[3][3];
+	extern ima::ColRGB imgPlayerKou[3][3];
+	extern ima::ColRGB imgPlayerShi[3][3];
+	extern ima::ColRGB ColWhite;
+	extern ima::ColRGB Col84ffff;
 }

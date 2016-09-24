@@ -5,6 +5,7 @@
 #include"InstanceZones.h"
 #include"Neural.h"
 #include"image.h"
+#include"CharRedEye.h"
 using namespace gandalfr;
 namespace test
 {
@@ -45,6 +46,6 @@ namespace test
 	extern CRITICAL_SECTION cs_testNeuralThread;
 
 	int initialTest();
-
+	int printBestAreaAndPlayer();
 
 }

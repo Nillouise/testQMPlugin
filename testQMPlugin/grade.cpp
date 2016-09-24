@@ -30,4 +30,24 @@ namespace ga
 	double coefficient_monNeural = 10;
 
 	DWORD startRunNeedTime = 450;
+
+
+	ima::ColRGB ColWhite(0xff, 0xff, 0xff);
+	ima::ColRGB Col84ffff(0x84, 0xff, 0xff);
+	ima::ColRGB imgPlayerH[3][3] = {
+		{ Col84ffff,Col84ffff,Col84ffff },
+		{ ColWhite,Col84ffff ,ColWhite },
+		{ Col84ffff ,Col84ffff ,Col84ffff }
+	};
+	ima::ColRGB imgPlayerKou[3][3] = {
+		{ Col84ffff,Col84ffff,Col84ffff },
+		{ Col84ffff,ColWhite ,Col84ffff },
+		{ Col84ffff ,Col84ffff ,Col84ffff }
+	};
+	ima::ColRGB imgPlayerShi[3][3] = {
+		{ ColWhite,Col84ffff,ColWhite },
+		{ Col84ffff,Col84ffff ,Col84ffff },
+		{ ColWhite ,Col84ffff ,ColWhite }
+	};
+
 }

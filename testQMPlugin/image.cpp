@@ -160,7 +160,7 @@ namespace ima
 					}
 					else {
 						iter = eatMap.erase(iter);
-						ok == 0;
+						ok = 0;
 						break;
 					}
 				}
