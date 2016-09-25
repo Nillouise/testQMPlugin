@@ -99,9 +99,9 @@ namespace ima
 	}
 	inline bool searchRGBRectInScreen(const ColRGB* const ColRect, const CRectangle &searchArea, const int &width, const int &height, int& findX, int &findY)
 	{
-		for (int y = searchArea.x; y < searchArea.height- height + 1; y++)
+		for (int y = searchArea.y; y < searchArea.y+ searchArea.height- height + 1; y++)
 		{
-			for (int x = searchArea.x; x < searchArea.width - width + 1; x++)
+			for (int x = searchArea.x; x <searchArea.x + searchArea.width - width + 1; x++)
 			{
 				int findout = 1;
 				for (int rectY = 0; rectY < height; rectY++)

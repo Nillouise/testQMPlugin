@@ -79,7 +79,7 @@ namespace gandalfr
 		int m_spRunY;
 		int m_spWalkX;
 		int m_spWalkY;
-		CSpeed(int RunX = 953, int RunY = 110, int WalkX = 300, int WalkY = 110) :m_spRunX(RunX), m_spRunY(RunY), m_spWalkX(WalkX), m_spWalkY(WalkY) {};
+		CSpeed(int RunX = 275, int RunY = 137, int WalkX = 110, int WalkY = 110) :m_spRunX(RunX), m_spRunY(RunY), m_spWalkX(WalkX), m_spWalkY(WalkY) {};
 	};
 
 
@@ -161,7 +161,7 @@ namespace gandalfr
 		int m_state;//in fuhuo or bati
 		int m_HP;
 		int m_MP;
-		CSpeed m_speed;//default speed:int RunX = 953, int RunY = 110, int WalkX = 300, int WalkY = 110
+		CSpeed m_speed;//default speed:int RunX = 270, int RunY = 110, int WalkX = 110, int WalkY = 110
 
 		CPlayer() { m_rect = CRectangle(0, 0, 30, 20); }
 		static CPlayer getPlayer();

@@ -615,6 +615,10 @@ void gandalfr::CKeyOp::processKey(Cdmsoft dm, const std::wstring & key, const ke
 		m_hisCKeyOp.push_back(CKeyOp(key, m_nowTime, DOWMNOAGAIN));
 		m_keyStateSignal[key] = signal;
 		m_keyRecentProcess[key] = m_nowTime;
+#ifdef _DEBUG
+		wcout << key << L" "  << L" " << ((m_nowTime / 100) % 600) / 10.0 << L" " << L"down\t\t\t";
+#endif // _DEBUG
+
 		return;
 	}
 	if (mode == UP)
@@ -623,6 +627,9 @@ void gandalfr::CKeyOp::processKey(Cdmsoft dm, const std::wstring & key, const ke
 		m_hisCKeyOp.push_back(CKeyOp(key, m_nowTime, UP));
 		m_keyStateSignal[key] = 0;
 		m_keyRecentProcess[key] = m_nowTime;
+#ifdef _DEBUG
+		wcout << key << L" "  << L" " << ((m_nowTime / 100) % 600) / 10.0 << L" " << L"up  \t\t\t";
+#endif // _DEBUG
 		return;
 	}
 
@@ -634,7 +641,7 @@ CPlayer gandalfr::CPlayer::getPlayer()
 	auto &pbyte = ima::curScreen::g_pbCurScreen;
 	auto &rect = ima::curScreen::g_rect;
 	map<void*, int> signalToOffsetY;
-	signalToOffsetY[ga::imgPlayerH] = 102;
+	signalToOffsetY[ga::imgPlayerH] = 112;
 	signalToOffsetY[ga::imgPlayerKou] = 85;
 	signalToOffsetY[ga::imgPlayerKou] = 58;
 
@@ -669,6 +676,7 @@ CPlayer gandalfr::CPlayer::getPlayer()
 	{
 		player.m_rect.y += signalToOffsetY[ga::imgPlayerShi];
 	}
+	player.m_rect.x -= player.m_rect.width/2;
 
 	return player;
 

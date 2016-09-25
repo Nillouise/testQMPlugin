@@ -91,6 +91,7 @@ BEGIN_MESSAGE_MAP(CtestQMPluginDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON12, &CtestQMPluginDlg::OnBnClickedButton12)
 	ON_BN_CLICKED(IDC_BUTTON13, &CtestQMPluginDlg::OnBnClickedButton13)
 	ON_BN_CLICKED(IDC_BUTTON14, &CtestQMPluginDlg::OnBnClickedButton14)
+	ON_BN_CLICKED(IDC_BUTTON15, &CtestQMPluginDlg::OnBnClickedButton15)
 END_MESSAGE_MAP()
 
 
@@ -331,4 +332,11 @@ void CtestQMPluginDlg::OnBnClickedButton14()
 {
 	// TODO: Add your control notification handler code here
 	test::restartNeuralThread();
+}
+
+
+void CtestQMPluginDlg::OnBnClickedButton15()
+{
+	// TODO: Add your control notification handler code here
+	test::testGetPlayer(dm);
 }

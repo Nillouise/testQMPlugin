@@ -14,13 +14,12 @@ RedEye::ActShuangDao::ActShuangDao()
 
 void RedEye::ActShuangDao::run()
 {
-	
+	m_selfOutput = m_base;
 	CRectangle skillArea(0, 0, 80, 50);
 	vector<vector<CRectangle>> receive;
 	
 	if ((*m_MonToAttack) == NULL)
 	{
-		m_selfOutput = m_base;
 		return;
 	}
 	CDecision::getMonsterOverlay( skillArea, receive,(**m_MonToAttack).m_Mon );// it should use MonNeural
@@ -107,7 +106,6 @@ void RedEye::ActShuangDao::run()
 	}
 	m_bestArea = bestArea;
 	
-	m_selfOutput = m_base;
 	m_selfOutput += bestScore;
 }
 
@@ -177,6 +175,10 @@ int RedEye::loadNeural()
 	actShuangDaoMon1->m_MonToAttack = &g_monNeural1;
 	ActShuangDao *actShuangDaoMon2 = new ActShuangDao();
 	actShuangDaoMon2->m_MonToAttack = &g_monNeural2;
+	ActZhiChong *actZhiChong1 = new ActZhiChong();
+	actZhiChong1->m_MonToAttack = &g_monNeural1;
+	ActZhiChong *actZhiChong2 = new ActZhiChong();
+	actZhiChong2->m_MonToAttack = &g_monNeural2;
 
 	MonAny* monAny = new MonAny();
 
@@ -186,6 +188,9 @@ int RedEye::loadNeural()
 
 	Neural::makeWeight(actShuangDaoMon1, &g_action, 1);
 	Neural::makeWeight(actShuangDaoMon2, &g_action, 1);
+	Neural::makeWeight(actZhiChong1, &g_action, 1);
+	Neural::makeWeight(actZhiChong2, &g_action, 1);
+
 	Neural::makeWeight(monAny, &g_selMonster, 1);
 
 
@@ -193,5 +198,53 @@ int RedEye::loadNeural()
 
 	g_AnyToAct[&g_action].insert(actShuangDaoMon1);
 	g_AnyToAct[&g_action].insert(actShuangDaoMon2);
+	g_AnyToAct[&g_action].insert(actZhiChong1);
+	g_AnyToAct[&g_action].insert(actZhiChong2);
 	return 0;
+}
+
+RedEye::ActZhiChong::ActZhiChong()
+{
+	m_base = 100;
+
+}
+
+void RedEye::ActZhiChong::run()
+{
+
+	m_selfOutput = m_base;
+	if ((*m_MonToAttack) == NULL)
+	{
+		m_selfOutput = 0;
+		return;
+	}
+	if ((*m_MonToAttack)->m_Mon.m_vecCMon.begin() != (*m_MonToAttack)->m_Mon.m_vecCMon.end())
+	{
+		m_bestArea.m_rect = (*m_MonToAttack)->m_Mon.m_vecCMon[0].m_rect;
+	}
+	else
+	{
+		m_selfOutput = 0;
+	}
+
+}
+
+void RedEye::ActZhiChong::cal()
+{
+	m_output = m_selfOutput;
+}
+
+void RedEye::ActZhiChong::express()
+{
+	CTrail tra;
+	ActTemp* actAttack = new ActTemp();
+	DWORD nowTime = GetTickCount();
+	actAttack->m_beginTime = nowTime;
+	actAttack->creator = this;
+	actAttack->m_base = 10;
+	actAttack->m_fnOutput = ActTemp::fnOutMustRunComplete;
+	CRectangle::getRectTrail(g_RoomState.m_Player.m_rect, m_bestArea.m_rect, tra);
+	actAttack->m_endTime = actAttack->m_beginTime + ga::timeActTempToStart;
+	actAttack->m_trail.push_back(tra);
+	g_AnyToActTemp[&g_action].insert(actAttack);
 }

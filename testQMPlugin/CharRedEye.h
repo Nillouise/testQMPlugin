@@ -34,6 +34,20 @@ namespace RedEye
 		std::vector<CTrail> m_vecTrail;//go to the m_bestArea's trail
 		
 	};
+
+	class ActZhiChong :public ActNeural
+	{
+	public:
+		virtual ActZhiChong* getClassType() { return this; }
+		ActZhiChong();
+		virtual void run();
+		virtual void cal();
+		virtual void express();
+		std::vector<CAttackArea> m_area;//possible attack area;
+		CAttackArea m_bestArea;
+		std::vector<CTrail> m_vecTrail;//go to the m_bestArea's trail
+	};
+
 	int loadNeural();
 
 }

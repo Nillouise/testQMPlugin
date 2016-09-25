@@ -61,6 +61,8 @@ int test::printCurNeural()
 	if (p != NULL)
 	{
 		cout << "curNeural: " << typeid (*((p)->getClassType())).name() << " output:" << g_action.m_curActNeural->m_output << endl;
+		if (typeid (*((p)->getClassType())) == typeid(RedEye::ActZhiChong))
+			cout << RectToString( ((RedEye::ActZhiChong*)p)->m_bestArea.m_rect);
 	}
 	else
 		cout << "NULL" << endl;
@@ -234,6 +236,14 @@ int test::printBestAreaAndPlayer()
 	}
 
 	::LeaveCriticalSection(&cs_testNeuralThread);
+	return 0;
+}
+
+int test::testGetPlayer(Cdmsoft dm)
+{
+	ima::getNewScreen(dm);
+	cout<<RectToString( CPlayer::getPlayer().m_rect);
+
 	return 0;
 }
 

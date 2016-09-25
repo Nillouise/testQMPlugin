@@ -48,4 +48,5 @@ namespace test
 	int initialTest();
 	int printBestAreaAndPlayer();
 
+	int testGetPlayer(Cdmsoft dm);
 }
