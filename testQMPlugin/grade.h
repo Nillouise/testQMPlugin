@@ -36,4 +36,6 @@ namespace ga //gor grade
 	extern ima::ColRGB imgPlayerShi[3][3];
 	extern ima::ColRGB ColWhite;
 	extern ima::ColRGB Col84ffff;
+
+	extern DWORD timeRunExcuteToAvoidConfilt;//when begin to run ,after two x key press ,after how much time to begin Y key;
 }

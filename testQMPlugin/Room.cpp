@@ -221,14 +221,6 @@ UINT gandalfr::CKeyOp::KeyboardInput(PVOID)
 						if (m_keyStateSignal[iter->m_Key] > 0)//if it is downing,0 is not downing
 						{
 							processKey(dm, iter->m_Key, UP, iter->m_signal);
-							CKeyOp nextKey(*iter);
-							auto iter2 = iter;
-							iter2++;
-							if (iter2 != m_setKeyOp.end())
-							{
-								nextKey.m_KeyTime = iter2->m_KeyTime - 1;
-							}
-							generateKey.push_back(nextKey);
 							iter++;
 							continue;
 						}
@@ -260,7 +252,7 @@ UINT gandalfr::CKeyOp::KeyboardInput(PVOID)
 							}
 							nextKey.m_KeyType = DOWMNOAGAIN;
 							generateKey.push_back(nextKey);
-							iter++;
+							iter = m_setKeyOp.erase(iter);
 						}
 						else {
 							processKey(dm, iter->m_Key, DOWMNOAGAIN, iter->m_signal);
@@ -616,7 +608,7 @@ void gandalfr::CKeyOp::processKey(Cdmsoft dm, const std::wstring & key, const ke
 		m_keyStateSignal[key] = signal;
 		m_keyRecentProcess[key] = m_nowTime;
 #ifdef _DEBUG
-		wcout << key << L" "  << L" " << ((m_nowTime / 100) % 600) / 10.0 << L" " << L"down\t\t\t";
+		wcout << key << L" " << (m_nowTime / 10) / 100.0 << L" " << L"down\t";
 #endif // _DEBUG
 
 		return;
@@ -628,7 +620,7 @@ void gandalfr::CKeyOp::processKey(Cdmsoft dm, const std::wstring & key, const ke
 		m_keyStateSignal[key] = 0;
 		m_keyRecentProcess[key] = m_nowTime;
 #ifdef _DEBUG
-		wcout << key << L" "  << L" " << ((m_nowTime / 100) % 600) / 10.0 << L" " << L"up  \t\t\t";
+		wcout << key << L" "  << (m_nowTime / 10) / 100.0 << L" " << L"up  \t";
 #endif // _DEBUG
 		return;
 	}

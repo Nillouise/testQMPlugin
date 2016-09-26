@@ -2,6 +2,8 @@
 #include "test.h"
 #include<iostream>
 #include<iomanip>
+#include"grade.h"
+#include<string>
 using namespace gandalfr;
 using namespace std;
 
@@ -76,6 +78,27 @@ int test::reset()
 	g_AnyToActTemp[&g_action].clear();
 
 	::LeaveCriticalSection(&cs_testNeuralThread);
+	return 0;
+}
+
+int test::testImg(Cdmsoft dm)
+{
+	ima::getNewScreen(dm,CRectangle(200,200,2,2));
+	//for (size_t i = 0; i <= 5; i++)
+	//{
+	//	for (size_t j = 0; j <= 5; j++)
+	//	{
+//			auto p = ima::getColorWhole(i, j);
+	//		cout <<hex<< (int)*p << " " <<hex<<(int) *(p+1) << " "<<hex << (int)*(p+2) << endl;
+	//	}
+	//}
+	for (size_t i = 0; i < 100; i++)
+	{
+		auto p = ima::curScreen::g_pbCurScreen + i;
+		cout << hex <<(int) *p << " ";
+	}
+
+
 	return 0;
 }
 
@@ -223,13 +246,24 @@ int test::initialTest()
 int test::printBestAreaAndPlayer()
 {
 	static int  NeuralSize = 0;
-	static int lastPrintTime = 0;
+	static int lastPrintTime = ::GetTickCount();
 	::EnterCriticalSection(&cs_testNeuralThread);
 
-	if ( g_action.m_hisActNeural.size()>NeuralSize || ::GetTickCount() -  lastPrintTime > 2000)
+	if ( g_action.m_hisActNeural.size()>NeuralSize )
 	{
-		auto attackArea = ((RedEye::ActShuangDao*) g_action.m_hisActNeural[g_action.m_hisActNeural.size() - 1].first)->m_bestArea;
-		cout<<"Num "<< g_action.m_hisActNeural.size()<<" :" << RectToString(attackArea.m_rect)<<" direction:"<<attackArea.direction << endl;
+		if (::GetTickCount() - lastPrintTime < 50)
+			return 0;
+		lastPrintTime = ::GetTickCount();
+		auto curNeural = (g_action.m_hisActNeural[g_action.m_hisActNeural.size() - 1].first);
+		if (typeid(*(curNeural->getClassType())) == typeid(RedEye::ActZhiChong))
+		{
+			auto area = ((RedEye::ActZhiChong*)curNeural)->m_bestArea;
+			cout << "Num " << g_action.m_hisActNeural.size() << " :" << RectToString(area.m_rect);
+		}
+		else {
+			auto attackArea = ((RedEye::ActShuangDao*) g_action.m_hisActNeural[g_action.m_hisActNeural.size() - 1].first)->m_bestArea;
+			cout << "Num " << g_action.m_hisActNeural.size() << " :" << RectToString(attackArea.m_rect) << " direction:" << attackArea.direction << endl;
+		}
 		cout <<"player "<< RectToString(g_RoomState.m_Player.m_rect) << endl;
 		NeuralSize = g_action.m_hisActNeural.size();
 		lastPrintTime = GetTickCount();
@@ -242,7 +276,66 @@ int test::printBestAreaAndPlayer()
 int test::testGetPlayer(Cdmsoft dm)
 {
 	ima::getNewScreen(dm);
-	cout<<RectToString( CPlayer::getPlayer().m_rect);
+	cout << "player: "<<RectToString(CPlayer::getPlayer().m_rect) << endl;
+
+	return 0;
+}
+
+int test::RunToTarget(Cdmsoft dm,int x,int y)
+{
+	//vector<CTrail> trail;
+	//trail.push_back(CTrail(x, y));
+	////CAction::executeTrail(trail, CSpeed(), g_RoomState.m_runState);
+	//DWORD t;
+	//CAction::playerRunX(900, map<wstring, int>(), CSpeed(), ::GetTickCount(), 0, t);
+	::EnterCriticalSection(&CKeyOp::g_csKeyOp);
+	CKeyOp::m_setKeyOp.insert(CKeyOp(L"right", ::GetTickCount(),CKeyOp::PRESS));
+	CKeyOp::m_setKeyOp.insert(CKeyOp(L"right", ::GetTickCount(),CKeyOp::DOWMNOAGAIN));
+
+
+	for (auto iter = CKeyOp::m_setKeyOp.begin(); iter != CKeyOp::m_setKeyOp.end(); iter++)
+	{
+		wcout << iter->m_Key << L" " << iter->m_KeyType << L"\t";
+	}
+
+
+	::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
+	return 0;
+}
+
+int test::printRunState()
+{
+	g_RoomState.setRunStateCorrectly();
+	auto state = g_RoomState.m_runState;
+	cout << "left: " << state[L"left"] << " right: " << state[L"right"] << " up: " << state[L"up"] << " down: " << state[L"down"] << endl;
+
+	return 0;
+}
+
+int test::ExecuteTraiDeviation(Cdmsoft dm)
+{
+	ofstream out("C:\\code\\dm\\data\\deviation.txt");
+	for (int x = 50; x < 351; x += 50)
+	{
+		for (int y = 50; y < 301; y += 50)
+		{
+			RunToTarget(dm, -500, -500);
+			Sleep(6*1000);
+			ima::getNewScreen(dm);
+			Sleep(1000);
+			auto rect = CPlayer::getPlayer().m_rect;
+			out << rect.x <<" "<<rect.y << endl;
+			RunToTarget(dm, x, y);
+			Sleep(6 * 1000);
+			out << x << " " << y << endl;
+			ima::getNewScreen(dm);
+			Sleep(1000);
+			auto rect2 = CPlayer::getPlayer().m_rect;
+			out << rect2.x << "\t" << rect2.y << endl;
+
+		}
+	}
+	out.close();
 
 	return 0;
 }

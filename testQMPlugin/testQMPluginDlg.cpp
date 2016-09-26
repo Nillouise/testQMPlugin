@@ -92,6 +92,8 @@ BEGIN_MESSAGE_MAP(CtestQMPluginDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON13, &CtestQMPluginDlg::OnBnClickedButton13)
 	ON_BN_CLICKED(IDC_BUTTON14, &CtestQMPluginDlg::OnBnClickedButton14)
 	ON_BN_CLICKED(IDC_BUTTON15, &CtestQMPluginDlg::OnBnClickedButton15)
+	ON_BN_CLICKED(IDC_BUTTON16, &CtestQMPluginDlg::OnBnClickedButton16)
+	ON_BN_CLICKED(IDC_BUTTON17, &CtestQMPluginDlg::OnBnClickedButton17)
 END_MESSAGE_MAP()
 
 
@@ -310,6 +312,7 @@ void CtestQMPluginDlg::OnBnClickedButton10()
 void CtestQMPluginDlg::OnBnClickedButton11()
 {
 	// TODO: Add your control notification handler code here
+	Sleep(1000);
 	test::beginNeuralThread();
 }
 
@@ -339,4 +342,22 @@ void CtestQMPluginDlg::OnBnClickedButton15()
 {
 	// TODO: Add your control notification handler code here
 	test::testGetPlayer(dm);
+}
+
+
+void CtestQMPluginDlg::OnBnClickedButton16()
+{
+	// TODO: Add your control notification handler code here
+
+
+	UpdateData(TRUE);
+	test::RunToTarget(dm, ::_ttoi(CSLayerWidth), ::_ttoi(CSLayerHeight));
+	//test::ExecuteTraiDeviation(dm);
+}
+
+
+void CtestQMPluginDlg::OnBnClickedButton17()
+{
+	// TODO: Add your control notification handler code here
+	test::printRunState();
 }

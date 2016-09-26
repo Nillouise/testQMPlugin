@@ -118,8 +118,8 @@ public:
 
 	void run();
 
-	static DWORD executeTrail(const vector<CTrail>& trail);
-	static DWORD playerRunX(int x, map<wstring, int> &runState, const CSpeed &speed, const DWORD &beginTime, int runOrWalk);
+	static DWORD executeTrail(const vector<CTrail>& trail, const CSpeed & speed, const map<wstring, int>& runState);
+	static DWORD playerRunX(int x, map<wstring, int> &runState, const CSpeed &speed, const DWORD &beginTime, int runOrWalk, DWORD &timeToYexcute);
 	static DWORD playerRunY(int y, map<wstring, int> &runState, const CSpeed &speed, const DWORD &beginTime);
 };
 

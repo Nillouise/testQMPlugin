@@ -14,7 +14,7 @@ namespace ima
 		extern byte* g_pbCurScreen;
 		extern CRectangle g_rect;
 	}
-	int getNewScreen(Cdmsoft dm, CRectangle screen = CRectangle(0, 0, 800, 600));
+	int getNewScreen(Cdmsoft dm, CRectangle screen = CRectangle(0, 0, 801, 601));
 	class ColRGB
 	{
 	public:

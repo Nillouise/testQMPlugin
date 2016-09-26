@@ -79,7 +79,7 @@ namespace gandalfr
 		int m_spRunY;
 		int m_spWalkX;
 		int m_spWalkY;
-		CSpeed(int RunX = 275, int RunY = 137, int WalkX = 110, int WalkY = 110) :m_spRunX(RunX), m_spRunY(RunY), m_spWalkX(WalkX), m_spWalkY(WalkY) {};
+		CSpeed(int RunX = 275, int RunY = 110, int WalkX = 137, int WalkY = 110) :m_spRunX(RunX), m_spRunY(RunY), m_spWalkX(WalkX), m_spWalkY(WalkY) {};
 	};
 
 

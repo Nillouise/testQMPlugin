@@ -25,7 +25,7 @@ namespace ga
 	int stepX = 10;
 	int stepY = 10;
 
-	DWORD key_ProInterval = 200;
+	DWORD key_ProInterval = 60;
 
 	double coefficient_monNeural = 10;
 
@@ -49,5 +49,5 @@ namespace ga
 		{ Col84ffff,Col84ffff ,Col84ffff },
 		{ ColWhite ,Col84ffff ,ColWhite }
 	};
-
+	DWORD timeRunExcuteToAvoidConfilt = 180;
 }

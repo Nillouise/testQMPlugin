@@ -23,7 +23,7 @@ namespace test
 	int printCurNeural();
 
 	int reset();
-
+	int testImg(Cdmsoft dm);
 
 	int PrintRoomState(Cdmsoft dm);
 
@@ -49,4 +49,10 @@ namespace test
 	int printBestAreaAndPlayer();
 
 	int testGetPlayer(Cdmsoft dm);
+
+	int RunToTarget(Cdmsoft dm, int x, int y);
+
+	int printRunState();
+
+	int ExecuteTraiDeviation(Cdmsoft dm);
 }
