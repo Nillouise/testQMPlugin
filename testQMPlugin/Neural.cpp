@@ -660,18 +660,36 @@ DWORD CAction::playerRunY(int y, map<wstring, int> &runState, const CSpeed &spee
 }
 
 
-double ActTemp::fnOutMustRunComplete(DWORD beginTime, DWORD endTime, Neural * neural)
+function<double(DWORD begin, DWORD end, Neural *neural)> ActTemp::fnOutMustRunComplete()
 {
-	DWORD nowtime = GetTickCount();
-	double r=0;
-	if (nowtime > beginTime && nowtime < endTime)
+	auto p = [](DWORD beginTime ,DWORD endTime, Neural *neural)
 	{
-		if (nowtime - beginTime > 700 && endTime - nowtime < 500)
-			return r;
-		r = 1000;
-	}
-	return r;
+		double r = 0;
+		DWORD nowtime = GetTickCount();
+		if (nowtime > beginTime && nowtime < endTime)
+		{
+			r = 1000;
+		}
+		return  r;
+	};
+	return p;
 }
+
+function<double(DWORD begin, DWORD end, Neural*neural)> ActTemp::fnOutGiveUpControlInLastXmillisecond(DWORD x)
+{
+	auto p = [=](DWORD beginTime, DWORD endTime, Neural *neural)
+	{
+		double r = 0;
+		DWORD nowtime = GetTickCount();
+		if (nowtime > beginTime && nowtime < endTime-x)
+		{
+			r = 1000;
+		}
+		return  r;
+	};
+	return p;
+}
+
 
 void ActTemp::run()
 {

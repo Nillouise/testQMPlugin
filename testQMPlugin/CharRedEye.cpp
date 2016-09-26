@@ -130,7 +130,7 @@ void RedEye::ActShuangDao::express()
 	actAttack->m_beginTime = nowTime;
 	actAttack->creator = this;
 	actAttack->m_base = 10;
-	actAttack->m_fnOutput = ActTemp::fnOutMustRunComplete;
+	actAttack->m_fnOutput = ActTemp::fnOutMustRunComplete();
 	//it need an generate m_ouput function;
 	
 	if (CRectangle::RectCollide(m_bestArea.m_rect, g_RoomState.m_Player.m_rect, &rectDist) == 1)
@@ -242,7 +242,7 @@ void RedEye::ActZhiChong::express()
 	actAttack->m_beginTime = nowTime;
 	actAttack->creator = this;
 	actAttack->m_base = 10;
-	actAttack->m_fnOutput = ActTemp::fnOutMustRunComplete;
+	actAttack->m_fnOutput = ActTemp::fnOutMustRunComplete();
 	CRectangle::getRectTrail(g_RoomState.m_Player.m_rect, m_bestArea.m_rect, tra);
 	actAttack->m_endTime = actAttack->m_beginTime + ga::timeActTempToStart;
 	actAttack->m_trail.push_back(tra);

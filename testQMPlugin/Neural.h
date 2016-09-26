@@ -5,6 +5,7 @@
 #include<vector>
 #include<map>
 #include<set>
+#include<functional>
 using namespace std;
 using namespace gandalfr;
 
@@ -82,14 +83,16 @@ public:
 
 };
 
+typedef  function<double(DWORD begin, DWORD end, Neural *neural)> fnOuput;
 //it must have correspond Up Key if you use m_key,
 class ActTemp :public Neural
 {
 public:
 	virtual ActTemp* getClassType() { return this; }
-	ActTemp(ActNeural* creator = NULL, double(*fnOutput)(DWORD begin, DWORD end, Neural*neural) = NULL) :creator(creator), m_fnOutput(fnOutput) { m_beginTime = GetTickCount(); m_endTime = GetTickCount() + 250; m_output = 0; m_base = 0; };
+	ActTemp(ActNeural* creator = NULL, function<double(DWORD begin, DWORD end, Neural *neural)> fnOutput = NULL) :creator(creator), m_fnOutput(fnOutput) { m_beginTime = GetTickCount(); m_endTime = GetTickCount() + 250; m_output = 0; m_base = 0; };
 
-	static double fnOutMustRunComplete(DWORD beginTime, DWORD endTime, Neural* TempNeural);//tempNeural have creator
+	static fnOuput fnOutMustRunComplete();//tempNeural have creator
+	static fnOuput fnOutGiveUpControlInLastXmillisecond(DWORD x);
 
 	virtual void run();//ActTemp output only depend on m_fnOutput?didn't relative the other Neural?
 	virtual void express();
@@ -103,7 +106,8 @@ public:
 	vector<CKeyOp>m_key;
 	int m_keySignal;//it only use in m_key
 
-	double(*m_fnOutput)(DWORD begin, DWORD end,Neural* neural);//the function poiter to cal the ActTemp output should be what in this time
+	fnOuput m_fnOutput;//the function poiter to cal the ActTemp output should be what in this time
+
 	ActNeural* creator;//who create it
 };
 
