@@ -55,18 +55,18 @@ namespace vis
 		int dnfScreenWidth = dnfWidth / narrowRate + 2 * dnfedgeWidth;
 		int dnfScreenHeight = dnfHeight / narrowRate + 2 * dnfedgeWidth;
 
-		Mat image = Mat::zeros(dnfHeight / narrowRate + 2 * dnfedgeWidth, dnfWidth / narrowRate, CV_8UC3);
+		Mat image = Mat::zeros(dnfScreenHeight, dnfScreenWidth, CV_8UC3);
 
-		CRectangle screen(dnfedgeWidth, dnfedgeWidth, dnfScreenWidth, dnfScreenHeight);
+		CRectangle screen(dnfedgeWidth, dnfedgeWidth, dnfScreenWidth-2* dnfedgeWidth, dnfScreenHeight-2* dnfedgeWidth);
 
-		if (g_RoomState.m_Player.m_rect.x != 0)
+		if (g_RoomState.m_Player.m_rect.x > 0)
 		{
 			auto newRect(g_RoomState.m_Player.m_rect);
 			newRect.x /= 2;
 			newRect.y /= 2;
 			newRect.width /= 2;
 			newRect.height /= 2;
-			printRect(image, g_RoomState.m_Player.m_rect, mapColor[player], screen);
+			printRect(image, newRect, mapColor[player], screen);
 		}
 		else
 		{
