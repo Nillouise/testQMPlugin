@@ -60,7 +60,9 @@ namespace vis
 
 		if (g_RoomState.m_Player.m_rect.x != 0)
 		{
-
+			auto newRect(g_RoomState.m_Player.m_rect);
+			newRect.width /= 2;
+			newRect.height /= 2;
 			printRect(image, g_RoomState.m_Player.m_rect, mapColor[player], screen);
 		}
 		else
@@ -70,7 +72,10 @@ namespace vis
 
 		for (auto iter = g_RoomState.m_Monster.m_vecCMon.begin() ; iter != g_RoomState.m_Monster.m_vecCMon.end(); iter++)
 		{
-			printRect(image, iter->m_rect, mapColor[monster], screen);
+			auto newRect(iter->m_rect);
+			newRect.width /= 2;
+			newRect.height /= 2;
+			printRect(image, newRect, mapColor[monster], screen);
 		}
 		return image;
 	}
