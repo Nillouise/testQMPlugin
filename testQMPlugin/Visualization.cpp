@@ -48,9 +48,9 @@ namespace vis
 	}
 	struct cmp_Neural
 	{
-		bool operator()(const Neural *k1, const Neural *k2)const
+		bool operator()(void * k1, void * k2)const
 		{
-			return k1->m_output > k2->m_output;
+			return ((Neural*)k1)->m_output > ((Neural*)k2)->m_output;
 		}
 	};
 	Mat DnfRoomState(int narrowRate = 2)
@@ -125,7 +125,11 @@ namespace vis
 		}
 		for (auto iter = neuralToRect.begin(); iter != neuralToRect.end(); iter++)
 		{
-			putText(image, typeid(*((Neural*) (iter->first))->getClassType()).name + ((Neural*)(iter->first))->m_output, Point(iter->second.x, iter->second.y+ iter->second.height), FONT_HERSHEY_PLAIN, 1, mapColor[player], 1, 8);
+			((Neural*)(iter->first))->m_output;
+
+			Neural *const neu = ((Neural*)(iter->first));
+
+			putText(image, typeid((* neu->getClassType())).name() , Point(iter->second.x, iter->second.y+ iter->second.height), FONT_HERSHEY_PLAIN, 1, mapColor[player], 1, 8);
 		}
 
 
