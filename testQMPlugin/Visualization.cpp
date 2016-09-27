@@ -16,7 +16,7 @@ namespace vis
 	const string gold = "gold";
 	const string scenebox = "scenebox";
 	const string player = "player";
-
+	const string text = "text";
 	int controlVisThread = 1;//1 is to run,2 is to stop,0 is to exit
 
 
@@ -24,6 +24,7 @@ namespace vis
 	{
 		mapColor[monster] = Scalar(0xff, 0x00, 0x94);
 		mapColor[player] = Scalar(255, 255, 255);
+		mapColor[text] = Scalar(255, 255, 255);
 		InitializeCriticalSection(&cs_visualization);
 		return 0;
 	}
@@ -45,7 +46,13 @@ namespace vis
 		rectangle(canvas,p1,p2,color, CV_FILLED,8);
 		return 0;
 	}
-
+	struct cmp_Neural
+	{
+		bool operator()(const Neural *k1, const Neural *k2)const
+		{
+			return k1->m_output > k2->m_output;
+		}
+	};
 	Mat DnfRoomState(int narrowRate = 2)
 	{
 		int dnfWidth = 800;
@@ -87,7 +94,41 @@ namespace vis
 
 	Mat ActionNeuralState()
 	{
-		auto &action = g_AnyToAct[&g_action];
+		const auto &action = g_AnyToAct[&g_action];
+		int width = 400;
+		int height = 300;
+		Mat image = Mat::zeros(height, width, CV_8UC3);
+		static map<void*, CRectangle, cmp_Neural> neuralToRect;// big to small
+		for (auto iter = action.begin(); iter != action.end(); iter++)
+		{
+			neuralToRect[*iter];
+		}
+		for (auto iter = g_AnyToActTemp[&g_action].begin(); iter != g_AnyToActTemp[&g_action].end(); iter++)
+		{
+			neuralToRect[*iter];
+		}
+		int OneWidth = 100;
+		int OneHeight = 12;
+
+		int startX = 0;
+		int startY = 0;
+
+		for (auto iter = neuralToRect.begin() ; iter != neuralToRect.end(); iter++)
+		{
+			CRectangle One(startX, startY, OneWidth, OneHeight);
+			startY += OneHeight;
+			if (startY > height - OneHeight)
+			{
+				startY = 0;
+				startX += OneWidth;
+			}
+		}
+		for (auto iter = neuralToRect.begin(); iter != neuralToRect.end(); iter++)
+		{
+			putText(image, typeid(*((Neural*) (iter->first))->getClassType()).name + ((Neural*)(iter->first))->m_output, Point(iter->second.x, iter->second.y+ iter->second.height), FONT_HERSHEY_PLAIN, 1, mapColor[player], 1, 8);
+		}
+
+
 
 
 
