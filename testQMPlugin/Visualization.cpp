@@ -80,6 +80,11 @@ namespace vis
 		return image;
 	}
 
+	Mat NeuralState()
+	{
+
+	}
+
 	unsigned int __stdcall showView(PVOID pM)
 	{
 
