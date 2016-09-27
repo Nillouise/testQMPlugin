@@ -3,6 +3,7 @@
 #include<string>
 #include<map>
 #include"Room.h"
+#include"Neural.h"
 using namespace cv;
 using namespace std;
 using namespace gandalfr;
@@ -61,6 +62,8 @@ namespace vis
 		if (g_RoomState.m_Player.m_rect.x != 0)
 		{
 			auto newRect(g_RoomState.m_Player.m_rect);
+			newRect.x /= 2;
+			newRect.y /= 2;
 			newRect.width /= 2;
 			newRect.height /= 2;
 			printRect(image, g_RoomState.m_Player.m_rect, mapColor[player], screen);
@@ -73,6 +76,8 @@ namespace vis
 		for (auto iter = g_RoomState.m_Monster.m_vecCMon.begin() ; iter != g_RoomState.m_Monster.m_vecCMon.end(); iter++)
 		{
 			auto newRect(iter->m_rect);
+			newRect.x /= 2;
+			newRect.y /= 2;
 			newRect.width /= 2;
 			newRect.height /= 2;
 			printRect(image, newRect, mapColor[monster], screen);
@@ -80,8 +85,15 @@ namespace vis
 		return image;
 	}
 
-	Mat NeuralState()
+	Mat ActionNeuralState()
 	{
+		auto &action = g_AnyToAct[&g_action];
+
+
+
+//		Mat image = Mat::zeros(dnfHeight / narrowRate + 2 * dnfedgeWidth, dnfWidth / narrowRate, CV_8UC3);
+
+		return Mat();
 
 	}
 
