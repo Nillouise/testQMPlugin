@@ -154,12 +154,7 @@ DWORD CAction::executeTrail(const vector<CTrail>& trail,const CSpeed &speed,cons
 		nowTime += max(curTimeX, curTimeY);
 	}
 
-	::EnterCriticalSection(&CKeyOp::g_csKeyOp);
-	for (auto iter = CKeyOp::m_setKeyOp.begin(); iter != CKeyOp::m_setKeyOp.end(); iter++)
-	{
-		wcout << iter->m_Key << L" " << iter->m_KeyType << L"\t";
-	}
-	::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
+
 
 	return nowTime;
 

@@ -19,7 +19,7 @@ namespace RedEye
 
 
 
-	class ActShuangDao :public ActNeural
+	class ActShuangDao :public ActWithArea
 	{
 	public:
 		virtual ActShuangDao* getClassType() { return this; }
@@ -29,13 +29,10 @@ namespace RedEye
 		virtual void cal();
 		virtual void express();
 		CSkShuangDao m_ShuangDao;
-		std::vector<CAttackArea> m_area;//possible attack area;
-		CAttackArea m_bestArea;
-		std::vector<CTrail> m_vecTrail;//go to the m_bestArea's trail
 		
 	};
 
-	class ActZhiChong :public ActNeural
+	class ActZhiChong :public ActWithArea
 	{
 	public:
 		virtual ActZhiChong* getClassType() { return this; }
@@ -43,9 +40,6 @@ namespace RedEye
 		virtual void run();
 		virtual void cal();
 		virtual void express();
-		std::vector<CAttackArea> m_area;//possible attack area;
-		CAttackArea m_bestArea;
-		std::vector<CTrail> m_vecTrail;//go to the m_bestArea's trail
 	};
 
 	int loadNeural();

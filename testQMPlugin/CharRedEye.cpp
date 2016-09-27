@@ -196,10 +196,10 @@ int RedEye::loadNeural()
 
 	g_AnyToMon[&g_selMonster].insert(monAny);//Add monster ,it may be all the same in all character
 
-//	g_AnyToAct[&g_action].insert(actShuangDaoMon1);
-//	g_AnyToAct[&g_action].insert(actShuangDaoMon2);
-	g_AnyToAct[&g_action].insert(actZhiChong1);
-	g_AnyToAct[&g_action].insert(actZhiChong2);
+	g_AnyToAct[&g_action].insert(actShuangDaoMon1);
+	g_AnyToAct[&g_action].insert(actShuangDaoMon2);
+//	g_AnyToAct[&g_action].insert(actZhiChong1);
+//	g_AnyToAct[&g_action].insert(actZhiChong2);
 	return 0;
 }
 

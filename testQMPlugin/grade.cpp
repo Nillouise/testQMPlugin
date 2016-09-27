@@ -19,8 +19,8 @@ namespace ga
 	int discardWidth = 3;
 	int discardHeight = 3;
 
-	double imgDigestibility = 0.7;
-	double imgDppetite = 0.7;
+	double imgDigestibility = 0.8;
+	double imgDppetite = 0.4;
 
 	int stepX = 10;
 	int stepY = 10;

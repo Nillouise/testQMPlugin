@@ -77,10 +77,21 @@ class ActNeural :public Neural
 {
 public:
 	virtual ActNeural* getClassType() { return this; }
+	virtual string getBaseType() { return "ActNeural"; }
 	DWORD m_lastReleaseSkills;// the time that last release Skill
 
 	MonNeural **m_MonToAttack;// point to a fix variant that point to dynamic MonNeural
 
+};
+
+class ActWithArea :public ActNeural
+{
+public:
+	virtual ActWithArea* getClassType() { return this; }
+	virtual string getBaseType() { return "ActWithArea"; }
+	std::vector<CAttackArea> m_area;//possible attack area;
+	CAttackArea m_bestArea;
+	std::vector<CTrail> m_vecTrail;//go to the m_bestArea's trail
 };
 
 typedef  function<double(DWORD begin, DWORD end, Neural *neural)> fnOuput;

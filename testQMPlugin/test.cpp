@@ -230,7 +230,7 @@ unsigned int __stdcall test::ThreadRunWhole(PVOID pM)
 		::EnterCriticalSection(&cs_testNeuralThread);
 		g_insZone.run(dm);
 		::LeaveCriticalSection(&cs_testNeuralThread);
-		test::printBestAreaAndPlayer();
+//		test::printBestAreaAndPlayer();
 	}
 	::CoUninitialize();
 	cout << "exit the neural thread successfully" << endl;
@@ -343,7 +343,13 @@ int test::ExecuteTraiDeviation(Cdmsoft dm)
 
 int test::visualization()
 {
-	vis::showView(NULL);
+	static int flagVis = 0;
+	if (flagVis == 0)
+	{
+		_beginthreadex(NULL, 0, vis::showView, NULL, 0, NULL);
+		flagVis = 1;
+	}
+
 
 	return 0;
 }
