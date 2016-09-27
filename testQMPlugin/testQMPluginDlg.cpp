@@ -7,7 +7,7 @@
 #include "testQMPluginDlg.h"
 #include "afxdialogex.h"
 
-
+#include "Visualization.h"
 #include "Cdmsoft.h"
 #include"Room.h"
 #include"test.h"
@@ -94,6 +94,7 @@ BEGIN_MESSAGE_MAP(CtestQMPluginDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON15, &CtestQMPluginDlg::OnBnClickedButton15)
 	ON_BN_CLICKED(IDC_BUTTON16, &CtestQMPluginDlg::OnBnClickedButton16)
 	ON_BN_CLICKED(IDC_BUTTON17, &CtestQMPluginDlg::OnBnClickedButton17)
+	ON_BN_CLICKED(IDC_BUTTON18, &CtestQMPluginDlg::OnBnClickedButton18)
 END_MESSAGE_MAP()
 
 
@@ -139,7 +140,9 @@ BOOL CtestQMPluginDlg::OnInitDialog()
 
 	test::initialTest();
 	::InitializeCriticalSection(&CKeyOp::g_csKeyOp);
-
+#ifdef VISUALIZATION
+	vis::init();
+#endif // VISUALIZATION
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -360,4 +363,11 @@ void CtestQMPluginDlg::OnBnClickedButton17()
 {
 	// TODO: Add your control notification handler code here
 	test::printRunState();
+}
+
+
+void CtestQMPluginDlg::OnBnClickedButton18()
+{
+	// TODO: Add your control notification handler code here
+	test::visualization();
 }

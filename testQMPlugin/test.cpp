@@ -4,6 +4,7 @@
 #include<iomanip>
 #include"grade.h"
 #include<string>
+#include"Visualization.h"
 using namespace gandalfr;
 using namespace std;
 
@@ -336,6 +337,13 @@ int test::ExecuteTraiDeviation(Cdmsoft dm)
 		}
 	}
 	out.close();
+
+	return 0;
+}
+
+int test::visualization()
+{
+	vis::showView(NULL);
 
 	return 0;
 }

@@ -55,4 +55,6 @@ namespace test
 	int printRunState();
 
 	int ExecuteTraiDeviation(Cdmsoft dm);
+
+	int visualization();
 }
