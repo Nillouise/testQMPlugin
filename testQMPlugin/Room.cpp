@@ -419,24 +419,24 @@ int gandalfr::CRoomState::getAllRectStateInRoom(Cdmsoft dm)
 	return count;
 }
 
-DWORD getKeyRunState(const wstring &key,int begin, DWORD &time, int &Up)
+DWORD getKeyRunState(const wstring &key,int &begin, DWORD &time, int &Up)
 {
 	auto &hisKey = CKeyOp::m_hisCKeyOp;
 	time = 0;
 	Up = 1;
 	int preDownTime = 0;
-	for (int i = begin; i < hisKey.size(); i++)
+	for (int i = begin; i < (long long) hisKey.size(); i++)
 	{
 		if (i == -1)
 		{
 			continue;
 		}
-		if (hisKey[i].m_Key == L"left")
+		if (hisKey[i].m_Key == key)
 		{
 			if (hisKey[i].m_KeyType == CKeyOp::DOWMNOAGAIN)
 			{
-				begin = i;
 				preDownTime = time;
+				begin = i;
 				time = hisKey[i].m_KeyTime;
 				Up = 0;
 			}
@@ -446,6 +446,25 @@ DWORD getKeyRunState(const wstring &key,int begin, DWORD &time, int &Up)
 			}
 		}
 	}
+
+	if (preDownTime == 0)
+	{
+		for (int i = begin - 1; i >= 0; i--)
+		{
+			if (hisKey[i].m_Key == key)
+			{
+				if (hisKey[i].m_KeyType == CKeyOp::DOWMNOAGAIN)
+				{
+					preDownTime = time;
+					break;
+				}
+			}
+			if (hisKey[begin].m_KeyTime - hisKey[i].m_KeyTime > 3000)
+				break;
+
+		}
+	}
+
 	return preDownTime;
 }
 
@@ -497,6 +516,13 @@ int gandalfr::CRoomState::setRunStateCorrectly()
 	else if ((downTime > upTime &&downUp == 0)||(downUp==0&&upUp==1))
 		state[L"down"] = 1;
 
+	for (auto iter = state.begin(); iter != state.end(); iter++)
+	{
+		if (iter->second > 0)
+		{
+			wcout << iter->first << L" " << iter->second << L" ";
+		}
+	}
 
 
 	return 0;
@@ -603,7 +629,7 @@ void gandalfr::CKeyOp::processKey(Cdmsoft dm, const std::wstring & key, const ke
 {
 	if (mode == DOWMNOAGAIN)
 	{
-		dm.KeyDownChar(key.c_str());
+//		dm.KeyDownChar(key.c_str());
 		m_hisCKeyOp.push_back(CKeyOp(key, m_nowTime, DOWMNOAGAIN));
 		m_keyStateSignal[key] = signal;
 		m_keyRecentProcess[key] = m_nowTime;
@@ -615,7 +641,7 @@ void gandalfr::CKeyOp::processKey(Cdmsoft dm, const std::wstring & key, const ke
 	}
 	if (mode == UP)
 	{
-		dm.KeyUpChar(key.c_str());
+//		dm.KeyUpChar(key.c_str());
 		m_hisCKeyOp.push_back(CKeyOp(key, m_nowTime, UP));
 		m_keyStateSignal[key] = 0;
 		m_keyRecentProcess[key] = m_nowTime;
@@ -639,10 +665,10 @@ CPlayer gandalfr::CPlayer::getPlayer()
 
 	CRectangle searchArea(0, 0, 4, 600);
 
-	for (size_t y = 0; y < rect.height; y++)
+	for (int y = 0;  y < rect.height; y++)
 	{
 		int ok = 0;
-		for (size_t x = 0; x <rect.width; x++)
+		for (int x = 0; x <rect.width; x++)
 		{
 			if (ima::compareTwoColor(ga::Col84ffff.col,ima::getColorWhole(x,y)) == true)
 			{

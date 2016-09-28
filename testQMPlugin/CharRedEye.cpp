@@ -81,7 +81,6 @@ void RedEye::ActShuangDao::run()
 	{
 		double curScore = 0;
 		CRectangle r;
-
 		//if need move player or change direction ,add the curScore;in other skill,it may hasn't the skill direction
 		if (CRectangle::RectCollide(player.m_rect, it->m_rect,&r) == 1)
 		{

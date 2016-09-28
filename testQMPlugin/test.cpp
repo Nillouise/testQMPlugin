@@ -250,7 +250,7 @@ int test::printBestAreaAndPlayer()
 	static int lastPrintTime = ::GetTickCount();
 	::EnterCriticalSection(&cs_testNeuralThread);
 
-	if ( g_action.m_hisActNeural.size()>NeuralSize )
+	if ( (long long) g_action.m_hisActNeural.size()>NeuralSize )
 	{
 		if (::GetTickCount() - lastPrintTime < 50)
 			return 0;
