@@ -875,3 +875,34 @@ void MonAny::cal()
 	m_output = m_selfOutput;
 	m_output += Neural::sumUpRelativeWeight(this);
 }
+
+CRectangle AddR2ToR1(const CRectangle R1, const CRectangle R2)
+{
+	CRectangle r(R1.x - R2.width / 2, R1.y - R2.height / 2, R1.width + R2.width, R1.height + R2.height );
+	return r;
+}
+
+
+void MonNearPlayer::run()
+{
+	auto &monster = g_RoomState.m_Monster;
+	auto &player = g_RoomState.m_Player;
+	m_Mon.m_vecCMon.clear();
+	CRectangle curArea = AddR2ToR1(player.m_rect, m_nearArea);
+	for (auto iter = monster.m_vecCMon.begin(); iter != monster.m_vecCMon.end() ; iter++)
+	{
+		if (CRectangle::RectCollide(iter->m_rect, curArea) == 1)
+		{
+			m_Mon.m_vecCMon.push_back(*iter);
+		}
+	}
+	m_selfOutput = m_base;
+	m_selfOutput += m_numToScore( m_Mon.m_vecCMon.size());
+
+}
+
+void MonNearPlayer::cal()
+{
+	m_output = m_selfOutput;
+	m_output += Neural::sumUpRelativeWeight(this);
+}

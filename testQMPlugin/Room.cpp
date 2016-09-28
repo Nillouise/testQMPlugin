@@ -369,11 +369,15 @@ void gandalfr::CRoomState::run(Cdmsoft dm)
 {
 	ima::getNewScreen(dm);
 	getAllRectStateInRoom(dm);
+	m_vecPlayerTrail.push_back(m_Player);
 	m_Player.m_rect = CPlayer::getPlayer().m_rect ;
+
 
 	::EnterCriticalSection(&CKeyOp::g_csKeyOp);
 	setRunStateCorrectly();
 	m_Player.m_direction =  getPlayerDirectionUseKeyOp();
+
+
 	::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
 }
 
@@ -645,7 +649,7 @@ void gandalfr::CKeyOp::processKey(Cdmsoft dm, const std::wstring & key, const ke
 {
 	if (mode == DOWMNOAGAIN)
 	{
-//		dm.KeyDownChar(key.c_str());
+		dm.KeyDownChar(key.c_str());
 		m_hisCKeyOp.push_back(CKeyOp(key, m_nowTime, DOWMNOAGAIN));
 		m_keyStateSignal[key] = signal;
 		m_keyRecentProcess[key] = m_nowTime;
@@ -657,7 +661,7 @@ void gandalfr::CKeyOp::processKey(Cdmsoft dm, const std::wstring & key, const ke
 	}
 	if (mode == UP)
 	{
-//		dm.KeyUpChar(key.c_str());
+		dm.KeyUpChar(key.c_str());
 		m_hisCKeyOp.push_back(CKeyOp(key, m_nowTime, UP));
 		m_keyStateSignal[key] = 0;
 		m_keyRecentProcess[key] = m_nowTime;

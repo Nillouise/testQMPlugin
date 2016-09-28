@@ -106,6 +106,7 @@ namespace gandalfr
 		double direction; //-1.0 represent to left,1.0 represent to right, 0 to both
 		std::vector<CMonsterOne> vec_Mons; //no use, how number could attack
 		int num;
+		double score;
 		CAttackArea(CRectangle rect, double direction, int num) :m_rect(rect), direction(direction), num(num) {}
 		CAttackArea() {}
 	};

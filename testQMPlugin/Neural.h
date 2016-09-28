@@ -36,23 +36,61 @@ public:
 
 };
 
-
+typedef  function<double(int)> fnNumToScore;
 class MonNeural:public Neural
 {
 public:
 	virtual MonNeural* getClassType() { return this; }
 	CMonsterSet m_Mon;//this MonNeural store which monsters should be considerate
-	
+	fnNumToScore m_numToScore;
 };
 
 
-class MonNearAndAttacking :public MonNeural
+class MonNearPlayer :public MonNeural
 {
 public:
-	virtual MonNearAndAttacking* getClassType() { return this; }
+	virtual MonNearPlayer* getClassType() { return this; }
 	virtual void run();
 	virtual void cal();
+	MonNearPlayer(CRectangle NearAreaWidthAndHeight, double base , fnNumToScore numToScore ) :m_nearArea(NearAreaWidthAndHeight){ m_base = base; m_numToScore = numToScore; };
+	CRectangle m_nearArea;
+
 };
+
+class MonFixArea :public MonNeural
+{
+public:
+	virtual MonFixArea* getClassType() { return this; }
+	virtual void run();
+	virtual void cal();
+	MonFixArea(CRectangle fixArea, double base, fnNumToScore numToScore) :m_fixArea(fixArea) { m_base = base; m_numToScore = numToScore; };
+	CRectangle m_fixArea;
+
+};
+
+class MonNoMoveAndInYaxilWithPlayer:public MonNeural
+{
+public:
+
+
+};
+
+//such as bati ,dutiao
+class MonIsAttacking:public MonNeural
+{
+public:
+
+};
+
+
+class MonNoMoveAndInPlayerBack:public MonNeural
+{
+public:
+
+};
+
+
+
 
 class MonAny :public MonNeural
 {

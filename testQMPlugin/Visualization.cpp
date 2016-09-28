@@ -238,6 +238,17 @@ namespace vis
 		return image;
 	}
 
+	int printPlayerDirection(Mat&image, CRectangle printArea)
+	{
+		string msg = "player:Direction: ";
+		msg+=doubleToString(g_RoomState.m_Player.m_direction);
+		int OneHeight = 12;
+		putText(image, msg, Point(printArea.x, printArea.y + OneHeight), FONT_HERSHEY_PLAIN, 1, Scalar(255, 255, 255), 1, 8);
+		return 0;
+	}
+
+
+
 	Mat printKeyboardState(Mat &image, CRectangle printArea)
 	{
 		int startX = printArea.x;
@@ -265,6 +276,7 @@ namespace vis
 		rectangle(image, Point(0, 0), Point(image.cols, image.rows), Scalar(0, 0, 0), CV_FILLED, 8);
 		printRunState(image, CRectangle(0, 0, 200, 40));
 		printKeyboardState(image, CRectangle(0, 40, 200, 40));
+		printPlayerDirection(image, CRectangle(0, 80 , 200, 24));
 		return image;
 	}
 
@@ -314,6 +326,7 @@ namespace vis
 			printBestArea(dnfMat, screen);
 			ActionNeuralState(neuMat);
 			keyBoardState(keyboardMat);
+
 			::LeaveCriticalSection(&cs_visualization);
 			procedMat = 1;
 		}

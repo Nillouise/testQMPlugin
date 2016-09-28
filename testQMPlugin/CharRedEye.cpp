@@ -27,13 +27,12 @@ void RedEye::ActShuangDao::run()
 
 	auto &player = g_RoomState.m_Player;
 	
-	vector<CAttackArea> selGolRec;//it will have correct monster num,direction
 	//select the suitable attackArea,delete the dulplicate area; 
 	for (auto it = receive.rbegin(); it != receive.rend(); it++)
 	{
 		for (auto it2 = it->begin(); it2 != it->end(); it2++)
 		{
-			selGolRec.push_back(CAttackArea(*it2, 0,  (receive.rend() - it)));
+			m_area.push_back(CAttackArea(*it2, 0,  (receive.rend() - it)));
 			for (auto it3 = it + 1; it3 != receive.rend(); it3++)
 			{
 				for (auto it4 = it3->begin(); it4 != it3->end(); )
@@ -59,7 +58,7 @@ void RedEye::ActShuangDao::run()
 	}
 
 	//generate the side skill area instead of the center skill
-	for (auto it = selGolRec.begin(); it != selGolRec.end(); it++)
+	for (auto it = m_area.begin(); it != m_area.end(); it++)
 	{
 		auto *area = &it->m_rect;
 		
@@ -77,28 +76,28 @@ void RedEye::ActShuangDao::run()
 
 	CAttackArea bestArea(CRectangle(), 0, 0);
 	double bestScore = -DBL_MAX;
-	for (auto it = selGolRec.begin(); it != selGolRec.end(); it++)
+	for (auto it = m_area.begin(); it != m_area.end(); it++)
 	{
-		double curScore = 0;
+		it->score = 0;
 		CRectangle r;
 		//if need move player or change direction ,add the curScore;in other skill,it may hasn't the skill direction
 		if (CRectangle::RectCollide(player.m_rect, it->m_rect,&r) == 1)
 		{
-			curScore += ga::NeednMove;
+			it->score += ga::NeednMove;
 			if (abs(it->direction + player.m_direction) > abs(it->direction))
 			{
-				curScore += ga::NeednChangeDirection;
+				it->score += ga::NeednChangeDirection;
 			}
 		}
 		else {
-			curScore -= max(abs(r.width)*ga::moveX, abs(r.height)*ga::moveY);
+			it->score -= max(abs(r.width)*ga::moveX, abs(r.height)*ga::moveY);
 		}
-		curScore += it->num * ga::OneMonster;
+		it->score += it->num * ga::OneMonster;
 
 
-		if (curScore > bestScore)
+		if (it->score > bestScore)
 		{
-			bestScore = curScore;
+			bestScore = it->score;
 			bestArea = *it;
 		}
 
@@ -134,7 +133,7 @@ void RedEye::ActShuangDao::express()
 	
 	if (CRectangle::RectCollide(m_bestArea.m_rect, g_RoomState.m_Player.m_rect, &rectDist) == 1)
 	{
-//		CKeyOp::upRunKey(0);//no continue to press run key;
+		CKeyOp::fillVecUpRunKeyCurrentTime(actAttack->m_key,0);//no continue to press run key;
 		//attack immediatly
 		actAttack->m_endTime = nowTime + 2000;
 		if (isCoDirection(g_RoomState.m_Player.m_direction, m_bestArea.direction) == 0)
@@ -516,12 +515,12 @@ int RedEye::loadNeural()
 
 	g_AnyToMon[&g_selMonster].insert(monAny);//Add monster ,it may be all the same in all character
 
-	g_AnyToAct[&g_action].insert(actShuangDaoMon1);
-	g_AnyToAct[&g_action].insert(actShuangDaoMon2);
-//	g_AnyToAct[&g_action].insert(actZhiChong1);
-//	g_AnyToAct[&g_action].insert(actZhiChong2);
+//	g_AnyToAct[&g_action].insert(actShuangDaoMon1);
+//	g_AnyToAct[&g_action].insert(actShuangDaoMon2);
+	g_AnyToAct[&g_action].insert(actZhiChong1);
+	g_AnyToAct[&g_action].insert(actZhiChong2);
 
-	simulate();
+//	simulate();
 
 	return 0;
 }
