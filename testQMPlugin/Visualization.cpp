@@ -110,8 +110,8 @@ namespace vis
 	Mat ActionNeuralState(Mat &image)
 	{
 		const auto &action = g_AnyToAct[&g_action];
-		int width = 400;
-		int height = 300;
+		int width = 800;
+		int height = 500;
 		image.create(height, width, CV_8UC3);
 		rectangle(image, Point(0, 0), Point(image.cols, image.rows), Scalar(0, 0, 0), CV_FILLED, 8);
 		static map<void*, CRectangle, cmp_Neural> neuralToRect;// big to small

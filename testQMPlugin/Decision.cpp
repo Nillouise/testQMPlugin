@@ -1,6 +1,7 @@
 #include"stdafx.h"
 #include"Decision.h"
-
+#include<vector>
+using namespace std;
 namespace gandalfr
 {
 	namespace de
@@ -77,6 +78,27 @@ namespace gandalfr
 			}
 			return r;
 		}
+		//change a center skill style  compu to half skill compu 
+		int generateHalfSkill(const CRectangle &player, vector<CAttackArea> &attackArea, const CRectangle &skillArea)
+		{
+			for (auto it = attackArea.begin(); it != attackArea.end(); it++)
+			{
+				auto *area = &it->m_rect;
+
+				//go to right side
+				if (player.x +player.width/2 > area->x + area->width / 2)
+				{
+					area->x = area->x + skillArea.width / 2;
+					it->direction = -1;
+				}
+				else {
+					area->x = area->x - skillArea.width / 2;
+					it->direction = 1;
+				}
+			}
+			return 0;
+		}
+
 
 
 

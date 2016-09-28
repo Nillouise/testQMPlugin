@@ -108,6 +108,8 @@ void CAction::run()
 			}
 			g_AnyToActTemp[(void*)this].clear();
 			m_hisActNeural.push_back( make_pair((ActNeural*)newAct, GetTickCount()));
+			m_curActNeural = NULL;
+
 		}
 		newAct->express();
 	}
@@ -144,8 +146,8 @@ DWORD CAction::executeTrail(const vector<CTrail>& trail,const CSpeed &speed,cons
 	{
 		DWORD yBeginTime = nowTime;
 		DWORD curTimeX = playerRunX((*it).x, cpy_runState, speed, nowTime, runOrWalk, yBeginTime);
-		DWORD curTimeY = 0;
-//		DWORD curTimeY = playerRunY((*it).y, cpy_runState, speed, yBeginTime);
+//		DWORD curTimeY = 0;
+		DWORD curTimeY = playerRunY((*it).y, cpy_runState, speed, yBeginTime);
 		curTimeY += yBeginTime - nowTime;
 		nowTime += max(curTimeX, curTimeY);
 	}
@@ -767,8 +769,6 @@ void ActTemp::end()
 	while (!qKey.empty())
 	{
 		CKeyOp::m_setKeyOp.insert(qKey.front());
-		if (qKey.front().m_Key == L"x")
-			int b = 0;
 
 		qKey.pop();
 	}
