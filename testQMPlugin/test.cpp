@@ -230,6 +230,8 @@ unsigned int __stdcall test::ThreadRunWhole(PVOID pM)
 		::EnterCriticalSection(&cs_testNeuralThread);
 		g_insZone.run(dm);
 		::LeaveCriticalSection(&cs_testNeuralThread);
+		Sleep(30);
+
 //		test::printBestAreaAndPlayer();
 	}
 	::CoUninitialize();
@@ -347,6 +349,7 @@ int test::visualization()
 	if (flagVis == 0)
 	{
 		_beginthreadex(NULL, 0, vis::showView, NULL, 0, NULL);
+		_beginthreadex(NULL, 0, vis::procView, NULL, 0, NULL);
 		flagVis = 1;
 	}
 

@@ -137,7 +137,7 @@ int gandalfr::CKeyOp::fillVecUpRunKeyCurrentTime(std::vector<CKeyOp>& vec, const
 	return 0;
 }
 
-int gandalfr::CKeyOp::UpSlefKeyAnddelKeyNoExe(int signalId)
+int gandalfr::CKeyOp::UpSlefKeyAndDelKeyNoExe(int signalId)
 {
 	::EnterCriticalSection(&CKeyOp::g_csKeyOp);
 	for (auto it = CKeyOp::m_setKeyOp.begin(); it != CKeyOp::m_setKeyOp.end(); )
@@ -154,16 +154,39 @@ int gandalfr::CKeyOp::UpSlefKeyAnddelKeyNoExe(int signalId)
 	return 0;
 }
 
-int gandalfr::CKeyOp::upKeyNoUp(int signalId)
+int gandalfr::CKeyOp::upKeyNoUpThenClearKeySet(int signalId)
 {
+	vector<CKeyOp> upKey;
 	::EnterCriticalSection(&CKeyOp::g_csKeyOp);
 	for (auto it = CKeyOp::m_keyStateSignal.begin(); it != CKeyOp::m_keyStateSignal.end(); it++)
 	{
 		if (it->second == signalId)
 		{
-			m_setKeyOp.insert(CKeyOp(it->first,0,CKeyOp::UP));
+			upKey.push_back(CKeyOp(it->first,0,CKeyOp::UP));
 		}
 	}
+	m_setKeyOp.clear();
+
+
+	::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
+	return 0;
+}
+
+int gandalfr::CKeyOp::eraseRunKey()
+{
+	::EnterCriticalSection(&CKeyOp::g_csKeyOp);
+
+	for (auto iter = m_setKeyOp.begin(); iter != m_setKeyOp.end(); )
+	{
+		if (iter->m_signal == 1)
+		{
+			iter = m_setKeyOp.erase(iter);
+		}
+		else {
+			iter++;
+		}
+	}
+
 	::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
 	return 0;
 }
@@ -455,13 +478,14 @@ DWORD getKeyRunState(const wstring &key,int &begin, DWORD &time, int &Up)
 			{
 				if (hisKey[i].m_KeyType == CKeyOp::DOWMNOAGAIN)
 				{
-					preDownTime = time;
+					preDownTime = hisKey[i].m_KeyTime;
 					break;
 				}
 			}
+
 			if (hisKey[begin].m_KeyTime - hisKey[i].m_KeyTime > 3000)
 				break;
-
+			
 		}
 	}
 
@@ -515,14 +539,6 @@ int gandalfr::CRoomState::setRunStateCorrectly()
 		state[L"up"] = 1;
 	else if ((downTime > upTime &&downUp == 0)||(downUp==0&&upUp==1))
 		state[L"down"] = 1;
-
-	for (auto iter = state.begin(); iter != state.end(); iter++)
-	{
-		if (iter->second > 0)
-		{
-			wcout << iter->first << L" " << iter->second << L" ";
-		}
-	}
 
 
 	return 0;

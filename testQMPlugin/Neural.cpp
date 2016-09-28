@@ -118,11 +118,7 @@ void CAction::run()
 //take a trail ,immediatly run ,and return the end time
 DWORD CAction::executeTrail(const vector<CTrail>& trail,const CSpeed &speed,const map<wstring,int> &runState)
 {
-
-	//it is right,beacuse the actTemp key no in trail state,it will manage it's own self key
-	::EnterCriticalSection(&CKeyOp::g_csKeyOp);
-	CKeyOp::m_setKeyOp.clear();
-	::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
+	CKeyOp::eraseRunKey();
 
 	int runOrWalk = 0;
 
@@ -700,30 +696,29 @@ void ActTemp::run()
 
 void ActTemp::express()
 {
-	if (m_trail.empty() == true)
+	//generate it's only keySignal
+	int signal = 3;//0 can not be use ,1 is run state,2 is release skill the least number 
+	for (;; signal++)
 	{
-		//generate it's only keySignal
-		int signal = 3;//0 can not be use ,1 is run state,2 is release skill the least number 
-		for (;; signal++)
+		int ok = 1;
+		::EnterCriticalSection(&CKeyOp::g_csKeyOp);
+		for (auto iter = CKeyOp::m_setKeyOp.begin(); iter != CKeyOp::m_setKeyOp.end(); iter++)
 		{
-			int ok = 1;
-			::EnterCriticalSection(&CKeyOp::g_csKeyOp);
-			for (auto iter = CKeyOp::m_setKeyOp.begin(); iter != CKeyOp::m_setKeyOp.end(); iter++)
+			if (iter->m_signal == signal)
 			{
-				if (iter->m_signal == signal)
-				{
-					ok = 0;
-					break;
-				}
-			}
-			::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
-			if (ok == 1)
-			{
-				m_keySignal = signal;
+				ok = 0;
 				break;
 			}
 		}
-		
+		::LeaveCriticalSection(&CKeyOp::g_csKeyOp);
+		if (ok == 1)
+		{
+			m_keySignal = signal;
+			break;
+		}
+	}
+	if (m_trail.empty() == true)
+	{
 		::EnterCriticalSection(&CKeyOp::g_csKeyOp);
 		for (auto it = m_key.begin(); it != m_key.end(); it++)
 		{
@@ -748,18 +743,15 @@ void ActTemp::end()
 
 	//find the no up key that this actTemp down
 	::EnterCriticalSection(&CKeyOp::g_csKeyOp);
-	for (auto iter = CKeyOp::m_setKeyOp.begin(); iter != CKeyOp::m_setKeyOp.end();iter++)
+	for (auto iter = CKeyOp::m_keyStateSignal.begin(); iter != CKeyOp::m_keyStateSignal.end();iter++)
 	{
-		if (iter->m_KeyType == CKeyOp::UP && CKeyOp::m_keyStateSignal[iter->m_Key] == iter->m_signal)
+		if (iter->second ==  m_keySignal)
 		{
-			if (firstKeyUp[iter->m_Key] == 0)
-			{
-				CKeyOp upkey(*iter);
-				upkey.m_KeyTime = GetTickCount();
-				qKey.push(upkey);
-			}
+			CKeyOp upkey(iter->first);
+			upkey.m_KeyTime = GetTickCount();
+			upkey.m_KeyType = CKeyOp::UP;
+			qKey.push(upkey);
 		}
-		firstKeyUp[iter->m_Key] = 1;
 	}
 	//delete all key this actTemp press(no include the trail)
 	for (auto it = CKeyOp::m_setKeyOp.begin(); it != CKeyOp::m_setKeyOp.end(); )
@@ -775,6 +767,9 @@ void ActTemp::end()
 	while (!qKey.empty())
 	{
 		CKeyOp::m_setKeyOp.insert(qKey.front());
+		if (qKey.front().m_Key == L"x")
+			int b = 0;
+
 		qKey.pop();
 	}
 	::LeaveCriticalSection(&CKeyOp::g_csKeyOp);

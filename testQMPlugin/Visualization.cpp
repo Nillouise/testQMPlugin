@@ -62,7 +62,7 @@ namespace vis
 				return false;
 		}
 	};
-	Mat DnfRoomState(CRectangle &screen,int narrowRate = 2)
+	Mat DnfRoomState(Mat &image,CRectangle &screen,int narrowRate = 2)
 	{
 		int dnfWidth = 800;
 		int dnfHeight = 600;
@@ -71,8 +71,8 @@ namespace vis
 		int dnfScreenWidth = dnfWidth / narrowRate + 2 * dnfedgeWidth;
 		int dnfScreenHeight = dnfHeight / narrowRate + 2 * dnfedgeWidth;
 
-		Mat image = Mat::zeros(dnfScreenHeight, dnfScreenWidth, CV_8UC3);
-
+		image.create(dnfScreenHeight, dnfScreenWidth, CV_8UC3);
+		rectangle(image, Point(0, 0),Point(image.cols,image.rows ), Scalar(0, 0, 0), CV_FILLED, 8);
 		screen.x = dnfedgeWidth;
 		screen.y = dnfedgeWidth;
 		screen.width = dnfScreenWidth - 2 * dnfedgeWidth;
@@ -107,12 +107,13 @@ namespace vis
 
 
 
-	Mat ActionNeuralState()
+	Mat ActionNeuralState(Mat &image)
 	{
 		const auto &action = g_AnyToAct[&g_action];
 		int width = 400;
 		int height = 300;
-		Mat image = Mat::zeros(height, width, CV_8UC3);
+		image.create(height, width, CV_8UC3);
+		rectangle(image, Point(0, 0), Point(image.cols, image.rows), Scalar(0, 0, 0), CV_FILLED, 8);
 		static map<void*, CRectangle, cmp_Neural> neuralToRect;// big to small
 		neuralToRect.clear();
 		for (auto iter = action.begin(); iter != action.end(); iter++)
@@ -204,12 +205,104 @@ namespace vis
 
 	}
 
+	std::string ws2s(const std::wstring& ws)
+	{
+		std::string curLocale = setlocale(LC_ALL, NULL);        // curLocale = "C";
+		setlocale(LC_ALL, "chs");
+		const wchar_t* _Source = ws.c_str();
+		size_t _Dsize = 2 * ws.size() + 1;
+		char *_Dest = new char[_Dsize];
+		memset(_Dest, 0, _Dsize);
+		wcstombs(_Dest, _Source, _Dsize);
+		std::string result = _Dest;
+		delete[]_Dest;
+		setlocale(LC_ALL, curLocale.c_str());
+		return result;
+	}
+
+	Mat printRunState(Mat &image,CRectangle printArea)
+	{
+		int startX = printArea.x;
+		int startY = printArea.y;
+		int OneHeight = 12;
+		for (auto iter = g_RoomState.m_runState.begin(); iter != g_RoomState.m_runState.end(); iter++)
+		{
+			if (iter->second == 0)
+				continue;
+			string run = ws2s(iter->first);
+			run += " ";
+			run += doubleToString( iter->second);
+			putText(image, run, Point(startX, startY + OneHeight), FONT_HERSHEY_PLAIN, 1, Scalar(255, 255, 255), 1, 8);
+			startY += OneHeight;
+		}
+		return image;
+	}
+
+	Mat printKeyboardState(Mat &image, CRectangle printArea)
+	{
+		int startX = printArea.x;
+		int startY = printArea.y;
+		int OneHeight = 12;
+		for (auto iter = CKeyOp::m_keyStateSignal.begin(); iter != CKeyOp::m_keyStateSignal.end(); iter++)
+		{
+			if (iter->second == 1 || iter->second == 0)
+				continue;
+			string run = ws2s(iter->first);
+			run += " ";
+			run += doubleToString(iter->second);
+			putText(image, run, Point(startX, startY + OneHeight), FONT_HERSHEY_PLAIN, 1, Scalar(255, 255, 255), 1, 8);
+			startY += OneHeight;
+		}
+		return image;
+	}
+
+
+	Mat keyBoardState(Mat &image)
+	{
+		int width = 400;
+		int height = 300;
+		image.create(height, width, CV_8UC3);
+		rectangle(image, Point(0, 0), Point(image.cols, image.rows), Scalar(0, 0, 0), CV_FILLED, 8);
+		printRunState(image, CRectangle(0, 0, 200, 40));
+		printKeyboardState(image, CRectangle(0, 40, 200, 40));
+		return image;
+	}
+
+
+
+	Mat dnfMat(10, 10, CV_8UC3);
+	Mat neuMat(10, 10, CV_8UC3);
+	Mat keyboardMat(10, 10, CV_8UC3);
+	int procedMat = 1;
 	unsigned int __stdcall showView(PVOID pM)
+	{
+		while (controlVisThread>0)
+		{
+			if (controlVisThread == 2)
+				continue;
+			if (procedMat == 1)
+			{
+				imshow("RoomState", dnfMat);
+				imshow("NeuralState", neuMat);
+				imshow("keyBoardState", keyboardMat);
+				procedMat = 0;
+			}
+			int r=-1;
+
+			r = waitKey(33);
+			if (r != -1)
+			{
+				controlVisThread = 0;
+				destroyWindow("dnfScreen");
+			}
+		}
+		return 0;
+	}
+	unsigned int __stdcall procView(PVOID pM)
 	{
 
 		int headHeight = 100;
 		controlVisThread = 1;
-
 
 		while (controlVisThread>0)
 		{
@@ -217,19 +310,12 @@ namespace vis
 				continue;
 			::EnterCriticalSection(&cs_visualization);
 			CRectangle screen;
-			Mat roomstate = DnfRoomState(screen);
-			printBestArea(roomstate, screen);
-			imshow("dnfScreen", roomstate);
-			imshow("Neural", ActionNeuralState());
-
-
+			DnfRoomState(dnfMat,screen);
+			printBestArea(dnfMat, screen);
+			ActionNeuralState(neuMat);
+			keyBoardState(keyboardMat);
 			::LeaveCriticalSection(&cs_visualization);
-			int r = waitKey(100);
-			if (r != -1)
-			{
-				controlVisThread = 0;
-				destroyWindow("dnfScreen");
-			}
+			procedMat = 1;
 		}
 
 		return 0;

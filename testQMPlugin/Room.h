@@ -42,9 +42,10 @@ namespace gandalfr
 		static std::map<std::wstring, int> m_keyStateSignal;//the key is 0 if not down,else int represent the ActTemp's keySignal;
 
 		static int fillVecUpRunKeyCurrentTime(std::vector<CKeyOp> &vec,DWORD timeToUpKey);//use in actTemp to up the run key.
-	//	static int upRunKey(DWORD upTime);// up the left,right,up,down key,if they are downing
-		static int UpSlefKeyAnddelKeyNoExe(int signalId);//it no use yet
-		static int upKeyNoUp(int signalId);// it no clear the m_setKeyOp first
+//		static int upRunKey(DWORD upTime);// up the left,right,up,down key,if they are downing
+		static int UpSlefKeyAndDelKeyNoExe(int signalId);//it no use yet
+		static int upKeyNoUpThenClearKeySet(int signalId);// it no clear the m_setKeyOp first
+		static int eraseRunKey();//erase all incoming run key
 
 		static void processKey(Cdmsoft dm, const std::wstring &key, const keyMode &mode, const int &signal);//process this key op include set keyStateDown and m_keyStateSignal;
 

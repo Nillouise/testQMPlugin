@@ -10,6 +10,7 @@ using namespace std;
 namespace vis
 {
 	unsigned int __stdcall showView(PVOID pM);
+	unsigned int __stdcall procView(PVOID pM);
 	int init();
 
 	inline string doubleToString(double x)
