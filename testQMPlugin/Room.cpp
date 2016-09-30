@@ -8,6 +8,7 @@
 #include<set>
 #include"image.h"
 #include"grade.h"
+#include"Visualization.h"
 using namespace gandalfr;
 using namespace std;
 CRoomState g_RoomState;
@@ -649,11 +650,13 @@ void gandalfr::CKeyOp::processKey(Cdmsoft dm, const std::wstring & key, const ke
 {
 	if (mode == DOWMNOAGAIN)
 	{
+#ifndef FORBITKEYBOARD
 		dm.KeyDownChar(key.c_str());
+#endif 
 		m_hisCKeyOp.push_back(CKeyOp(key, m_nowTime, DOWMNOAGAIN));
 		m_keyStateSignal[key] = signal;
 		m_keyRecentProcess[key] = m_nowTime;
-#ifdef _DEBUG
+#ifdef PRINTKEY
 		wcout << key << L" " << (m_nowTime / 10) / 100.0 << L" " << L"down\t";
 #endif // _DEBUG
 
@@ -661,11 +664,13 @@ void gandalfr::CKeyOp::processKey(Cdmsoft dm, const std::wstring & key, const ke
 	}
 	if (mode == UP)
 	{
+#ifndef FORBITKEYBOARD
 		dm.KeyUpChar(key.c_str());
+#endif 
 		m_hisCKeyOp.push_back(CKeyOp(key, m_nowTime, UP));
 		m_keyStateSignal[key] = 0;
 		m_keyRecentProcess[key] = m_nowTime;
-#ifdef _DEBUG
+#ifdef PRINTKEY
 		wcout << key << L" "  << (m_nowTime / 10) / 100.0 << L" " << L"up  \t";
 #endif // _DEBUG
 		return;

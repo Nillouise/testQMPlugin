@@ -8,6 +8,8 @@ namespace ga
 
 	 double moveX = 0.02;// mul with pixel 
 	 double moveY = 0.03;
+	 double AttackAllMonster = 2;
+
 
 	 DWORD timeActTempToStart = 330;
 

@@ -6,7 +6,7 @@ namespace gandalfr
 {
 	namespace de
 	{
-		int getMonsterOverlay(const CRectangle &rectSkill, std::vector<std::vector<CRectangle>> &receive, const CMonsterSet &monset = g_RoomState.m_Monster)
+		int getMonsterOverlay(const CRectangle &rectSkill, std::vector<std::vector<CRectangle>> &receive, const CMonsterSet &monset)
 		{
 			//preprocess the monster collide with rectSkill and  calculate the 1 monster range.
 			receive.push_back(std::vector<CRectangle>());
@@ -243,6 +243,7 @@ namespace gandalfr
 		CAttackArea selBestAttackArea(vector<CAttackArea> areas)
 		{
 			CAttackArea bestArea;
+
 			for (auto iter = areas.begin(); iter != areas.end(); iter++)
 			{
 				if (bestArea.score<iter->score)
@@ -255,7 +256,7 @@ namespace gandalfr
 
 
 		//work with getMonsterOverlay together
-		int selSuitablAttackArea( vector<vector<CRectangle>> &receive,vector<CAttackArea> &generatedAttackArea,double CollidePercentageToEatSmall = 0.55)
+		int selSuitablAttackArea( vector<vector<CRectangle>> &receive,vector<CAttackArea> &generatedAttackArea,double CollidePercentageToEatSmall)
 		{
 			for (auto it = receive.rbegin(); it != receive.rend(); it++)
 			{

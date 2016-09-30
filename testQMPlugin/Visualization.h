@@ -5,6 +5,8 @@
 #include<sstream>
 #include <iomanip>
 #define VISUALIZATION
+#define FORBITKEYBOARD
+#define PRINTKEY
 using namespace std;
 
 namespace vis

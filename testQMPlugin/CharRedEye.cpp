@@ -497,6 +497,7 @@ namespace RedEye
 	void ActShiZiZhan::run()
 	{
 		m_selfOutput = m_base;
+		m_area.clear();
 		if (m_skill == NULL)
 		{
 			m_selfOutput = -DBL_MAX;
@@ -513,8 +514,8 @@ namespace RedEye
 		de::selSuitablAttackArea(recMonNeuralArea, monNeuralAttackArea);
 		de::selSuitablAttackArea(recMonAllArea, m_area);
 
-		de::calAttackAreaScoreOnlyMonsterNumber(monNeuralAttackArea, recMonNeuralArea.size(), ga::OneMonster * 2, ga::AttakAllMonster);
-		de::calAttackAreaScoreOnlyMonsterNumber(m_area, recMonAllArea.size(), ga::OneMonster, ga::AttakAllMonster);
+		de::calAttackAreaScoreOnlyMonsterNumber(monNeuralAttackArea, recMonNeuralArea.size(), ga::OneMonster * 2, ga::AttackAllMonster);
+		de::calAttackAreaScoreOnlyMonsterNumber(m_area, recMonAllArea.size(), ga::OneMonster, ga::AttackAllMonster);
 
 		de::addAt2ToAt1WhenTheyOverlay(m_area, monNeuralAttackArea, 0.9);
 
@@ -553,7 +554,7 @@ namespace RedEye
 		{
 			CKeyOp::fillVecUpRunKeyCurrentTime(actAttack->m_key, 0);//no continue to press run key;
 																	//attack immediatly
-			actAttack->m_endTime = nowTime + 2000;
+			actAttack->m_endTime = nowTime + 800;
 			if (isCoDirection(g_RoomState.m_Player.m_direction, m_bestArea.direction) == 0)
 			{
 				if (m_bestArea.direction < 0)
@@ -590,6 +591,9 @@ namespace RedEye
 
 int RedEye::loadNeural()
 {
+	CSkShiZiZhan *csShizizhan = new CSkShiZiZhan();
+
+
 	ActShuangDao *actShuangDaoMon1 = new ActShuangDao();
 	actShuangDaoMon1->m_MonToAttack = &g_monNeural1;
 	ActShuangDao *actShuangDaoMon2 = new ActShuangDao();
@@ -598,6 +602,10 @@ int RedEye::loadNeural()
 	actZhiChong1->m_MonToAttack = &g_monNeural1;
 	ActZhiChong *actZhiChong2 = new ActZhiChong();
 	actZhiChong2->m_MonToAttack = &g_monNeural2;
+	ActShiZiZhan *actShiZiZhan1 = new ActShiZiZhan(csShizizhan);
+	actShiZiZhan1->m_MonToAttack = &g_monNeural1;
+	ActShiZiZhan *actShiZiZhan2 = new ActShiZiZhan(csShizizhan);
+	actShiZiZhan2->m_MonToAttack = &g_monNeural2;
 
 	MonAny* monAny = new MonAny();
 
@@ -617,8 +625,10 @@ int RedEye::loadNeural()
 
 //	g_AnyToAct[&g_action].insert(actShuangDaoMon1);
 //	g_AnyToAct[&g_action].insert(actShuangDaoMon2);
-	g_AnyToAct[&g_action].insert(actZhiChong1);
-	g_AnyToAct[&g_action].insert(actZhiChong2);
+//	g_AnyToAct[&g_action].insert(actZhiChong1);
+//	g_AnyToAct[&g_action].insert(actZhiChong2);
+	g_AnyToAct[&g_action].insert(actShiZiZhan1);
+	g_AnyToAct[&g_action].insert(actShiZiZhan2);
 
 //	simulate();
 
