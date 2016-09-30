@@ -14,5 +14,9 @@ namespace gandalfr
 		int selSuitablAttackArea(vector<vector<CRectangle>> &receive, vector<CAttackArea> &generatedAttackArea, double CollidePercentageToEatSmall = 0.55);
 		int calAttackAreaScoreOnlyMonsterNumber(vector<CAttackArea> &attackArea, int totalMonsterNum, double scOneMonster, double AllMonsterWillbeAttack);
 		int addAt2ToAt1WhenTheyOverlay(vector<CAttackArea> &At1, const  vector<CAttackArea> &At2, double percentage);
+		int offsetAttackArea(vector<CAttackArea> &attackArea, int xOffset);
+		int calAttackAreaScoreInMove(vector<CAttackArea> &attackArea, const  CPlayer &player, double scNeednMove, double scNeednChangeDirection, double scMoveX, double scMoveY);
+		CAttackArea selBestAttackArea(vector<CAttackArea> areas);
 	}
+
 }

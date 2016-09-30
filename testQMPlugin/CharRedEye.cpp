@@ -18,6 +18,12 @@ void RedEye::ActShuangDao::run()
 	CRectangle skillArea(0, 0, 80, 50);
 	vector<vector<CRectangle>> receive;
 	
+	if (m_skill == NULL)
+	{
+		m_selfOutput = -DBL_MAX;
+		return;
+	}
+
 	if ((*m_MonToAttack) == NULL)
 	{
 		return;
@@ -490,6 +496,15 @@ namespace RedEye
 
 	void ActShiZiZhan::run()
 	{
+		m_selfOutput = m_base;
+		if (m_skill == NULL)
+		{
+			m_selfOutput = -DBL_MAX;
+			return;
+		}
+		if ((*m_MonToAttack) == NULL)
+			return;
+
 		vector<vector<CRectangle>> recMonNeuralArea;
 		de::getMonsterOverlay(m_skill->m_area, recMonNeuralArea, (*m_MonToAttack)->m_Mon);
 		vector<vector<CRectangle>> recMonAllArea;
@@ -504,7 +519,69 @@ namespace RedEye
 		de::addAt2ToAt1WhenTheyOverlay(m_area, monNeuralAttackArea, 0.9);
 
 		de::generateHalfSkill(g_RoomState.m_Player.m_rect, m_area, m_skill->m_area);
+		de::offsetAttackArea(m_area, 20);
 
+		de::calAttackAreaScoreInMove(m_area, g_RoomState.m_Player, ga::NeednMove, ga::NeednChangeDirection, ga::moveX, ga::moveY);
+		m_bestArea = de::selBestAttackArea(m_area);
+		m_selfOutput += m_bestArea.score;
+
+	}
+
+	void ActShiZiZhan::cal()
+	{
+		m_output = m_selfOutput;
+		m_output += Neural::sumUpRelativeWeight(this);
+
+		//add the monster source weight;
+		//it is interesting,in sumUpRelatveWeight,I add all the edge include the all MonNeural.Now, I add again the one of them,it should mul a large coefficient
+		if (*m_MonToAttack != NULL)
+			m_output += ga::coefficient_monNeural * ((*m_MonToAttack)->m_output)  * g_weight[make_pair(this, *m_MonToAttack)];
+	}
+
+	void ActShiZiZhan::express()
+	{
+		CRectangle rectDist;
+		ActTemp* actAttack = new ActTemp();
+		DWORD nowTime = GetTickCount();
+		actAttack->m_beginTime = nowTime;
+		actAttack->creator = this;
+		actAttack->m_base = 10;
+		actAttack->m_fnOutput = ActTemp::fnOutMustRunComplete();
+		//it need an generate m_ouput function;
+
+		if (CRectangle::RectCollide(m_bestArea.m_rect, g_RoomState.m_Player.m_rect, &rectDist) == 1)
+		{
+			CKeyOp::fillVecUpRunKeyCurrentTime(actAttack->m_key, 0);//no continue to press run key;
+																	//attack immediatly
+			actAttack->m_endTime = nowTime + 2000;
+			if (isCoDirection(g_RoomState.m_Player.m_direction, m_bestArea.direction) == 0)
+			{
+				if (m_bestArea.direction < 0)
+				{
+					actAttack->m_key.push_back(CKeyOp(L"left", nowTime, CKeyOp::PRESS));
+				}
+				else {
+					actAttack->m_key.push_back(CKeyOp(L"right", nowTime, CKeyOp::PRESS));
+				}
+				nowTime += 70;// turn round ' s delay time
+			}
+
+
+			for (auto iter = m_skill->m_Key.begin(); iter != m_skill->m_Key.end(); iter++)
+			{
+				auto key(*iter);
+				key.m_KeyTime = nowTime + iter->m_KeyTime;
+				actAttack->m_key.push_back(key);
+			}
+		}
+		else {
+			CTrail tra;
+
+			CRectangle::getRectTrail(g_RoomState.m_Player.m_rect, m_bestArea.m_rect, tra);
+			actAttack->m_endTime = actAttack->m_beginTime + ga::timeActTempToStart;
+			actAttack->m_trail.push_back(tra);
+		}
+		g_AnyToActTemp[&g_action].insert(actAttack);
 
 
 	}

@@ -47,7 +47,10 @@ namespace RedEye
 	public:
 		virtual ActShiZiZhan* getClassType() { return this; }
 		virtual void run();
+		virtual void cal();
+		virtual void express();
 		CSkill *m_skill;
+		ActShiZiZhan(CSkill * skill):m_skill( skill){}
 	};
 
 	int loadNeural();

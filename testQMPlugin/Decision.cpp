@@ -81,15 +81,65 @@ namespace gandalfr
 			return r;
 		}
 
-		int AddCuttedAttackAreaWithMonster(vector<CAttackArea> &attackArea,const CMonsterSet &monster,double AvoidOneMonsterScore)
-		{
-			for (size_t i = 0; i < length; i++)
-			{
+		//int YaxilCollide(const CRectangle &rectOri, const CRectangle &rectCutter, CRectangle *remainArea = NULL, CRectangle *cuttedArea = NULL)
+		//{
+		//	int DeleteCutted = 0;
+		//	if (cuttedArea == NULL)
+		//	{
+		//		cuttedArea = new CRectangle(rectOri);
+		//		DeleteCutted = 1;
+		//	}
+		//	int DeleteRemain = 0;
+		//	if (remainArea == NULL)
+		//	{
+		//		remainArea = new CRectangle(rectOri);
+		//		DeleteRemain = 1;
+		//	}
+		//	int r = 0;
+		//	if ((rectOri.y + rectOri.height > rectCutter.y && rectOri.y < rectCutter.y) || (rectOri.y< rectCutter.y + rectCutter.height && rectOri.y + rectOri.height >rectCutter.y + rectCutter.height))
+		//	{
+		//		if (rectOri.x < rectCutter.x + rectCutter.width && rectOri.x + rectOri.width > rectCutter.x)
+		//		{
+		//			remainArea->width = rectOri.x + rectOri.width - rectCutter.x + rectCutter.width;
+		//			remainArea->x = rectCutter.x + rectCutter.width;
+		//			cuttedArea->width = rectOri.x + rectOri.width - (remainArea->x + remainArea->width);
+		//			cuttedArea->x = 
 
-			}
+		//			r = remainArea->width <= 0 ? 2 : 1;
+		//		}
+		//		if (rectOri.x + rectOri.width > rectCutter.x && rectOri.x<rectCutter.x + rectCutter.width)
+		//		{
+		//			remainArea->width = rectCutter.x - rectOri.x;
+		//			r = remainArea->width <= 0 ? 2 : 1;
+		//		}
+		//	}
 
-			return 0;
-		}
+
+
+
+		//	if (DeleteCutted == 1)
+		//	{
+		//		delete cuttedArea;
+		//	}
+		//	if (DeleteRemain == 1)
+		//	{
+		//		delete remainArea;
+		//	}
+		//	return r;
+		//}
+
+
+		//int AddCuttedAttackAreaWithMonster(vector<CAttackArea> &attackArea,const CMonsterSet &monster,double AvoidOneMonsterScore)
+		//{
+
+		//	//check the cutted area have other monster
+		//	for (size_t i = 0; i < length; i++)
+		//	{
+
+		//	}
+
+		//	return 0;
+		//}
 
 		//change a center skill style  compu to half skill compu 
 		int generateHalfSkill(const CRectangle &player, vector<CAttackArea> &attackArea, const CRectangle &skillArea)
@@ -112,6 +162,22 @@ namespace gandalfr
 			return 0;
 		}
 
+		int offsetAttackArea(vector<CAttackArea> &attackArea,int xOffset)
+		{
+			for (auto it = attackArea.begin(); it != attackArea.end(); it++)
+			{
+				if (it->direction > 0)
+				{
+					it->m_rect.x -= xOffset;
+				}
+				else {
+					it->m_rect.x += xOffset;
+				}
+			}
+			return 0;
+		}
+
+		
 
 
 		int calAttackAreaScore(const CPlayer &player, vector<CAttackArea> &attackArea, double scOneMonster,double scNeednMove,double scNeednChangeDirection,double scMoveX,double scMoveY ,double AllMonsterWillbeAttack)
@@ -137,6 +203,28 @@ namespace gandalfr
 			return 0;
 		}
 
+		int calAttackAreaScoreInMove(vector<CAttackArea> &attackArea,const  CPlayer &player, double scNeednMove, double scNeednChangeDirection, double scMoveX, double scMoveY)
+		{
+			for (auto it = attackArea.begin(); it != attackArea.end(); it++)
+			{
+				CRectangle r;
+				//if need move player or change direction ,add the curScore;in other skill,it may hasn't the skill direction
+				if (CRectangle::RectCollide(player.m_rect, it->m_rect,&r) == 1)
+				{
+					it->score += scNeednMove;
+					if (abs(it->direction + player.m_direction) > abs(it->direction))
+					{
+						it->score += scNeednChangeDirection;
+					}
+				}
+				else {
+					it->score -= max(abs(r.width)*scMoveX, abs(r.height)*scMoveY);
+				}
+			}
+			return 0;
+		}
+
+
 		int calAttackAreaScoreOnlyMonsterNumber(vector<CAttackArea> &attackArea,int totalMonsterNum, double scOneMonster, double AllMonsterWillbeAttack)
 		{
 
@@ -150,6 +238,19 @@ namespace gandalfr
 				}
 			}
 			return 0;
+		}
+
+		CAttackArea selBestAttackArea(vector<CAttackArea> areas)
+		{
+			CAttackArea bestArea;
+			for (auto iter = areas.begin(); iter != areas.end(); iter++)
+			{
+				if (bestArea.score<iter->score)
+				{
+					bestArea = *iter;
+				}
+			}
+			return bestArea;
 		}
 
 

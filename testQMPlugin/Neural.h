@@ -98,7 +98,7 @@ public:
 	DWORD m_lastReleaseSkills;// the time that last release Skill
 
 	MonNeural **m_MonToAttack;// point to a fix variant that point to dynamic MonNeural
-
+	CSkill *m_skill;
 };
 
 class MonNoMoveAndInYaxilWithPlayer :public MonNeural

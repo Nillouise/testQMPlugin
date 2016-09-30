@@ -108,7 +108,7 @@ namespace gandalfr
 		int num;
 		double score;
 		CAttackArea(CRectangle rect, double direction, int num) :m_rect(rect), direction(direction), num(num) {}
-		CAttackArea() {}
+		CAttackArea() { num = 0; score = 0; }
 	};
 
 
