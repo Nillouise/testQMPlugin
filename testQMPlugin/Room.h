@@ -218,9 +218,13 @@ namespace gandalfr
 	{
 	public:
 		DWORD m_NextTime;
+		DWORD m_lastTime;
 		DWORD m_cooldown;
-		std::vector<CKeyOp> m_Key;
+		CRectangle m_area;
+		int m_canUse;
 
+		std::vector<CKeyOp> m_Key;
+		void release(DWORD curTime);
 
 	};
 

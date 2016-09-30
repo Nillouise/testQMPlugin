@@ -486,6 +486,29 @@ namespace RedEye
 
 	}
 
+
+
+	void ActShiZiZhan::run()
+	{
+		vector<vector<CRectangle>> recMonNeuralArea;
+		de::getMonsterOverlay(m_skill->m_area, recMonNeuralArea, (*m_MonToAttack)->m_Mon);
+		vector<vector<CRectangle>> recMonAllArea;
+		de::getMonsterOverlay(m_skill->m_area, recMonAllArea);
+		vector<CAttackArea> monNeuralAttackArea;
+		de::selSuitablAttackArea(recMonNeuralArea, monNeuralAttackArea);
+		de::selSuitablAttackArea(recMonAllArea, m_area);
+
+		de::calAttackAreaScoreOnlyMonsterNumber(monNeuralAttackArea, recMonNeuralArea.size(), ga::OneMonster * 2, ga::AttakAllMonster);
+		de::calAttackAreaScoreOnlyMonsterNumber(m_area, recMonAllArea.size(), ga::OneMonster, ga::AttakAllMonster);
+
+		de::addAt2ToAt1WhenTheyOverlay(m_area, monNeuralAttackArea, 0.9);
+
+		de::generateHalfSkill(g_RoomState.m_Player.m_rect, m_area, m_skill->m_area);
+
+
+
+	}
+
 }
 
 int RedEye::loadNeural()

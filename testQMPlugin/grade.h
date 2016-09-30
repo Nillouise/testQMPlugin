@@ -5,6 +5,8 @@ namespace ga //gor grade
 	extern double OneMonster; //add the score when a ActNeural can hit a mon
 	extern double NeednMove;//add the score when a ActNeural didn't need to move
 	extern double NeednChangeDirection;//add the score when a ActNeural didn't need to changeDirection
+	extern double AttakAllMonster;
+
 
 	extern double moveX;//monster estimate point mul with pixel 
 	extern double moveY;//

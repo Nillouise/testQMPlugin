@@ -26,6 +26,8 @@ namespace gandalfr
 			{
 				if (receive[count].size() < 2)
 				{
+					if (receive[count].size() == 0)
+						receive.erase( (receive.end()-1) );
 					break;
 				}
 				receive.push_back(std::vector<CRectangle>());
@@ -58,7 +60,7 @@ namespace gandalfr
 		}
 
 
-		//if return 1,cut successful,0,no cur,2 cut out all,considerate the y axil
+		//if return 1,cut successful,0,no cut,2 cut out all,considerate the y axil
 		int cutRectX(CRectangle &rectOri, const CRectangle &rectCutter)
 		{
 			int r = 0;
@@ -78,6 +80,17 @@ namespace gandalfr
 			}
 			return r;
 		}
+
+		int AddCuttedAttackAreaWithMonster(vector<CAttackArea> &attackArea,const CMonsterSet &monster,double AvoidOneMonsterScore)
+		{
+			for (size_t i = 0; i < length; i++)
+			{
+
+			}
+
+			return 0;
+		}
+
 		//change a center skill style  compu to half skill compu 
 		int generateHalfSkill(const CRectangle &player, vector<CAttackArea> &attackArea, const CRectangle &skillArea)
 		{
@@ -124,7 +137,20 @@ namespace gandalfr
 			return 0;
 		}
 
+		int calAttackAreaScoreOnlyMonsterNumber(vector<CAttackArea> &attackArea,int totalMonsterNum, double scOneMonster, double AllMonsterWillbeAttack)
+		{
 
+			for (auto it = attackArea.begin(); it != attackArea.end(); it++)
+			{
+				it->score = it->num*scOneMonster;
+				if (it->num >= totalMonsterNum)
+				{
+
+					it->score += AllMonsterWillbeAttack;
+				}
+			}
+			return 0;
+		}
 
 
 		//work with getMonsterOverlay together
@@ -167,6 +193,26 @@ namespace gandalfr
 			return 0;
 		}
 
+		int addAt2ToAt1WhenTheyOverlay(vector<CAttackArea> &At1, const  vector<CAttackArea> &At2,double percentage)
+		{
+			for (auto iter1 = At1.begin(); iter1 != At1.end(); iter1++)
+			{
+				for (auto iter2 = At2.begin(); iter2 != At2.end(); iter2++)
+				{
+					CRectangle colRect;
+					if (CRectangle::RectCollide(iter1->m_rect, iter2->m_rect, &colRect) == 1)
+					{
+						double colArea = colRect.width*colRect.height;
+						double at1Area = iter1->m_rect.width * iter1->m_rect.height;
+						if (colArea / at1Area > percentage)
+						{
+							iter1->score += iter2->score;
+						}
+					}
+				}
+			}
+			return 0;
+		}
 
 
 

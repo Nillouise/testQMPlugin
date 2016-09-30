@@ -719,3 +719,9 @@ CPlayer gandalfr::CPlayer::getPlayer()
 	return player;
 
 }
+
+void gandalfr::CSkill::release(DWORD curTime)
+{
+	m_lastTime = curTime;
+	m_NextTime = curTime + m_cooldown;
+}

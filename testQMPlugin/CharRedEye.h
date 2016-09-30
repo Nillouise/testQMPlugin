@@ -2,7 +2,7 @@
 #include"stdafx.h"
 #include"Room.h"
 #include "Neural.h"
-
+#include"Decision.h"
 namespace RedEye
 {
 	class CSkShuangDao :public CSkill
@@ -40,6 +40,14 @@ namespace RedEye
 		virtual void run();
 		virtual void cal();
 		virtual void express();
+	};
+
+	class ActShiZiZhan :public ActWithArea
+	{
+	public:
+		virtual ActShiZiZhan* getClassType() { return this; }
+		virtual void run();
+		CSkill *m_skill;
 	};
 
 	int loadNeural();

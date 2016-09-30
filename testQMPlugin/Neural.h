@@ -46,6 +46,8 @@ public:
 };
 
 
+
+
 class MonNearPlayer :public MonNeural
 {
 public:
@@ -67,29 +69,6 @@ public:
 	CRectangle m_fixArea;
 
 };
-
-class MonNoMoveAndInYaxilWithPlayer:public MonNeural
-{
-public:
-
-
-};
-
-//such as bati ,dutiao
-class MonIsAttacking:public MonNeural
-{
-public:
-
-};
-
-
-class MonNoMoveAndInPlayerBack:public MonNeural
-{
-public:
-
-};
-
-
 
 
 class MonAny :public MonNeural
@@ -122,6 +101,41 @@ public:
 
 };
 
+class MonNoMoveAndInYaxilWithPlayer :public MonNeural
+{
+public:
+
+
+};
+
+//such as bati ,dutiao
+class MonIsAttacking :public MonNeural
+{
+public:
+
+};
+
+
+class MonNoMoveAndInPlayerBack :public MonNeural
+{
+public:
+
+};
+
+//if there is monster in the other side,this neural output will be larger
+class MonInObstacleSide :public MonNeural
+{
+public:
+
+};
+
+
+class MiddleLayerNeural :public ActNeural
+{
+public:
+
+};
+
 class ActWithArea :public ActNeural
 {
 public:
@@ -131,6 +145,22 @@ public:
 	CAttackArea m_bestArea;
 	std::vector<CTrail> m_vecTrail;//go to the m_bestArea's trail
 };
+//use other ActWithArea Neural's area,(it aim is to help ActWithArea Neural
+class AttachToActWithAreaNeural :public ActNeural
+{
+public:
+	ActWithArea *m_sourceNeural;
+};
+
+class RunOutofObstacle :public AttachToActWithAreaNeural
+{
+public:
+
+};
+
+
+
+
 
 typedef  function<double(DWORD begin, DWORD end, Neural *neural)> fnOuput;
 //it must have correspond Up Key if you use m_key,
