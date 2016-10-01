@@ -41,7 +41,10 @@ class MonNeural:public Neural
 {
 public:
 	virtual MonNeural* getClassType() { return this; }
+	MonNeural() { m_necessary = 0.3; }
+
 	CMonsterSet m_Mon;//this MonNeural store which monsters should be considerate
+	double m_necessary;//to avoid m_output bigger and bigger,   this neural 's monster set should important in while multiply?it will mul with any monset,so it should be 1/3 etc
 	fnNumToScore m_numToScore;
 };
 
@@ -77,7 +80,7 @@ public:
 	virtual MonAny* getClassType() { return this; }
 	virtual void run();
 	virtual void cal();
-	MonAny(double base = 0.0) { m_base = base; };
+	MonAny(double base = 0.0):MonNeural() { m_base = base; };
 };
 
 
@@ -95,10 +98,7 @@ class ActNeural :public Neural
 public:
 	virtual ActNeural* getClassType() { return this; }
 	virtual string getBaseType() { return "ActNeural"; }
-	DWORD m_lastReleaseSkills;// the time that last release Skill
 
-	MonNeural **m_MonToAttack;// point to a fix variant that point to dynamic MonNeural
-	CSkill *m_skill;
 };
 
 class MonNoMoveAndInYaxilWithPlayer :public MonNeural
@@ -143,7 +143,10 @@ public:
 	virtual string getBaseType() { return "ActWithArea"; }
 	std::vector<CAttackArea> m_area;//possible attack area;
 	CAttackArea m_bestArea;
+	CSkill *m_skill;
+	MonNeural **m_MonToConsiderFirst;// point to a fix variant that point to dynamic MonNeural
 	std::vector<CTrail> m_vecTrail;//go to the m_bestArea's trail
+	DWORD m_lastReleaseSkills;// the time that last release Skill
 };
 //use other ActWithArea Neural's area,(it aim is to help ActWithArea Neural
 class AttachToActWithAreaNeural :public ActNeural

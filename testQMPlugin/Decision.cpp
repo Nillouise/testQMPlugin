@@ -316,6 +316,103 @@ namespace gandalfr
 			return 0;
 		}
 
+		int runInActWithAreaHalfSkill(ActWithArea *actNeural)
+		{
+			actNeural->m_selfOutput = actNeural->m_base;
+			actNeural->m_area.clear();
+			if (actNeural->m_skill == NULL)
+			{
+				actNeural->m_selfOutput = -DBL_MAX;
+				return 0;
+			}
+			if (actNeural->m_skill->canUse() == false)
+				return 0;
+
+			if ((*(actNeural->m_MonToConsiderFirst)) == NULL)
+				return 0;
+
+			vector<vector<CRectangle>> recMonNeuralArea;
+			de::getMonsterOverlay(actNeural->m_skill->m_area, recMonNeuralArea, (*(actNeural->m_MonToConsiderFirst))->m_Mon);
+			vector<vector<CRectangle>> recMonAllArea;
+			de::getMonsterOverlay(actNeural->m_skill->m_area, recMonAllArea);
+			vector<CAttackArea> monNeuralAttackArea;
+			de::selSuitablAttackArea(recMonNeuralArea, monNeuralAttackArea);
+			de::selSuitablAttackArea(recMonAllArea, actNeural->m_area);
+
+			de::calAttackAreaScoreOnlyMonsterNumber(monNeuralAttackArea, recMonNeuralArea.size(), ga::OneMonster, ga::AttackAllMonster);
+			de::calAttackAreaScoreOnlyMonsterNumber(actNeural->m_area, recMonAllArea.size(), ga::OneMonster * (*actNeural->m_MonToConsiderFirst)->m_necessary, ga::AttackAllMonster);
+
+			de::addAt2ToAt1WhenTheyOverlay(actNeural->m_area, monNeuralAttackArea, 0.9);
+
+			de::generateHalfSkill(g_RoomState.m_Player.m_rect, actNeural->m_area, actNeural->m_skill->m_area);
+			de::offsetAttackArea(actNeural->m_area, 20);
+
+			de::calAttackAreaScoreInMove(actNeural->m_area, g_RoomState.m_Player, ga::NeednMove, ga::NeednChangeDirection, ga::moveX, ga::moveY);
+			actNeural->m_bestArea = de::selBestAttackArea(actNeural->m_area);
+			actNeural->m_selfOutput += actNeural->m_bestArea.score;
+			return 0;
+		}
+
+		int calscoreAfterRun(ActWithArea * actNeural)
+		{
+			actNeural->m_output = actNeural->m_selfOutput;
+			actNeural->m_output += Neural::sumUpRelativeWeight(actNeural);
+
+			//add the monster source weight;
+			//it is interesting,in sumUpRelatveWeight,I add all the edge include the all MonNeural.Now, I add again the one of them,it should mul a large coefficient
+			if (*actNeural->m_MonToConsiderFirst != NULL)
+				actNeural->m_output += ga::coefficient_monNeural * ((*actNeural->m_MonToConsiderFirst)->m_output)  * g_weight[make_pair(actNeural, *actNeural->m_MonToConsiderFirst)];
+			return 0;
+		}
+
+		int epressHalfSkill(ActWithArea * actNeural)
+		{
+			CRectangle rectDist;
+			ActTemp* actAttack = new ActTemp();
+			DWORD nowTime = GetTickCount();
+			actAttack->m_beginTime = nowTime;
+			actAttack->creator = actNeural;
+			actAttack->m_base = 10;
+			actAttack->m_fnOutput = ActTemp::fnOutMustRunComplete();
+			//it need an generate m_ouput function;
+
+			if (CRectangle::RectCollide(actNeural->m_bestArea.m_rect, g_RoomState.m_Player.m_rect, &rectDist) == 1)
+			{
+				CKeyOp::fillVecUpRunKeyCurrentTime(actAttack->m_key, 0);//no continue to press run key;
+																		//attack immediatly
+				actAttack->m_endTime = nowTime + actNeural->m_skill->m_HitrecoverTime;
+				if (isCoDirection(g_RoomState.m_Player.m_direction, actNeural->m_bestArea.direction) == 0)
+				{
+					if (actNeural->m_bestArea.direction < 0)
+					{
+						actAttack->m_key.push_back(CKeyOp(L"left", nowTime, CKeyOp::PRESS));
+					}
+					else {
+						actAttack->m_key.push_back(CKeyOp(L"right", nowTime, CKeyOp::PRESS));
+					}
+					nowTime += 70;// turn round ' s delay time
+				}
+
+
+				for (auto iter = actNeural->m_skill->m_Key.begin(); iter != actNeural->m_skill->m_Key.end(); iter++)
+				{
+					auto key(*iter);
+					key.m_KeyTime = nowTime + iter->m_KeyTime;
+					actAttack->m_key.push_back(key);
+				}
+			}
+			else {
+				CTrail tra;
+
+				CRectangle::getRectTrail(g_RoomState.m_Player.m_rect, actNeural->m_bestArea.m_rect, tra);
+				actAttack->m_endTime = actAttack->m_beginTime + ga::timeActTempToStart;
+				actAttack->m_trail.push_back(tra);
+			}
+			g_AnyToActTemp[&g_action].insert(actAttack);
+
+
+			return 0;
+		}
 
 
 

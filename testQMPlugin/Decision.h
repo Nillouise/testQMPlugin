@@ -2,6 +2,8 @@
 #include"stdafx.h"
 #include"Room.h"
 #include<vector>
+#include"Neural.h"
+#include"grade.h"
 using namespace std;
 namespace gandalfr
 {
@@ -17,6 +19,9 @@ namespace gandalfr
 		int offsetAttackArea(vector<CAttackArea> &attackArea, int xOffset);
 		int calAttackAreaScoreInMove(vector<CAttackArea> &attackArea, const  CPlayer &player, double scNeednMove, double scNeednChangeDirection, double scMoveX, double scMoveY);
 		CAttackArea selBestAttackArea(vector<CAttackArea> areas);
+		int runInActWithAreaHalfSkill(ActWithArea *actNeural);
+		int calscoreAfterRun(ActWithArea *actNeural);
+		int epressHalfSkill(ActWithArea *actNeural);
 	}
 
 }

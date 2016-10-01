@@ -3,15 +3,13 @@
 #include"CharRedEye.h"
 #include"Cdmsoft.h"
 #include"Visualization.h"
-
+#include"CharBaoPo.h"
 InsZone g_insZone;
 
 int InsZone::loadNeural()
 {
-	RedEye::loadNeural();
+	BaoPo::loadNeural();
 	
-
-
 
 	return 0;
 }

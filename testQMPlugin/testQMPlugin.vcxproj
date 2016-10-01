@@ -189,6 +189,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cdmsoft.h" />
+    <ClInclude Include="CharBaoPo.h" />
     <ClInclude Include="CharRedEye.h" />
     <ClInclude Include="Decision.h" />
     <ClInclude Include="grade.h" />
@@ -205,6 +206,7 @@
     <ClInclude Include="Visualization.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CharBaoPo.cpp" />
     <ClCompile Include="CharRedEye.cpp" />
     <ClCompile Include="Decision.cpp" />
     <ClCompile Include="grade.cpp" />
