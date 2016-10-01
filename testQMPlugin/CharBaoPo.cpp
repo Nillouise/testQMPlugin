@@ -115,7 +115,6 @@ namespace BaoPo
 		de::epressHalfSkill(this);
 	}
 
-	int dddd(DWORD) { return 0; }
 
 	int loadNeural()
 	{
@@ -123,12 +122,12 @@ namespace BaoPo
 		skLongJuanFeng->m_area = CRectangle(0, 0, 30, 20);
 		skLongJuanFeng->m_cooldown = 3000;
 		skLongJuanFeng->m_HitrecoverTime = 700;
-		skLongJuanFeng->m_Key.push_back(CKeyOp(L"z",0,CKeyOp::PRESS, dddd));
+		skLongJuanFeng->m_Key.push_back(CKeyOp(L"z", 0, CKeyOp::PRESS, [&](DWORD pressTime) {skLongJuanFeng->release(pressTime); return 0.0; }));
 		AttackSkill *skPingX = new AttackSkill();
 		skPingX->m_area= CRectangle(0, 0, 500, 70);
 		skPingX->m_cooldown = 50;
 		skPingX->m_HitrecoverTime = 1800;
-		skPingX->m_Key.push_back(CKeyOp(L"x", 0, CKeyOp::DOWMAGAIN, dddd));
+		skPingX->m_Key.push_back(CKeyOp(L"x", 0, CKeyOp::DOWMAGAIN, [&](DWORD pressTime) {skPingX->release(pressTime); return 0.0; }));
 		// [&](DWORD pressTime) { skPingX->release(pressTime); return 0.0; }
 
 

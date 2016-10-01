@@ -10,14 +10,14 @@
 #include<set>
 
 
-
 namespace gandalfr
 {
 	class CRoomState;
 	class CMonsterOne;
 	class CTrail;
 
-
+	typedef  std::function<double(DWORD pressTime)> fnKeyPressCallBack;
+	extern fnKeyPressCallBack KeyDefaultCallback;
 	class CKeyOp
 	{
 	public:
@@ -25,17 +25,16 @@ namespace gandalfr
 
 		std::wstring m_Key;
 		DWORD m_KeyTime;
-		int(*m_KeyCallback)(DWORD x);//when a key press ,it call back£¬the process while pass the process time
+//		int(*m_KeyCallback)(DWORD x);//when a key press ,it call back£¬the process while pass the process time
+		fnKeyPressCallBack m_KeyCallback;
 		keyMode m_KeyType;// this key is press or down or up
 		int m_signal;//1 if for run to some area,2 to release skill,you can you other num to approach other effect
-
-
+	//	DWORD testss;
 
 		static DWORD m_nowTime;
 		static bool m_RunTheKeyBoard;//if it is false,the keyboard thread will exit
 
 
-		static int KeyDefaultCallback(DWORD process_time);// 
 
 		static std::vector<CKeyOp> m_hisCKeyOp; // record the history key
 		static std::set<CKeyOp > m_setKeyOp;  // incoming key
@@ -51,7 +50,7 @@ namespace gandalfr
 
 		static void processKey(Cdmsoft dm, const std::wstring &key, const keyMode &mode, const int &signal);//process this key op include set keyStateDown and m_keyStateSignal;
 
-		CKeyOp(std::wstring Key = L"", DWORD KeyTime = 0, keyMode KeyType = CKeyOp::PRESS, int(*KeyCallback)(DWORD) = KeyDefaultCallback, int signal = 1) :m_Key(Key), m_KeyTime(KeyTime), m_KeyCallback(KeyCallback), m_KeyType(KeyType), m_signal(signal) {}
+		CKeyOp(std::wstring Key = L"", DWORD KeyTime = 0, keyMode KeyType = CKeyOp::PRESS, fnKeyPressCallBack keyCallBack = KeyDefaultCallback, int signal = 1) :m_Key(Key), m_KeyTime(KeyTime), m_KeyCallback(keyCallBack), m_KeyType(KeyType), m_signal(signal) {}
 		static UINT __stdcall KeyboardInput(PVOID);//use to begin a new thread
 	};
 	bool operator < (const CKeyOp &t1, const CKeyOp &t2);

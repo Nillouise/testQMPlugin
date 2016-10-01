@@ -175,7 +175,6 @@ public:
 
 	static fnOuput fnOutMustRunComplete();//tempNeural have creator
 	static fnOuput fnOutGiveUpControlInLastXmillisecond(DWORD x);
-
 	virtual void run();//ActTemp output only depend on m_fnOutput?didn't relative the other Neural?
 	virtual void express();
 	virtual void end();

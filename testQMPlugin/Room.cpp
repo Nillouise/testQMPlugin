@@ -19,7 +19,7 @@ std::map<std::wstring, int>  CKeyOp::m_keyStateSignal;//the key is 0 if not down
 CRITICAL_SECTION CKeyOp::g_csKeyOp;
 bool CKeyOp::m_RunTheKeyBoard;
 DWORD CKeyOp::m_nowTime;
-
+fnKeyPressCallBack gandalfr::KeyDefaultCallback = [](DWORD) {return 0.0; };
 
 
 
@@ -121,10 +121,7 @@ bool gandalfr::operator <(const CRectangle & t1, const CRectangle & t2)
 
 
 
-int gandalfr::CKeyOp::KeyDefaultCallback(DWORD x)
-{
-	return 0;
-}
+
 
 
 
