@@ -22,5 +22,19 @@ namespace Neural
 
             return rs;
         }
+
+        public static string generateMulText(string OriText,string replaceText, string[] newName )
+        {
+            string r="";
+            for (int i = 0; i < newName.Length; i++)
+            {
+                r += OriText.Replace(replaceText, newName[i])+'\n';
+            }
+            return r;
+        }
+
+
+
+
     }
 }

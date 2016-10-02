@@ -27,7 +27,10 @@ namespace generateNeural
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-            txt_OuputCode.Text = generateCode.simulation(txt_ClassName.Text, 80);
+            string[] newNames = txt_ClassName.Text.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+            string outputcode = Neural.generateCode.generateMulText(txt_replaceText.Text, txt_replaceTextName.Text, newNames);
+
+            txt_OuputCode.Text = outputcode;
         }
     }
 }

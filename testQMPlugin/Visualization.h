@@ -5,7 +5,7 @@
 #include<sstream>
 #include <iomanip>
 #define VISUALIZATION
-#define FORBITKEYBOARD
+//#define FORBITKEYBOARD
 #define PRINTKEY
 using namespace std;
 

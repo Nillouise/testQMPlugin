@@ -724,7 +724,7 @@ CPlayer gandalfr::CPlayer::getPlayer()
 
 bool gandalfr::CSkill::canUse()
 {
-	return true;
+	return ::GetTickCount() > m_NextTime;
 }
 
 int gandalfr::CSkill::release(DWORD curTime)

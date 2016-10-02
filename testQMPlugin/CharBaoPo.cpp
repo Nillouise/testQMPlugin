@@ -122,37 +122,94 @@ namespace BaoPo
 		skLongJuanFeng->m_area = CRectangle(0, 0, 30, 20);
 		skLongJuanFeng->m_cooldown = 3000;
 		skLongJuanFeng->m_HitrecoverTime = 700;
-		skLongJuanFeng->m_Key.push_back(CKeyOp(L"z", 0, CKeyOp::PRESS, [&](DWORD pressTime) {skLongJuanFeng->release(pressTime); return 0.0; }));
+		skLongJuanFeng->m_Key.push_back(CKeyOp(L"z", 0, CKeyOp::PRESS, [skLongJuanFeng](DWORD pressTime) {skLongJuanFeng->release(pressTime); return 0.0; }));
 		AttackSkill *skPingX = new AttackSkill();
 		skPingX->m_area= CRectangle(0, 0, 500, 70);
 		skPingX->m_cooldown = 50;
 		skPingX->m_HitrecoverTime = 1800;
-		skPingX->m_Key.push_back(CKeyOp(L"x", 0, CKeyOp::DOWMAGAIN, [&](DWORD pressTime) {skPingX->release(pressTime); return 0.0; }));
-		// [&](DWORD pressTime) { skPingX->release(pressTime); return 0.0; }
+		skPingX->m_Key.push_back(CKeyOp(L"x", 0, CKeyOp::DOWMAGAIN, [skPingX](DWORD pressTime) {skPingX->release(pressTime); return 0.0; }));
+		AttackSkill *skMoDanLianShe = new AttackSkill();
+		skMoDanLianShe->m_area = CRectangle(0, 0, 450, 70);
+		skMoDanLianShe->m_cooldown = 4000;
+		skMoDanLianShe->m_HitrecoverTime = 1300;
+		skMoDanLianShe->m_Key.push_back(CKeyOp(L"a", 0, CKeyOp::PRESS, [skMoDanLianShe](DWORD pressTime) {skMoDanLianShe->release(pressTime); return 0.0; }));
+		AttackSkill *skDiYan = new AttackSkill();
+		skDiYan->m_area = CRectangle(0, 0, 300, 180);
+		skDiYan->m_cooldown = 6000;
+		skDiYan->m_HitrecoverTime = 850;
+		skDiYan->m_Key.push_back(CKeyOp(L"g", 0, CKeyOp::PRESS, [skDiYan](DWORD pressTime) {skDiYan->release(pressTime); return 0.0; }));
+		AttackSkill *skBingJingZhiYu = new AttackSkill();
+		skBingJingZhiYu->m_area = CRectangle(0, 0, 350, 230);
+		skBingJingZhiYu->m_cooldown = 15*1000;
+		skBingJingZhiYu->m_HitrecoverTime = 850;
+		skBingJingZhiYu->m_Key.push_back(CKeyOp(L"f", 0, CKeyOp::PRESS, [skBingJingZhiYu](DWORD pressTime) {skBingJingZhiYu->release(pressTime); return 0.0; }));
+		AttackSkill *skLeiGuangLian = new AttackSkill();
+		skLeiGuangLian->m_area = CRectangle(0, 0, 200, 140);
+		skLeiGuangLian->m_cooldown = 15*1000;
+		skLeiGuangLian->m_HitrecoverTime = 1500;
+		skLeiGuangLian->m_Key.push_back(CKeyOp(L"w", 0, CKeyOp::PRESS, [skLeiGuangLian](DWORD pressTime) {skLeiGuangLian->release(pressTime); return 0.0; }));
+		AttackSkill *skXuanHuoDun = new AttackSkill();
+		skXuanHuoDun->m_area = CRectangle(0, 0, 450, 140);
+		skXuanHuoDun->m_cooldown = 5*1000;
+		skXuanHuoDun->m_HitrecoverTime = 700;
+		skXuanHuoDun->m_Key.push_back(CKeyOp(L"d", 0, CKeyOp::PRESS, [skXuanHuoDun](DWORD pressTime) {skXuanHuoDun->release(pressTime); return 0.0; }));
 
-
-
+		//MoDanLianShe
+		//	DiYan
+		//	BingJingZhiYu
+		//	LeiGuangLian
+		//	XuanHuoDun
 
 
 		ActHalfSkill* actLongjuanfeng1 = new ActHalfSkill(skLongJuanFeng);
 		ActHalfSkill* actLongjuanfeng2 = new ActHalfSkill(skLongJuanFeng);
 		ActHalfSkill* actPingX1 = new ActHalfSkill(skPingX);
 		ActHalfSkill* actPingX2 = new ActHalfSkill(skPingX);
-
-
+		ActHalfSkill* actMoDanLianShe1 = new ActHalfSkill(skMoDanLianShe);
+		ActHalfSkill* actMoDanLianShe2 = new ActHalfSkill(skMoDanLianShe);
+		ActHalfSkill* actDiYan1 = new ActHalfSkill(skDiYan);
+		ActHalfSkill* actDiYan2 = new ActHalfSkill(skDiYan);
+		ActHalfSkill* actBingJingZhiYu1 = new ActHalfSkill(skBingJingZhiYu);
+		ActHalfSkill* actBingJingZhiYu2 = new ActHalfSkill(skBingJingZhiYu);
+		ActHalfSkill* actLeiGuangLian1 = new ActHalfSkill(skLeiGuangLian);
+		ActHalfSkill* actLeiGuangLian2 = new ActHalfSkill(skLeiGuangLian);
+		ActHalfSkill* actXuanHuoDun1 = new ActHalfSkill(skXuanHuoDun);
+		ActHalfSkill* actXuanHuoDun2 = new ActHalfSkill(skXuanHuoDun);
 
 
 		actLongjuanfeng1->m_MonToConsiderFirst = &g_monNeural1;
 		actLongjuanfeng2->m_MonToConsiderFirst = &g_monNeural2;
 		actPingX1->m_MonToConsiderFirst = &g_monNeural1;
 		actPingX2->m_MonToConsiderFirst = &g_monNeural2;
+		actMoDanLianShe1->m_MonToConsiderFirst = &g_monNeural1;
+		actMoDanLianShe2->m_MonToConsiderFirst = &g_monNeural2;
+		actDiYan1->m_MonToConsiderFirst = &g_monNeural1;
+		actDiYan2->m_MonToConsiderFirst = &g_monNeural2;
+		actBingJingZhiYu1->m_MonToConsiderFirst = &g_monNeural1;
+		actBingJingZhiYu2->m_MonToConsiderFirst = &g_monNeural2;
+		actLeiGuangLian1->m_MonToConsiderFirst = &g_monNeural1;
+		actLeiGuangLian2->m_MonToConsiderFirst = &g_monNeural2;
+		actXuanHuoDun1->m_MonToConsiderFirst = &g_monNeural1;
+		actXuanHuoDun2->m_MonToConsiderFirst = &g_monNeural2;
+
+
 
 		MonAny* monAny = new MonAny();
 
 		Neural::makeWeight(actLongjuanfeng1, monAny, 1, 0);
 		Neural::makeWeight(actLongjuanfeng2, monAny, 1, 0);
-		Neural::makeWeight(actPingX1, monAny, 1, 0);
-		Neural::makeWeight(actPingX2, monAny, 1, 0);
+		Neural::makeWeight(actMoDanLianShe1, monAny, 1, 0);
+		Neural::makeWeight(actMoDanLianShe2, monAny, 1, 0);  
+		Neural::makeWeight(actDiYan1, monAny, 1, 0);
+		Neural::makeWeight(actDiYan2, monAny, 1, 0);  
+		Neural::makeWeight(actBingJingZhiYu1, monAny, 1, 0);
+		Neural::makeWeight(actBingJingZhiYu2, monAny, 1, 0);  
+		Neural::makeWeight(actLeiGuangLian1, monAny, 1, 0);
+		Neural::makeWeight(actLeiGuangLian2, monAny, 1, 0);  
+		Neural::makeWeight(actXuanHuoDun1, monAny, 1, 0);
+		Neural::makeWeight(actXuanHuoDun2, monAny, 1, 0);
+
+
 
 		Neural::makeWeight(monAny, &g_selMonster, 1);
 
@@ -164,6 +221,18 @@ namespace BaoPo
 		g_AnyToAct[&g_action].insert(actLongjuanfeng2);
 		g_AnyToAct[&g_action].insert(actPingX1);
 		g_AnyToAct[&g_action].insert(actPingX2);
+		g_AnyToAct[&g_action].insert(actMoDanLianShe1);
+		g_AnyToAct[&g_action].insert(actMoDanLianShe2);
+		g_AnyToAct[&g_action].insert(actDiYan1);
+		g_AnyToAct[&g_action].insert(actDiYan2);
+		g_AnyToAct[&g_action].insert(actBingJingZhiYu1);
+		g_AnyToAct[&g_action].insert(actBingJingZhiYu2);
+		g_AnyToAct[&g_action].insert(actLeiGuangLian1);
+		g_AnyToAct[&g_action].insert(actLeiGuangLian2);
+		g_AnyToAct[&g_action].insert(actXuanHuoDun1);
+		g_AnyToAct[&g_action].insert(actXuanHuoDun2);
+
+
 
 		return 0;
 	}
