@@ -22,6 +22,7 @@ namespace gandalfr
 		int runInActWithAreaHalfSkill(ActWithArea *actNeural);
 		int calscoreAfterRun(ActWithArea *actNeural);
 		int epressHalfSkill(ActWithArea *actNeural);
+		CRectangle generateAttackEffect(const CPlayer & player, const CRectangle &skill);
 	}
 
 }

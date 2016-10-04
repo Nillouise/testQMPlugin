@@ -413,11 +413,45 @@ namespace gandalfr
 
 			return 0;
 		}
+		CRectangle generateAttackEffect(const CPlayer &player,const CRectangle &skill);
 
 
 
+		CRectangle generateAttackEffect(const CPlayer & player, const CRectangle &skill)
+		{
+			CRectangle r(skill);
+			double offset;
+			int playerX;
+			if (player.m_direction > 0.5)
+			{
+				offset = 0;
+				playerX = player.m_rect.x + player.m_rect.width;
+			}
+			else if (player.m_direction < -0.5)
+			{
+				offset = -1;
+				playerX = player.m_rect.x;
+			}
+			else
+			{
+				offset = -0.5;
+				playerX = player.m_rect.x + player.m_rect.width / 2;
+			}
 
-	}
+			int UpNearY = 0;
+			UpNearY = player.m_rect.y - skill.height / 2;
+			UpNearY += skill.y;
+			int NearX = 0;
+			NearX = playerX + offset*skill.width;
+			NearX = NearX + (player.m_direction < 0 ? -1 : 1) * skill.x;
+			r.x = NearX;
+			r.y = UpNearY;
+
+			return r;
+		}
+
+	
+}
 
 
 

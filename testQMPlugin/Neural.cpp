@@ -906,3 +906,45 @@ void MonNearPlayer::cal()
 	m_output = m_selfOutput;
 	m_output += Neural::sumUpRelativeWeight(this);
 }
+
+void MonAttacking::run()
+{
+	auto &attackArea = g_RoomState.m_AttackEffect;
+	auto &monster = g_RoomState.m_Monster;
+	DWORD nowTime = ::GetTickCount();
+	m_Mon.m_vecCMon.clear();
+	m_Mon.m_time = nowTime;
+	m_selfOutput = m_base;
+
+	for (auto iter = attackArea.rbegin(); iter != attackArea.rend(); iter++)
+	{
+		if (nowTime - iter->attackTime > 4 * 1000)
+			break;
+		for (auto itMon = monster.m_vecCMon.begin(); itMon != monster.m_vecCMon.end(); itMon++)
+		{
+			if (CRectangle::RectCollide(iter->attackRect, itMon->m_rect) == 1)
+			{
+				int ok = 1;
+				for (auto itDuplicate = m_Mon.m_vecCMon.begin(); itDuplicate != m_Mon.m_vecCMon.end(); itDuplicate++)
+				{
+					if (itDuplicate->m_rect.compare(itMon->m_rect))
+					{
+						ok = 0;
+						break;	
+					}
+				}
+				if (ok == 1)
+				{
+					m_Mon.m_vecCMon.push_back(*itMon);
+				}
+			}
+		}
+	}
+	m_selfOutput += m_numToScore(m_Mon.m_vecCMon.size());
+}
+
+void MonAttacking::cal()
+{
+	m_output = m_selfOutput;
+	m_output += Neural::sumUpRelativeWeight(this);
+}

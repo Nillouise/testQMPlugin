@@ -69,7 +69,9 @@ namespace gandalfr
 		CRectangle(int x = -1, int y = -1, int width = 0, int height = 0) :x(x), y(y), width(width), height(height) {};
 		static int RectCollide(const CRectangle &A, const CRectangle &B, CRectangle* R = NULL);//1 to collide,R is the collided Rectangle
 		static int getRectTrail(const CRectangle &player, const CRectangle &rect, CTrail &receive);//player go to the center of rect 's trail
-
+		bool compare(const CRectangle& r2) {
+			return r2.x == x && r2.y == y&&r2.width == width&&r2.height == height;
+		}
 	};
 	bool operator < (const CRectangle &t1, const CRectangle &t2);
 
@@ -213,7 +215,15 @@ namespace gandalfr
 	};
 
 
+	class CSkillAttackEffect
+	{
+	public:
+		CMonsterSet monsters;
+		DWORD attackTime;
+		CRectangle attackRect;
+	};
 
+	
 
 	class CSkill
 	{
@@ -245,6 +255,7 @@ namespace gandalfr
 		std::vector<CPlayer> m_vecPlayerTrail;
 		std::vector<CObstacleSet> m_vecObstacleTrail;
 		std::vector<CSceneBoxSet> m_vecSceneBoxTrail;
+		std::vector<CSkillAttackEffect> m_AttackEffect;
 
 		CMonsterSet m_Monster;
 		CGoldSet m_Gold;

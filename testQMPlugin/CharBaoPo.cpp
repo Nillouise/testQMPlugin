@@ -237,4 +237,12 @@ namespace BaoPo
 		return 0;
 	}
 
+
+	int dissociateNeural()
+	{
+
+
+
+		return 0;
+	}
 }

@@ -9,6 +9,7 @@
 #include"image.h"
 #include"grade.h"
 #include"Visualization.h"
+#include"Decision.h"
 using namespace gandalfr;
 using namespace std;
 CRoomState g_RoomState;
@@ -731,6 +732,11 @@ int gandalfr::CSkill::release(DWORD curTime)
 {
 	m_lastTime = curTime;
 	m_NextTime = curTime + m_cooldown;
+	CSkillAttackEffect attackEffect;
+	attackEffect.monsters = g_RoomState.m_Monster;
+	attackEffect.attackTime = curTime;
+	attackEffect.attackRect = de::generateAttackEffect(g_RoomState.m_Player, this->m_area);
+	g_RoomState.m_AttackEffect.push_back(attackEffect);
 	return 0;
 }
 

@@ -83,6 +83,16 @@ public:
 	MonAny(double base = 0.0):MonNeural() { m_base = base; };
 };
 
+class MonAttacking :public MonNeural
+{
+public:
+	virtual MonAttacking* getClassType() { return this; }
+	virtual void run();
+	virtual void cal();
+	MonAttacking(double base = 0.0) :MonNeural() { m_base = base; };
+};
+
+
 
 //it didn't have outpu
 class SelMonster
