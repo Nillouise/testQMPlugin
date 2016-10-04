@@ -105,6 +105,33 @@ namespace vis
 		return image;
 	}
 
+	CRectangle MonNeuralState(Mat&image,const CRectangle &screen)
+	{
+		if (g_monNeural1 != NULL)
+		{
+			string neuralName = typeid((*g_monNeural1->getClassType())).name();
+			neuralName = neuralName.substr(6, neuralName.size() - 6);
+			string onemsg = neuralName + " " + doubleToString(g_monNeural1->m_output) + " MonNumber:"+ doubleToString( g_monNeural1->m_Mon.m_vecCMon.size());
+			putText(image, onemsg, Point(screen.x, screen.y + 12), FONT_HERSHEY_PLAIN, 1, mapColor[player], 1, 8);
+		}
+		else {
+			putText(image, "g_monNeural1: NULL", Point(screen.x, screen.y + 12), FONT_HERSHEY_PLAIN, 1, mapColor[player], 1, 8);
+		}
+		if (g_monNeural2 != NULL)
+		{
+
+			string neuralName1 = typeid((*g_monNeural2->getClassType())).name();
+			neuralName1 = neuralName1.substr(6, neuralName1.size() - 6);
+			string onemsg1 = neuralName1 + " " + doubleToString(g_monNeural2->m_output)+" MonNumber:" + doubleToString(g_monNeural2->m_Mon.m_vecCMon.size());
+			putText(image, onemsg1, Point(screen.x, screen.y + 24), FONT_HERSHEY_PLAIN, 1, mapColor[player], 1, 8);
+		}
+		else {
+			putText(image, "g_monNeural2: NULL", Point(screen.x, screen.y + 24), FONT_HERSHEY_PLAIN, 1, mapColor[player], 1, 8);
+		}
+		CRectangle r(screen);
+		r.y += 24;
+		return r;
+	}
 
 
 	Mat ActionNeuralState(Mat &image)
@@ -277,8 +304,11 @@ namespace vis
 		printRunState(image, CRectangle(0, 0, 200, 40));
 		printKeyboardState(image, CRectangle(0, 40, 200, 40));
 		printPlayerDirection(image, CRectangle(0, 80 , 200, 24));
+		MonNeuralState(image, CRectangle(0, 110, 200, 24));
+
 		return image;
 	}
+
 
 
 
@@ -325,6 +355,7 @@ namespace vis
 			DnfRoomState(dnfMat,screen);
 			printBestArea(dnfMat, screen);
 			ActionNeuralState(neuMat);
+
 			keyBoardState(keyboardMat);
 
 			::LeaveCriticalSection(&cs_visualization);

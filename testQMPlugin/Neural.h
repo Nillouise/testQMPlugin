@@ -89,7 +89,7 @@ public:
 	virtual MonAttacking* getClassType() { return this; }
 	virtual void run();
 	virtual void cal();
-	MonAttacking(double base = 0.0) :MonNeural() { m_base = base; };
+	MonAttacking(double base = 3.1) :MonNeural() { m_base = base; };
 };
 
 

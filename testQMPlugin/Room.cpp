@@ -682,9 +682,9 @@ CPlayer gandalfr::CPlayer::getPlayer()
 	auto &pbyte = ima::curScreen::g_pbCurScreen;
 	auto &rect = ima::curScreen::g_rect;
 	map<void*, int> signalToOffsetY;
-	signalToOffsetY[ga::imgPlayerH] = 112;
-	signalToOffsetY[ga::imgPlayerKou] = 85;
-	signalToOffsetY[ga::imgPlayerKou] = 58;
+	signalToOffsetY[ga::imgPlayerH] = 112 + 20;
+	signalToOffsetY[ga::imgPlayerKou] = 85 + 20;
+	signalToOffsetY[ga::imgPlayerKou] = 58 + 20;
 
 	CRectangle searchArea(0, 0, 4, 600);
 

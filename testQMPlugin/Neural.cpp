@@ -847,6 +847,10 @@ void SelMonster::run()
 		if (itAct != g_weight.end())
 		{
 			curWeight = (*iter)->m_output * itAct->second;
+			//if (itAct->second <= 0)
+			//{
+			//	int a = 0;
+			//}
 		}
 		if (curWeight > maxMon1)
 		{
@@ -859,7 +863,10 @@ void SelMonster::run()
 			g_monNeural2 = (*iter);
 		}
 	}
-
+	//if (g_monNeural2 == NULL&& typeid( *g_monNeural1->getClassType()) ==  typeid(MonAttacking))
+	//{
+	//	int afds = 0;
+	//}
 
 
 }
@@ -874,6 +881,7 @@ void MonAny::cal()
 {
 	m_output = m_selfOutput;
 	m_output += Neural::sumUpRelativeWeight(this);
+//	cout <<"monAny: "<< m_output<< " "<<m_Mon.m_vecCMon.size()<<"\t";
 }
 
 CRectangle AddR2ToR1(const CRectangle R1, const CRectangle R2)
@@ -940,6 +948,8 @@ void MonAttacking::run()
 			}
 		}
 	}
+//	cout <<"attacking "<< m_Mon.m_vecCMon.size()<< "\t";
+
 	m_selfOutput += m_numToScore(m_Mon.m_vecCMon.size());
 }
 
