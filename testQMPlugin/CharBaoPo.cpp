@@ -121,7 +121,7 @@ namespace BaoPo
 		AttackSkill *skLongJuanFeng = new AttackSkill();
 		skLongJuanFeng->m_area = CRectangle(0, 0, 30, 20);
 		skLongJuanFeng->m_cooldown = 3000;
-		skLongJuanFeng->m_HitrecoverTime = 500;
+		skLongJuanFeng->m_HitrecoverTime = 450;
 		skLongJuanFeng->m_Key.push_back(CKeyOp(L"z", 0, CKeyOp::PRESS, [skLongJuanFeng](DWORD pressTime) {skLongJuanFeng->release(pressTime); return 0.0; }));
 		AttackSkill *skPingX = new AttackSkill();
 		skPingX->m_area= CRectangle(0, 0, 500, 70);
@@ -146,7 +146,7 @@ namespace BaoPo
 		AttackSkill *skLeiGuangLian = new AttackSkill();
 		skLeiGuangLian->m_area = CRectangle(0, 0, 200, 140);
 		skLeiGuangLian->m_cooldown = 15*1000;
-		skLeiGuangLian->m_HitrecoverTime = 1500;
+		skLeiGuangLian->m_HitrecoverTime = 1300;
 		skLeiGuangLian->m_Key.push_back(CKeyOp(L"w", 0, CKeyOp::PRESS, [skLeiGuangLian](DWORD pressTime) {skLeiGuangLian->release(pressTime); return 0.0; }));
 		AttackSkill *skXuanHuoDun = new AttackSkill();
 		skXuanHuoDun->m_area = CRectangle(0, 0, 450, 140);
@@ -251,7 +251,7 @@ namespace BaoPo
 		return 0;
 	}
 
-
+	//the middle neural layer
 	int dissociateNeural()
 	{
 

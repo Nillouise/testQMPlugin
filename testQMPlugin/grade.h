@@ -6,6 +6,8 @@ namespace ga //gor grade
 	extern double NeednMove;//add the score when a ActNeural didn't need to move
 	extern double NeednChangeDirection;//add the score when a ActNeural didn't need to changeDirection
 	extern double AttackAllMonster;//if a skill can attack all monster in monsterNeural,add it
+	extern double SubEdgeAttackAreaX;//it is coefficient to sub the pixel mul by it
+	extern double SubEdgeAttackAreaY;
 
 	extern double MonNeuralOneMonster;//if this monneural have a monster, add it
 

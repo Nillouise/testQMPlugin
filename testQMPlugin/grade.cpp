@@ -5,6 +5,8 @@ namespace ga
 	 double OneMonster = 10;
 	 double NeednMove = 10;// don't need  move
 	 double NeednChangeDirection = 3;
+	 double SubEdgeAttackAreaX = 0.07;
+	 double SubEdgeAttackAreaX = 0.04;
 
 	 double moveX = 0.02;// mul with pixel 
 	 double moveY = 0.03;

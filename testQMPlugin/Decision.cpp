@@ -348,6 +348,7 @@ namespace gandalfr
 			de::offsetAttackArea(actNeural->m_area, 20);
 
 			de::calAttackAreaScoreInMove(actNeural->m_area, g_RoomState.m_Player, ga::NeednMove, ga::NeednChangeDirection, ga::moveX, ga::moveY);
+			de::SubRoomEdgeScore(g_RoomState.m_Player, actNeural->m_area, ga::SubEdgeAttackAreaX);
 			actNeural->m_bestArea = de::selBestAttackArea(actNeural->m_area);
 			actNeural->m_selfOutput += actNeural->m_bestArea.score;
 			return 0;
@@ -410,6 +411,40 @@ namespace gandalfr
 			}
 			g_AnyToActTemp[&g_action].insert(actAttack);
 
+
+			return 0;
+		}
+
+		//y axil doesn't need to sub?
+		int SubRoomEdgeScore(const CPlayer & player, CAttackArea & attackArea, double Xscore,double Yscore)
+		{
+			//yÖá£º287, 367
+			//	XÖá£º349, 449
+			auto &rePlayer = player.m_rect;
+			int rightEdge = 800 - 40;
+			int leftEdge = 40;
+			if (rePlayer.x > 420)
+			{
+				if (attackArea.m_rect.x+attackArea.m_rect.width > rightEdge)
+				{
+					attackArea.score -= (double(attackArea.m_rect.x + attackArea.m_rect.width - rightEdge)) / attackArea.m_rect.width *Xscore;
+				}
+			}
+			else if (rePlayer.x < leftEdge)
+			{
+				if (attackArea.m_rect.x <  leftEdge)
+				{
+					attackArea.score -= (double(leftEdge - attackArea.m_rect.x )) / attackArea.m_rect.width *Xscore;
+				}
+			}
+			return 0;
+		}
+		int SubRoomEdgeScore(const CPlayer & player, vector<CAttackArea>& attackArea, double Xscore, double Yscore)
+		{
+			for (auto iter = attackArea.begin(); iter !=  attackArea.end(); iter++)
+			{
+				SubRoomEdgeScore(player, *iter, Xscore);
+			}
 
 			return 0;
 		}
