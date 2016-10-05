@@ -7,6 +7,7 @@
 #include<set>
 #include<float.h>
 #include"grade.h"
+#include"Decision.h"
 using namespace std;
 using namespace gandalfr;
 
@@ -957,4 +958,58 @@ void MonAttacking::cal()
 {
 	m_output = m_selfOutput;
 	m_output += Neural::sumUpRelativeWeight(this);
+}
+
+void ActGoToMonsterOpposite::run()
+{
+	CRectangle detectArea(0, 0, 100, 60);
+	int leftMonsterNumber = 0;
+	int rightMonsterNumber = 0;
+
+	int sideMonsterCount = de::TwoSideMonsterNumber(g_RoomState.m_Player.m_rect.midLine(), detectArea, g_RoomState.m_Monster, leftMonsterNumber, rightMonsterNumber);
+
+	for (auto iter = g_RoomState.m_Monster.m_vecCMon.begin(); iter != g_RoomState.m_Monster.m_vecCMon.end(); iter++)
+	{
+		vector<CRectangle> receive;
+		de::generateTwoSideArea(iter->m_rect, detectArea, receive);
+		for (auto itVoidArea = receive.begin(); itVoidArea != receive.end(); itVoidArea++)
+		{
+			int leftCount = 0;
+			int rightCount = 0;
+			int minuMonsterCount =  de::TwoSideMonsterNumber(itVoidArea->midLine(), detectArea, g_RoomState.m_Monster, leftCount, rightCount);
+			CAttackArea possibleArea;
+			possibleArea.m_rect = *itVoidArea;
+			possibleArea.score = 0 - minuMonsterCount*8;
+			m_area.push_back(possibleArea);
+		}
+	}
+
+	de::calZeroAttackArea(m_area, sideMonsterCount*14);
+	de::calAttackAreaScoreInMove(m_area, g_RoomState.m_Player, 0, 0, 0.1, 0.12);
+
+	m_bestArea = de::selBestAttackArea(m_area);
+	m_selfOutput = m_base;
+	m_selfOutput += m_bestArea.score;
+}
+
+void ActGoToMonsterOpposite::cal()
+{
+	m_output = m_selfOutput;
+	m_output += Neural::sumUpRelativeWeight(this);
+}
+
+void ActGoToMonsterOpposite::express()
+{
+	ActTemp* actAttack = new ActTemp();
+	DWORD nowTime = GetTickCount();
+	actAttack->m_beginTime = nowTime;
+	actAttack->creator = this;
+	actAttack->m_base = 10;
+	actAttack->m_fnOutput = ActTemp::fnOutMustRunComplete();
+	CTrail tra;
+
+	CRectangle::getRectTrail(g_RoomState.m_Player.m_rect, m_bestArea.m_rect, tra);
+	actAttack->m_endTime = actAttack->m_beginTime + ga::timeActTempToStart;
+	actAttack->m_trail.push_back(tra);
+	g_AnyToActTemp[&g_action].insert(actAttack);
 }

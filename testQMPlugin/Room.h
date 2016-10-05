@@ -72,6 +72,10 @@ namespace gandalfr
 		bool compare(const CRectangle& r2) {
 			return r2.x == x && r2.y == y&&r2.width == width&&r2.height == height;
 		}
+		CRectangle addInPlayer(const CRectangle& area);
+		CRectangle linkWith(const CRectangle& other);
+		CRectangle midLine();
+
 	};
 	bool operator < (const CRectangle &t1, const CRectangle &t2);
 
@@ -134,7 +138,7 @@ namespace gandalfr
 	public:
 		std::vector<CMonsterOne> m_vecCMon;
 		DWORD m_time;
-
+		static void offsetY(CMonsterSet &monster,int y);//because the block no the collide area,it should offset y pixel,y is minus
 	};
 
 

@@ -27,6 +27,9 @@ namespace ga //gor grade
 	extern double imgDigestibility;//a larage rect ' s inner small rect,how much the rate that small rect's appear numer should add to the large rect
 	extern double imgDppetite;// how much number rate the big rect have can eat the small one; 
 
+	extern int dnfScreenWidth;
+	extern int dnfScreenHeight;
+
 	extern int stepX;
 	extern int stepY;
 

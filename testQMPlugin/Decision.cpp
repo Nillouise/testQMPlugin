@@ -224,13 +224,22 @@ namespace gandalfr
 			return 0;
 		}
 
+		int calZeroAttackArea(vector<CAttackArea> &attackArea,double initValue)
+		{
+			for (auto it = attackArea.begin(); it != attackArea.end(); it++)
+			{
+				it->score = initValue;
+			}
+			return 0;
+		}
+
 
 		int calAttackAreaScoreOnlyMonsterNumber(vector<CAttackArea> &attackArea,int totalMonsterNum, double scOneMonster, double AllMonsterWillbeAttack)
 		{
 
 			for (auto it = attackArea.begin(); it != attackArea.end(); it++)
 			{
-				it->score = it->num*scOneMonster;
+				it->score += it->num*scOneMonster;
 				if (it->num >= totalMonsterNum)
 				{
 
@@ -339,7 +348,9 @@ namespace gandalfr
 			de::selSuitablAttackArea(recMonNeuralArea, monNeuralAttackArea);
 			de::selSuitablAttackArea(recMonAllArea, actNeural->m_area);
 
+			de::calZeroAttackArea(monNeuralAttackArea);
 			de::calAttackAreaScoreOnlyMonsterNumber(monNeuralAttackArea, recMonNeuralArea.size(), ga::OneMonster, ga::AttackAllMonster);
+			de::calZeroAttackArea(actNeural->m_area);
 			de::calAttackAreaScoreOnlyMonsterNumber(actNeural->m_area, recMonAllArea.size(), ga::OneMonster * (*actNeural->m_MonToConsiderFirst)->m_necessary, ga::AttackAllMonster);
 
 			de::addAt2ToAt1WhenTheyOverlay(actNeural->m_area, monNeuralAttackArea, 0.9);
@@ -366,7 +377,7 @@ namespace gandalfr
 			return 0;
 		}
 
-		int epressHalfSkill(ActWithArea * actNeural)
+		int expressHalfSkill(ActWithArea * actNeural)
 		{
 			CRectangle rectDist;
 			ActTemp* actAttack = new ActTemp();
@@ -430,7 +441,7 @@ namespace gandalfr
 					attackArea.score -= (double(attackArea.m_rect.x + attackArea.m_rect.width - rightEdge)) / attackArea.m_rect.width *Xscore;
 				}
 			}
-			else if (rePlayer.x < leftEdge)
+			else if (rePlayer.x < 370)
 			{
 				if (attackArea.m_rect.x <  leftEdge)
 				{
@@ -485,7 +496,85 @@ namespace gandalfr
 			return r;
 		}
 
-	
+		int generateTwoSideArea(const CRectangle &seed, const CRectangle &area,vector<CRectangle> &receive,int cutedge, CRectangle cutScreen )
+		{
+			CRectangle left;
+			left.x = seed.x - area.width;
+			left.y = seed.y - area.height / 2;
+			left.width = area.width ;
+			left.height = seed.height+area.height;
+
+			CRectangle right;
+			right.x = seed.x + seed.width;
+			right.y = seed.y - area.height / 2;
+			right.width = area.width;
+			right.height = seed.height + area.height;
+
+			int successfulCreat = 0;
+			if (cutedge == 1)
+			{
+				if (left.x < cutScreen.x)
+				{
+					left.width = left.x + left.width - cutScreen.x;
+					left.x = cutScreen.x;
+					if (left.width > 0)
+					{
+						receive.push_back(left);
+						successfulCreat++;
+					}
+				}
+				if (right.x + right.width > cutScreen.x + cutScreen.width)
+				{
+					right.width = cutScreen.x + cutScreen.width - right.x;
+					if (right.width > 0)
+					{
+						receive.push_back(right);
+						successfulCreat++;
+					}
+				}
+			}
+			else {
+				receive.push_back(left);
+				receive.push_back(right);
+				successfulCreat = 2;
+			}
+			return successfulCreat;
+		}
+		
+		int collideWithMonsterSet(const CRectangle &seed,const CMonsterSet& monsters)
+		{
+			int count = 0;
+			for (auto iter  = monsters.m_vecCMon.begin(); iter  != monsters.m_vecCMon.end(); iter++)
+			{
+				if (CRectangle::RectCollide(iter->m_rect, seed) == 1)
+				{
+					count++;
+				}
+			}
+			return count;
+		}
+		int TwoSideMonsterNumber(const CRectangle&seed, const CRectangle &area, const CMonsterSet& monsters, int &left, int &right)
+		{
+			vector<CRectangle> receive;
+			left = 0;
+			right = 0;
+			generateTwoSideArea(seed, area, receive);
+			for (auto iter = receive.begin(); iter != receive.end(); iter++)
+			{
+				int count = collideWithMonsterSet(*iter, monsters);
+				if (iter->x < seed.x)
+				{
+					left = count;
+				}
+				else {
+					right = count;
+				}
+			}
+			return min(left , right);
+		}
+
+
+
 }
 
 

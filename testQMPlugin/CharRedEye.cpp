@@ -514,7 +514,9 @@ namespace RedEye
 		de::selSuitablAttackArea(recMonNeuralArea, monNeuralAttackArea);
 		de::selSuitablAttackArea(recMonAllArea, m_area);
 
+		de::calZeroAttackArea(monNeuralAttackArea);
 		de::calAttackAreaScoreOnlyMonsterNumber(monNeuralAttackArea, recMonNeuralArea.size(), ga::OneMonster * 2, ga::AttackAllMonster);
+		de::calZeroAttackArea(m_area);
 		de::calAttackAreaScoreOnlyMonsterNumber(m_area, recMonAllArea.size(), ga::OneMonster, ga::AttackAllMonster);
 
 		de::addAt2ToAt1WhenTheyOverlay(m_area, monNeuralAttackArea, 0.9);

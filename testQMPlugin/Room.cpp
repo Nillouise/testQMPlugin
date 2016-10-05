@@ -351,6 +351,41 @@ int gandalfr::CRectangle::getRectTrail(const CRectangle & player, const CRectang
 	return 0;
 }
 
+CRectangle gandalfr::CRectangle::addInPlayer(const CRectangle & area)
+{
+	CRectangle r(*this);
+
+	r.x = r.x - area.width/2;
+	r.y = r.y - area.height/2;
+	r.x += area.x;
+	r.y += area.y;
+	r.width += area.width;
+	r.height += area.height;
+
+	return r;
+}
+
+CRectangle gandalfr::CRectangle::linkWith(const CRectangle & other)
+{
+	CRectangle r(*this);
+	r.x = min(other.x, x);
+	r.y = min(other.y, y);
+	r.width = max(other.x + other.width, x + width) - r.x;
+	r.height = max(other.y + other.height, y + height) - r.y;
+
+	return r;
+}
+
+CRectangle gandalfr::CRectangle::midLine()
+{
+	CRectangle r(*this);
+
+	r.x = x + width / 2;
+	r.width = 1;
+
+	return CRectangle();
+}
+
 double gandalfr::isCoDirection(double player, double area)
 {
 	if (player < 0 && area < 0)
@@ -433,6 +468,8 @@ int gandalfr::CRoomState::getAllRectStateInRoom(Cdmsoft dm)
 			count--;
 		}
 	}
+	CMonsterSet::offsetY(newMon, -15);
+
 	m_vecMonTrail.push_back(newMon);
 	m_Monster = newMon;
 	m_vecObstacleTrail.push_back(newObs);
@@ -441,6 +478,8 @@ int gandalfr::CRoomState::getAllRectStateInRoom(Cdmsoft dm)
 	m_SceneBox = newSceneBox;
 	m_vecGoldTrail.push_back(newGold);
 	m_Gold = newGold;
+
+
 
 	return count;
 }
@@ -682,9 +721,9 @@ CPlayer gandalfr::CPlayer::getPlayer()
 	auto &pbyte = ima::curScreen::g_pbCurScreen;
 	auto &rect = ima::curScreen::g_rect;
 	map<void*, int> signalToOffsetY;
-	signalToOffsetY[ga::imgPlayerH] = 112 + 20;
-	signalToOffsetY[ga::imgPlayerKou] = 85 + 20;
-	signalToOffsetY[ga::imgPlayerKou] = 58 + 20;
+	signalToOffsetY[ga::imgPlayerH] = 112 + 25;
+	signalToOffsetY[ga::imgPlayerKou] = 85 + 25;
+	signalToOffsetY[ga::imgPlayerKou] = 58 + 25;
 
 	CRectangle searchArea(0, 0, 4, 600);
 
@@ -740,4 +779,10 @@ int gandalfr::CSkill::release(DWORD curTime)
 	return 0;
 }
 
-
+void gandalfr::CMonsterSet::offsetY(CMonsterSet & monster, int y)
+{
+	for (auto iter = monster.m_vecCMon.begin(); iter != monster.m_vecCMon.end(); iter++)
+	{
+		iter->m_rect.y += y;
+	}
+}

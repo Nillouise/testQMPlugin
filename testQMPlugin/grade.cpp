@@ -6,7 +6,7 @@ namespace ga
 	 double NeednMove = 10;// don't need  move
 	 double NeednChangeDirection = 3;
 	 double SubEdgeAttackAreaX = 0.07;
-	 double SubEdgeAttackAreaX = 0.04;
+	 double SubEdgeAttackAreaY = 0.04;
 
 	 double moveX = 0.02;// mul with pixel 
 	 double moveY = 0.03;
@@ -25,6 +25,9 @@ namespace ga
 
 	double imgDigestibility = 0.8;
 	double imgDppetite = 0.4;
+	int dnfScreenWidth = 800;
+	int dnfScreenHeight = 600;
+
 
 	int stepX = 10;
 	int stepY = 10;

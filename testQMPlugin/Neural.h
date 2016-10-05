@@ -171,7 +171,25 @@ public:
 
 };
 
+class ActMove :public ActNeural
+{
+public:
+	virtual ActMove* getClassType() { return this; }
+	virtual string getBaseType() { return "ActMove"; }
+	std::vector<CAttackArea> m_area;//does not use the direction
+	CAttackArea m_bestArea;
+	std::vector<CTrail> m_vecTrail;
+};
 
+
+class ActGoToMonsterOpposite :public ActMove
+{
+public:
+	virtual ActGoToMonsterOpposite* getClassType() { return this; }
+	virtual void run();
+	virtual void cal();
+	virtual void express();
+};
 
 
 
