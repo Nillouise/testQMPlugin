@@ -1013,3 +1013,44 @@ void ActGoToMonsterOpposite::express()
 	actAttack->m_trail.push_back(tra);
 	g_AnyToActTemp[&g_action].insert(actAttack);
 }
+
+void ActAvoidArea::run()
+{
+	CRectangle area(0,0,20,10);
+	CMonsterSet &monsters = g_RoomState.m_Monster;
+	vector<CRectangle> possibleRect;
+	for (auto iter = monsters.m_vecCMon.begin(); iter != monsters.m_vecCMon.end(); iter++)
+	{
+		de::generateConnerSideArea(iter->m_rect.addInPlayer(area), possibleRect);
+	}
+	vector<vector<CRectangle>> receive;
+	de::generateOverlay(possibleRect, receive);
+	vector<CAttackArea> possibleArea;
+	de::selSuitablAttackArea(receive, possibleArea);
+	de::calAttackAreaScoreOnlyMonsterNumber(possibleArea, 0, 2, 0);
+	de::calAttackAreaScoreInMove(possibleArea, g_RoomState.m_Player, 4, 0, 0.02, 0.02);
+	m_bestArea = de::selBestAttackArea(possibleArea);
+	m_selfOutput = m_base;
+}
+
+void ActAvoidArea::cal()
+{
+	m_output = m_selfOutput;
+	m_output += Neural::sumUpRelativeWeight(this);
+}
+
+void ActAvoidArea::express()
+{
+	ActTemp* actAttack = new ActTemp();
+	DWORD nowTime = GetTickCount();
+	actAttack->m_beginTime = nowTime;
+	actAttack->creator = this;
+	actAttack->m_base = 10;
+	actAttack->m_fnOutput = ActTemp::fnOutMustRunComplete();
+	CTrail tra;
+
+	CRectangle::getRectTrail(g_RoomState.m_Player.m_rect, m_bestArea.m_rect, tra);
+	actAttack->m_endTime = actAttack->m_beginTime + ga::timeActTempToStart;
+	actAttack->m_trail.push_back(tra);
+	g_AnyToActTemp[&g_action].insert(actAttack);
+}

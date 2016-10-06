@@ -233,6 +233,91 @@ namespace gandalfr
 			return 0;
 		}
 
+		int generateUpDownSideArea(const CRectangle & seed, vector<CRectangle>& receive, int cutedge, CRectangle cutScreen)
+		{
+			CRectangle up, down;
+			up.x = cutScreen.x;
+			up.width = cutScreen.width;
+			up.y = cutScreen.y;
+			up.height = seed.y - cutScreen.y;
+
+			down.x = cutScreen.x;
+			down.width = cutScreen.width;
+			down.y = seed.y + seed.height;
+			down.height = cutScreen.y + cutScreen.height - down.y;
+
+			receive.push_back(up);
+			receive.push_back(down);
+
+
+			return 2;
+		}
+
+		int generateConnerSideArea(const CRectangle & seed, vector<CRectangle>& receive, int cutedge, CRectangle cutScreen)
+		{
+
+			CRectangle quadrant1, quadrant2, quadrant3, quadrant4;
+
+			quadrant1.x = cutScreen.x;
+			quadrant1.width = seed.x - cutScreen.x;
+			quadrant1.y = cutScreen.y;
+			quadrant1.height = seed.y - cutScreen.y;
+
+			quadrant2.x = seed.x2();
+			quadrant2.width = cutScreen.x2() - quadrant2.x;
+			quadrant2.y = cutScreen.y;
+			quadrant2.height = seed.y - cutScreen.y;
+
+			quadrant3.x = cutScreen.x;
+			quadrant3.width = seed.x - cutScreen.x;
+			quadrant3.y = seed.y2();
+			quadrant3.height = cutScreen.y2() - seed.y2();
+
+			quadrant4.x = seed.x2();
+			quadrant4.width = cutScreen.x2() - seed.x2();
+			quadrant4.y = seed.y2();
+			quadrant4.height = cutScreen.y2() - seed.y2();
+
+			const int widthRange = 3;
+			const int heightRange = 5;
+
+			int count = 0;
+			if (cutedge == 1)
+			{
+				if (quadrant1.width > widthRange && quadrant1.height > heightRange)
+				{
+					count++;
+					receive.push_back(quadrant1);
+				}
+				if (quadrant2.width > widthRange && quadrant2.height > heightRange)
+				{
+					count++;
+					receive.push_back(quadrant2);
+				}
+				if (quadrant3.width > widthRange && quadrant3.height > heightRange)
+				{
+					count++;
+					receive.push_back(quadrant3);
+				}
+				if (quadrant4.width > widthRange && quadrant4.height > heightRange)
+				{
+					count++;
+					receive.push_back(quadrant4);
+				}
+			}
+			else {
+				count = 4;
+				receive.push_back(quadrant1);
+				receive.push_back(quadrant2);
+				receive.push_back(quadrant3);
+				receive.push_back(quadrant4);
+			}
+
+
+
+			return count;
+		}
+
 
 		int calAttackAreaScoreOnlyMonsterNumber(vector<CAttackArea> &attackArea,int totalMonsterNum, double scOneMonster, double AllMonsterWillbeAttack)
 		{
@@ -573,12 +658,56 @@ namespace gandalfr
 			return min(left , right);
 		}
 
+		int generateOverlay(const vector<CRectangle> &seed, vector<vector<CRectangle>> &receive)
+		{
+			receive.push_back(std::vector<CRectangle>());
+			for (auto iter = seed.begin(); iter != seed.end(); iter++)
+			{
+				CRectangle curRect = (*iter);
+				receive[0].push_back(curRect);
+			}
+
+			//use pre layer to calculate next layer that overlay
+
+			for (int count = 0; ; count++)
+			{
+				if (receive[count].size() < 2)
+				{
+					if (receive[count].size() == 0)
+						receive.erase((receive.end() - 1));
+					break;
+				}
+				receive.push_back(std::vector<CRectangle>());
+				std::set<CRectangle> setRectDerep;
+
+				for (auto iteri = receive[count].begin(); iteri != receive[count].end(); iteri++)
+				{
+					for (auto iterj = iteri + 1; iterj != receive[count].end(); iterj++)
+					{
+						CRectangle &i = (*iteri);
+						CRectangle &j = (*iterj);
+						CRectangle r;
+						r.x = max(i.x, j.x);
+						r.y = max(i.y, j.y);
+						int x = min(i.x + i.width, j.x + j.width);
+						int y = min(i.y + i.height, j.y + j.height);
+						if (r.x >= x || r.y >= y)
+							continue;
+						r.width = x - r.x;
+						r.height = y - r.y;
+						if (setRectDerep.insert(r).second)
+						{
+							receive[count + 1].push_back(r);
+						}
+					}
+				}
+
+			}
+
+			return 0;
+		}
 
 
 }
-
-
-
-
 
 }

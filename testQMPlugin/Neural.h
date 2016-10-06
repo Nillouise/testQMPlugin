@@ -191,6 +191,15 @@ public:
 	virtual void express();
 };
 
+class ActAvoidArea :public ActMove
+{
+public:
+	virtual ActAvoidArea* getClassType() { return this; }
+	virtual void run();
+	virtual void cal();
+	virtual void express();
+};
+
 
 
 typedef  function<double(DWORD begin, DWORD end, Neural *neural)> fnOuput;

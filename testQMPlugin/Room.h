@@ -75,7 +75,8 @@ namespace gandalfr
 		CRectangle addInPlayer(const CRectangle& area);
 		CRectangle linkWith(const CRectangle& other);
 		CRectangle midLine();
-
+		int x2()const { return x + width; }
+		int y2()const { return y + height; }
 	};
 	bool operator < (const CRectangle &t1, const CRectangle &t2);
 
