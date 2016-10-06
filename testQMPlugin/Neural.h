@@ -198,6 +198,7 @@ public:
 	virtual void run();
 	virtual void cal();
 	virtual void express();
+	ActAvoidArea() {m_base = 2; };
 };
 
 

@@ -178,6 +178,8 @@ namespace BaoPo
 		ActHalfSkill* actXuanHuoDun1 = new ActHalfSkill(skXuanHuoDun);
 		ActHalfSkill* actXuanHuoDun2 = new ActHalfSkill(skXuanHuoDun);
 
+		ActAvoidArea *actAvoidArea = new ActAvoidArea();
+
 
 		actLongjuanfeng1->m_MonToConsiderFirst = &g_monNeural1;
 		actLongjuanfeng2->m_MonToConsiderFirst = &g_monNeural2;
@@ -233,22 +235,23 @@ namespace BaoPo
 		g_AnyToMon[&g_selMonster].insert(monAny);//Add monster ,it may be all the same in all character
 		g_AnyToMon[&g_selMonster].insert(monAttacking);
 
-		g_AnyToAct[&g_action].insert(actLongjuanfeng1);
-		g_AnyToAct[&g_action].insert(actLongjuanfeng2);
-		g_AnyToAct[&g_action].insert(actPingX1);
-		g_AnyToAct[&g_action].insert(actPingX2);
-		g_AnyToAct[&g_action].insert(actMoDanLianShe1);
-		g_AnyToAct[&g_action].insert(actMoDanLianShe2);
-		g_AnyToAct[&g_action].insert(actDiYan1);
-		g_AnyToAct[&g_action].insert(actDiYan2);
-		g_AnyToAct[&g_action].insert(actBingJingZhiYu1);
-		g_AnyToAct[&g_action].insert(actBingJingZhiYu2);
-		g_AnyToAct[&g_action].insert(actLeiGuangLian1);
-		g_AnyToAct[&g_action].insert(actLeiGuangLian2);
-		g_AnyToAct[&g_action].insert(actXuanHuoDun1);
-		g_AnyToAct[&g_action].insert(actXuanHuoDun2);
+		//g_AnyToAct[&g_action].insert(actLongjuanfeng1);
+		//g_AnyToAct[&g_action].insert(actLongjuanfeng2);
+		//g_AnyToAct[&g_action].insert(actPingX1);
+		//g_AnyToAct[&g_action].insert(actPingX2);
+		//g_AnyToAct[&g_action].insert(actMoDanLianShe1);
+		//g_AnyToAct[&g_action].insert(actMoDanLianShe2);
+		//g_AnyToAct[&g_action].insert(actDiYan1);
+		//g_AnyToAct[&g_action].insert(actDiYan2);
+		//g_AnyToAct[&g_action].insert(actBingJingZhiYu1);
+		//g_AnyToAct[&g_action].insert(actBingJingZhiYu2);
+		//g_AnyToAct[&g_action].insert(actLeiGuangLian1);
+		//g_AnyToAct[&g_action].insert(actLeiGuangLian2);
+		//g_AnyToAct[&g_action].insert(actXuanHuoDun1);
+		//g_AnyToAct[&g_action].insert(actXuanHuoDun2);
 
 
+		g_AnyToAct[&g_action].insert(actAvoidArea);
 
 		return 0;
 	}

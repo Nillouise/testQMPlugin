@@ -216,18 +216,33 @@ namespace vis
 		}
 		auto neu = g_action.m_hisActNeural[g_action.m_hisActNeural.size() - 1].first;
 		auto name = neu->getBaseType();
-		if (neu->getBaseType() != "ActWithArea")
-			return 0;
-		ActWithArea* actArea = (ActWithArea*)neu;
+		if (neu->getBaseType() == "ActWithArea")
+		{
+			ActWithArea* actArea = (ActWithArea*)neu;
 
-		Scalar colArea(0, 100, 255);
-		CRectangle rect ( actArea->m_bestArea.m_rect);
-		rect.x -= 2;
-		rect.y -= 2;
-		rect.width += 4;
-		rect.height += 4;
-		shrinkRect(rect);
-		printRect(image, rect, colArea, edge, 2);
+			Scalar colArea(0, 100, 255);
+			CRectangle rect(actArea->m_bestArea.m_rect);
+			rect.x -= 2;
+			rect.y -= 2;
+			rect.width += 4;
+			rect.height += 4;
+			shrinkRect(rect);
+			printRect(image, rect, colArea, edge, 2);
+		}
+		else if (neu->getBaseType() == "ActMove")
+		{
+			ActMove* actArea = (ActMove*)neu;
+
+			Scalar colArea(0, 100, 255);
+			CRectangle rect(actArea->m_bestArea.m_rect);
+			rect.x -= 2;
+			rect.y -= 2;
+			rect.width += 4;
+			rect.height += 4;
+			shrinkRect(rect);
+			printRect(image, rect, colArea, edge, 2);
+		}
+
 		return 0;
 
 	}

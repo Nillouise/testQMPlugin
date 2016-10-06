@@ -386,6 +386,8 @@ CRectangle gandalfr::CRectangle::midLine()
 	return CRectangle();
 }
 
+
+
 double gandalfr::isCoDirection(double player, double area)
 {
 	if (player < 0 && area < 0)

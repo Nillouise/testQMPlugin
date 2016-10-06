@@ -1029,8 +1029,10 @@ void ActAvoidArea::run()
 	de::selSuitablAttackArea(receive, possibleArea);
 	de::calAttackAreaScoreOnlyMonsterNumber(possibleArea, 0, 2, 0);
 	de::calAttackAreaScoreInMove(possibleArea, g_RoomState.m_Player, 4, 0, 0.02, 0.02);
+	de::calAreaWithAreaSize(possibleArea,150*150,10);
+	de::SubScreenEdgeScoreDwonY(g_RoomState.m_Player, possibleArea, 10);
 	m_bestArea = de::selBestAttackArea(possibleArea);
-	m_selfOutput = m_base;
+	m_selfOutput = m_base + log( m_bestArea.m_rect.AreaSize());
 }
 
 void ActAvoidArea::cal()

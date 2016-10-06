@@ -75,6 +75,9 @@ namespace gandalfr
 		CRectangle addInPlayer(const CRectangle& area);
 		CRectangle linkWith(const CRectangle& other);
 		CRectangle midLine();
+		double AreaSize() {
+			return width*height;
+		};
 		int x2()const { return x + width; }
 		int y2()const { return y + height; }
 	};
@@ -115,7 +118,7 @@ namespace gandalfr
 		std::vector<CMonsterOne> vec_Mons; //no use, how number could attack
 		int num;
 		double score;
-		CAttackArea(CRectangle rect, double direction, int num) :m_rect(rect), direction(direction), num(num) {}
+		CAttackArea(CRectangle rect, double direction, int num,double score = 0) :m_rect(rect), direction(direction), num(num),score(score) {}
 		CAttackArea() { num = 0; score = 0; }
 	};
 

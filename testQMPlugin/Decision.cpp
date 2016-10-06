@@ -334,6 +334,16 @@ namespace gandalfr
 			return 0;
 		}
 
+		int calAreaWithAreaSize(vector<CAttackArea>& Area, double areaSizeBase, double areaScore)
+		{
+			for (auto iter  = Area.begin(); iter != Area.end(); iter ++)
+			{
+				iter->score += iter->m_rect.AreaSize() / areaSizeBase * areaScore;
+			}
+
+			return 0;
+		}
+
 		CAttackArea selBestAttackArea(vector<CAttackArea> areas)
 		{
 			CAttackArea bestArea;
@@ -444,7 +454,7 @@ namespace gandalfr
 			de::offsetAttackArea(actNeural->m_area, 20);
 
 			de::calAttackAreaScoreInMove(actNeural->m_area, g_RoomState.m_Player, ga::NeednMove, ga::NeednChangeDirection, ga::moveX, ga::moveY);
-			de::SubRoomEdgeScore(g_RoomState.m_Player, actNeural->m_area, ga::SubEdgeAttackAreaX);
+			de::SubRoomEdgeScoreX(g_RoomState.m_Player, actNeural->m_area, ga::SubEdgeAttackAreaX);
 			actNeural->m_bestArea = de::selBestAttackArea(actNeural->m_area);
 			actNeural->m_selfOutput += actNeural->m_bestArea.score;
 			return 0;
@@ -512,7 +522,7 @@ namespace gandalfr
 		}
 
 		//y axil doesn't need to sub?
-		int SubRoomEdgeScore(const CPlayer & player, CAttackArea & attackArea, double Xscore,double Yscore)
+		int SubRoomEdgeScoreX(const CPlayer & player, CAttackArea & attackArea, double Xscore,double Yscore)
 		{
 			//y÷·£∫287, 367
 			//	X÷·£∫349, 449
@@ -535,16 +545,32 @@ namespace gandalfr
 			}
 			return 0;
 		}
-		int SubRoomEdgeScore(const CPlayer & player, vector<CAttackArea>& attackArea, double Xscore, double Yscore)
+		int SubRoomEdgeScoreX(const CPlayer & player, vector<CAttackArea>& attackArea, double Xscore, double Yscore)
 		{
-			for (auto iter = attackArea.begin(); iter !=  attackArea.end(); iter++)
+
+			if (player.m_rect.y<390)
 			{
-				SubRoomEdgeScore(player, *iter, Xscore);
+				for (auto iter = attackArea.begin(); iter != attackArea.end(); iter++)
+				{
+					SubRoomEdgeScoreX(player, *iter, Xscore);
+				}
+			}
+			return 0;
+		}
+
+		int SubScreenEdgeScoreDwonY(const CPlayer & player, vector<CAttackArea>& attackArea, double Yscore)
+		{
+			int downEdge = 600 - 40;
+			for (auto iter = attackArea.begin(); iter != attackArea.end(); iter++)
+			{
+				if (iter->m_rect.y2()  > downEdge)
+				{
+					iter->score -= (double(iter->m_rect.y2()- downEdge)) / iter->m_rect.width *Yscore;
+				}
 			}
 
 			return 0;
 		}
-		CRectangle generateAttackEffect(const CPlayer &player,const CRectangle &skill);
 
 
 
