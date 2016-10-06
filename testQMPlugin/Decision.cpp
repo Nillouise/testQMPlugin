@@ -224,6 +224,15 @@ namespace gandalfr
 			return 0;
 		}
 
+		int calAddScoreAttackArea(vector<CAttackArea> &attackArea, double addValue)
+		{
+			for (auto it = attackArea.begin(); it != attackArea.end(); it++)
+			{
+				it->score += addValue;
+			}
+			return 0;
+		}
+
 		int calZeroAttackArea(vector<CAttackArea> &attackArea,double initValue)
 		{
 			for (auto it = attackArea.begin(); it != attackArea.end(); it++)
@@ -347,7 +356,7 @@ namespace gandalfr
 		CAttackArea selBestAttackArea(vector<CAttackArea> areas)
 		{
 			CAttackArea bestArea;
-
+			bestArea.score = -DBL_MAX;
 			for (auto iter = areas.begin(); iter != areas.end(); iter++)
 			{
 				if (bestArea.score<iter->score)
@@ -520,6 +529,28 @@ namespace gandalfr
 
 			return 0;
 		}
+		int SubRoomEdgeScoreX(const CPlayer & player, CAttackArea & attackArea, double Xscore, int leftEdge, int rightEdge)
+		{
+			//yÖá£º287, 367
+			//	XÖá£º349, 449
+			auto &rePlayer = player.m_rect;
+			if (rePlayer.x > 420)
+			{
+				if (attackArea.m_rect.x + attackArea.m_rect.width > rightEdge)
+				{
+					attackArea.score -= (double(attackArea.m_rect.x + attackArea.m_rect.width - rightEdge)) / attackArea.m_rect.width *Xscore;
+				}
+			}
+			else if (rePlayer.x < 370)
+			{
+				if (attackArea.m_rect.x <  leftEdge)
+				{
+					attackArea.score -= (double(leftEdge - attackArea.m_rect.x)) / attackArea.m_rect.width *Xscore;
+				}
+			}
+			return 0;
+		}
+
 
 		//y axil doesn't need to sub?
 		int SubRoomEdgeScoreX(const CPlayer & player, CAttackArea & attackArea, double Xscore,double Yscore)
@@ -529,34 +560,29 @@ namespace gandalfr
 			auto &rePlayer = player.m_rect;
 			int rightEdge = 800 - 40;
 			int leftEdge = 40;
-			if (rePlayer.x > 420)
-			{
-				if (attackArea.m_rect.x+attackArea.m_rect.width > rightEdge)
-				{
-					attackArea.score -= (double(attackArea.m_rect.x + attackArea.m_rect.width - rightEdge)) / attackArea.m_rect.width *Xscore;
-				}
-			}
-			else if (rePlayer.x < 370)
-			{
-				if (attackArea.m_rect.x <  leftEdge)
-				{
-					attackArea.score -= (double(leftEdge - attackArea.m_rect.x )) / attackArea.m_rect.width *Xscore;
-				}
-			}
+			SubRoomEdgeScoreX(player, attackArea, Xscore, leftEdge, rightEdge);
+
+
 			return 0;
 		}
 		int SubRoomEdgeScoreX(const CPlayer & player, vector<CAttackArea>& attackArea, double Xscore, double Yscore)
 		{
-
-			if (player.m_rect.y<390)
+			for (auto iter = attackArea.begin(); iter != attackArea.end(); iter++)
 			{
-				for (auto iter = attackArea.begin(); iter != attackArea.end(); iter++)
-				{
-					SubRoomEdgeScoreX(player, *iter, Xscore);
-				}
+				SubRoomEdgeScoreX(player, *iter, Xscore);
 			}
 			return 0;
 		}
+
+		int SubRoomEdgeScoreX(const CPlayer & player, vector<CAttackArea>& attackArea, double Xscore, int leftEdge, int rightEdge)
+		{
+			for (auto iter = attackArea.begin(); iter != attackArea.end(); iter++)
+			{
+				SubRoomEdgeScoreX(player, *iter, Xscore, leftEdge,rightEdge);
+			}
+			return 0;
+		}
+
 
 		int SubScreenEdgeScoreDwonY(const CPlayer & player, vector<CAttackArea>& attackArea, double Yscore)
 		{
@@ -634,6 +660,10 @@ namespace gandalfr
 						successfulCreat++;
 					}
 				}
+				else {
+					receive.push_back(left);
+					successfulCreat++;
+				}
 				if (right.x + right.width > cutScreen.x + cutScreen.width)
 				{
 					right.width = cutScreen.x + cutScreen.width - right.x;
@@ -642,6 +672,10 @@ namespace gandalfr
 						receive.push_back(right);
 						successfulCreat++;
 					}
+				}
+				else {
+					receive.push_back(right);
+					successfulCreat++;
 				}
 			}
 			else {

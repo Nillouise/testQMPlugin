@@ -179,7 +179,7 @@ namespace BaoPo
 		ActHalfSkill* actXuanHuoDun2 = new ActHalfSkill(skXuanHuoDun);
 
 		ActAvoidArea *actAvoidArea = new ActAvoidArea();
-
+		ActGoToMonsterOpposite *actGoToMonsterOpposite = new ActGoToMonsterOpposite();
 
 		actLongjuanfeng1->m_MonToConsiderFirst = &g_monNeural1;
 		actLongjuanfeng2->m_MonToConsiderFirst = &g_monNeural2;
@@ -251,7 +251,8 @@ namespace BaoPo
 		//g_AnyToAct[&g_action].insert(actXuanHuoDun2);
 
 
-		g_AnyToAct[&g_action].insert(actAvoidArea);
+//		g_AnyToAct[&g_action].insert(actAvoidArea);
+		g_AnyToAct[&g_action].insert(actGoToMonsterOpposite);
 
 		return 0;
 	}

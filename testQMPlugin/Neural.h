@@ -186,6 +186,7 @@ class ActGoToMonsterOpposite :public ActMove
 {
 public:
 	virtual ActGoToMonsterOpposite* getClassType() { return this; }
+	ActGoToMonsterOpposite() { m_base = 2; };
 	virtual void run();
 	virtual void cal();
 	virtual void express();

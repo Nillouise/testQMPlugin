@@ -383,7 +383,7 @@ CRectangle gandalfr::CRectangle::midLine()
 	r.x = x + width / 2;
 	r.width = 1;
 
-	return CRectangle();
+	return r;
 }
 
 

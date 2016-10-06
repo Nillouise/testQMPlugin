@@ -30,10 +30,11 @@ namespace gandalfr
 		CRectangle generateAttackEffect(const CPlayer & player, const CRectangle &skill);
 		int TwoSideMonsterNumber(const CRectangle&seed, const CRectangle &area, const CMonsterSet& monsters, int &left, int &right);
 		int calZeroAttackArea(vector<CAttackArea> &attackArea, double initValue = 0);
+		int calAddScoreAttackArea(vector<CAttackArea> &attackArea, double addValue);
 		int generateUpDownSideArea(const CRectangle &seed, vector<CRectangle> &receive, int cutedge = 1, CRectangle cutScreen = CRectangle(0, 0, 800, 600));
 		int generateConnerSideArea(const CRectangle &seed, vector<CRectangle> &receive, int cutedge = 1, CRectangle cutScreen = CRectangle(0, 0, 800, 600));
 		int generateOverlay(const vector<CRectangle> &seed, vector<vector<CRectangle>> &receive);
-
+		int SubRoomEdgeScoreX(const CPlayer & player, vector<CAttackArea>& attackArea, double Xscore, int leftEdge, int rightEdge);
 
 	}
 

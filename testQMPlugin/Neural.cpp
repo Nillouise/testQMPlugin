@@ -965,7 +965,7 @@ void ActGoToMonsterOpposite::run()
 	CRectangle detectArea(0, 0, 100, 60);
 	int leftMonsterNumber = 0;
 	int rightMonsterNumber = 0;
-
+	m_area.clear();
 	int sideMonsterCount = de::TwoSideMonsterNumber(g_RoomState.m_Player.m_rect.midLine(), detectArea, g_RoomState.m_Monster, leftMonsterNumber, rightMonsterNumber);
 
 	for (auto iter = g_RoomState.m_Monster.m_vecCMon.begin(); iter != g_RoomState.m_Monster.m_vecCMon.end(); iter++)
@@ -976,16 +976,17 @@ void ActGoToMonsterOpposite::run()
 		{
 			int leftCount = 0;
 			int rightCount = 0;
-			int minuMonsterCount =  de::TwoSideMonsterNumber(itVoidArea->midLine(), detectArea, g_RoomState.m_Monster, leftCount, rightCount);
+			int minuMonsterCount = de::TwoSideMonsterNumber(itVoidArea->midLine(), detectArea, g_RoomState.m_Monster, leftCount, rightCount);
 			CAttackArea possibleArea;
 			possibleArea.m_rect = *itVoidArea;
-			possibleArea.score = 0 - minuMonsterCount*8;
+			possibleArea.score = 0 - minuMonsterCount * 8;
 			m_area.push_back(possibleArea);
 		}
-	}
 
-	de::calZeroAttackArea(m_area, sideMonsterCount*14);
+	}
+	de::calAddScoreAttackArea(m_area, sideMonsterCount * 14);
 	de::calAttackAreaScoreInMove(m_area, g_RoomState.m_Player, 0, 0, 0.1, 0.12);
+	de::SubRoomEdgeScoreX(g_RoomState.m_Player, m_area, 15,100,700);
 
 	m_bestArea = de::selBestAttackArea(m_area);
 	m_selfOutput = m_base;
@@ -1018,6 +1019,7 @@ void ActAvoidArea::run()
 {
 	CRectangle area(0,0,20,10);
 	CMonsterSet &monsters = g_RoomState.m_Monster;
+	m_area.clear();
 	vector<CRectangle> possibleRect;
 	for (auto iter = monsters.m_vecCMon.begin(); iter != monsters.m_vecCMon.end(); iter++)
 	{
@@ -1025,13 +1027,12 @@ void ActAvoidArea::run()
 	}
 	vector<vector<CRectangle>> receive;
 	de::generateOverlay(possibleRect, receive);
-	vector<CAttackArea> possibleArea;
-	de::selSuitablAttackArea(receive, possibleArea);
-	de::calAttackAreaScoreOnlyMonsterNumber(possibleArea, 0, 2, 0);
-	de::calAttackAreaScoreInMove(possibleArea, g_RoomState.m_Player, 4, 0, 0.02, 0.02);
-	de::calAreaWithAreaSize(possibleArea,150*150,10);
-	de::SubScreenEdgeScoreDwonY(g_RoomState.m_Player, possibleArea, 10);
-	m_bestArea = de::selBestAttackArea(possibleArea);
+	de::selSuitablAttackArea(receive, m_area);
+	de::calAttackAreaScoreOnlyMonsterNumber(m_area, 0, 2, 0);
+	de::calAttackAreaScoreInMove(m_area, g_RoomState.m_Player, 4, 0, 0.02, 0.02);
+	de::calAreaWithAreaSize(m_area,150*150,10);
+	de::SubScreenEdgeScoreDwonY(g_RoomState.m_Player, m_area, 10);
+	m_bestArea = de::selBestAttackArea(m_area);
 	m_selfOutput = m_base + log( m_bestArea.m_rect.AreaSize());
 }
 
