@@ -1057,3 +1057,69 @@ void ActAvoidArea::express()
 	actAttack->m_trail.push_back(tra);
 	g_AnyToActTemp[&g_action].insert(actAttack);
 }
+
+void ActAdjustPosition::run()
+{
+	m_area.clear();
+	m_selfOutput = m_base;
+	CMonsterSet &monster = g_RoomState.m_Monster;
+	CRectangle area;
+	area.x = 0;
+	area.y = 0;
+	area.width = abs( dist.x);
+	area.height = abs(dist.y*2);
+
+	for (auto iter = monster.m_vecCMon.begin(); iter != monster.m_vecCMon.end(); iter++)
+	{
+		vector<CRectangle> receive;
+		de::generateTwoSideArea(iter->m_rect, area, receive);
+		for (auto  iter2 = receive.begin(); iter2 !=  receive.end(); iter2++)
+		{
+			if (iter2->x < iter->m_rect.x)
+			{
+				iter2->width = dist.width;
+			}
+			else {
+				iter2->x += iter2->width -dist.width;
+				iter2->width = dist.width;
+			}
+			if (dist.y < 0)
+			{
+				iter2->height = dist.height;
+			}
+			else {
+				iter2->y += iter2->height - dist.height;
+				iter2->height = dist.height;
+			}
+
+			m_area.push_back(CAttackArea(*iter2, 0, 0));
+		}
+	}
+	de::calAttackAreaScoreInMove(m_area, g_RoomState.m_Player, 0, 0, 0.02, 0.02);
+	m_bestArea = de::selBestAttackArea(m_area);
+
+
+
+}
+
+void ActAdjustPosition::cal()
+{
+	m_output = m_selfOutput;
+	m_output += Neural::sumUpRelativeWeight(this);
+}
+
+void ActAdjustPosition::express()
+{
+	ActTemp* actAttack = new ActTemp();
+	DWORD nowTime = GetTickCount();
+	actAttack->m_beginTime = nowTime;
+	actAttack->creator = this;
+	actAttack->m_base = 10;
+	actAttack->m_fnOutput = ActTemp::fnOutMustRunComplete();
+	CTrail tra;
+
+	CRectangle::getRectTrail(g_RoomState.m_Player.m_rect, m_bestArea.m_rect, tra);
+	actAttack->m_endTime = actAttack->m_beginTime + ga::timeActTempToStart;
+	actAttack->m_trail.push_back(tra);
+	g_AnyToActTemp[&g_action].insert(actAttack);
+}

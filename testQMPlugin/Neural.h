@@ -202,6 +202,18 @@ public:
 	ActAvoidArea() {m_base = 2; };
 };
 
+//adjust position to nearest monster face in a fixed distance;
+class ActAdjustPosition :public ActMove
+{
+public:
+	virtual ActAdjustPosition* getClassType() { return this; }
+	virtual void run();
+	virtual void cal();
+	virtual void express();
+	CRectangle dist;
+	ActAdjustPosition(CRectangle dist ):dist(dist) { m_base = 2; };
+};
+
 
 
 typedef  function<double(DWORD begin, DWORD end, Neural *neural)> fnOuput;
