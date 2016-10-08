@@ -256,6 +256,7 @@ namespace BaoPo
 //		g_AnyToAct[&g_action].insert(actGoToMonsterOpposite);
 		g_AnyToAct[&g_action].insert(actAdjustPosition);
 
+
 		return 0;
 	}
 
