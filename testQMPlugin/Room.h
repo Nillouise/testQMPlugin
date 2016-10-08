@@ -78,6 +78,8 @@ namespace gandalfr
 		double AreaSize() {
 			return width*height;
 		};
+		double centerX() { return x + width / 2.0; };
+		double centerY() { return y + height / 2.0; };
 		int x2()const { return x + width; }
 		int y2()const { return y + height; }
 	};

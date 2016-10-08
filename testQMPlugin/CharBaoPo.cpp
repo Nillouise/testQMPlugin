@@ -180,6 +180,7 @@ namespace BaoPo
 
 		ActAvoidArea *actAvoidArea = new ActAvoidArea();
 		ActGoToMonsterOpposite *actGoToMonsterOpposite = new ActGoToMonsterOpposite();
+		ActAdjustPosition *actAdjustPosition = new ActAdjustPosition(CRectangle(100,-15,100,30));
 
 		actLongjuanfeng1->m_MonToConsiderFirst = &g_monNeural1;
 		actLongjuanfeng2->m_MonToConsiderFirst = &g_monNeural2;
@@ -252,7 +253,8 @@ namespace BaoPo
 
 
 //		g_AnyToAct[&g_action].insert(actAvoidArea);
-		g_AnyToAct[&g_action].insert(actGoToMonsterOpposite);
+//		g_AnyToAct[&g_action].insert(actGoToMonsterOpposite);
+		g_AnyToAct[&g_action].insert(actAdjustPosition);
 
 		return 0;
 	}

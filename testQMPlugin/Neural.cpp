@@ -1083,13 +1083,14 @@ void ActAdjustPosition::run()
 				iter2->x += iter2->width -dist.width;
 				iter2->width = dist.width;
 			}
+
 			if (dist.y < 0)
 			{
-				iter2->height = dist.height;
+				iter2->height = dist.height + iter->m_rect.height;
 			}
 			else {
 				iter2->y += iter2->height - dist.height;
-				iter2->height = dist.height;
+				iter2->height = dist.height + iter->m_rect.height;
 			}
 
 			m_area.push_back(CAttackArea(*iter2, 0, 0));
@@ -1097,7 +1098,7 @@ void ActAdjustPosition::run()
 	}
 	de::calAttackAreaScoreInMove(m_area, g_RoomState.m_Player, 0, 0, 0.02, 0.02);
 	m_bestArea = de::selBestAttackArea(m_area);
-
+	m_selfOutput = abs(m_bestArea.m_rect.centerX() - g_RoomState.m_Player.m_rect.centerX()) *0.005 + abs(m_bestArea.m_rect.centerY() - g_RoomState.m_Player.m_rect.centerY())*0.005;
 
 
 }

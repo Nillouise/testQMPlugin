@@ -380,7 +380,4 @@ namespace vis
 		return 0;
 	}
 
-
-
-
 }
