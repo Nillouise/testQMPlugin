@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Neural;
+using System.Data;
+using System.Data.SqlClient;
 namespace generateNeural
 {
     /// <summary>
@@ -31,6 +33,12 @@ namespace generateNeural
             string outputcode = Neural.generateCode.generateMulText(txt_replaceText.Text, txt_replaceTextName.Text, newNames);
 
             txt_OuputCode.Text = outputcode;
+        }
+
+        private void btn_DataBase_Click(object sender, RoutedEventArgs e)
+        {
+            NeuralWeight baseWindow =  new NeuralWeight();
+            baseWindow.Show();
         }
     }
 }
