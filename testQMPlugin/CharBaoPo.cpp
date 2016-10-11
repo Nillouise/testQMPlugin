@@ -203,6 +203,7 @@ namespace BaoPo
 		MonAttacking *monAttacking = new MonAttacking();
 		monAttacking->m_numToScore = [](int x) {return x*2.0; };
 
+
 		Neural::makeWeight(actLongjuanfeng1, monAny, 1, 0);
 		Neural::makeWeight(actLongjuanfeng2, monAny, 1, 0);
 		Neural::makeWeight(actMoDanLianShe1, monAny, 1, 0);
