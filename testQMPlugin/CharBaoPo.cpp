@@ -221,6 +221,7 @@ namespace BaoPo
 
 
 
+
 		Neural::makeWeight(actLongjuanfeng1, monAttacking, 1, 0);
 		Neural::makeWeight(actLongjuanfeng2, monAttacking, 1, 0);
 		Neural::makeWeight(actMoDanLianShe1, monAttacking, 1, 0);
